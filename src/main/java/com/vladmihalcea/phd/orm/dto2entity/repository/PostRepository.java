@@ -20,14 +20,16 @@ public interface PostRepository extends JpaRepository<Post, Long> {
         left join fetch pc.author
         left join fetch pc.parent
         where p.id = :id
+        order by pc.id
         """)
     Post findByIdWithAuthorAndComments(@Param("id") Long id);
 
     @Query("""
         select p
         from Post p
-        left join fetch p.tags
+        left join fetch p.tags t
         where p.id = :id
+        order by t.id
         """)
     Post findByIdWithTags(@Param("id") Long id);
 }

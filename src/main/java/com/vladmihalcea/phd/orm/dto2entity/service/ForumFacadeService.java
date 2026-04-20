@@ -22,6 +22,6 @@ public class ForumFacadeService {
         LOGGER.info("Convert DTO to JPA entity");
         Post post = forumService.convertDTOToPost(postDTO);
         LOGGER.info("Merge updated JPA entity");
-        forumService.mergePost(post);
+        forumService.updatePost(post);
     }
 }

@@ -1,8 +1,6 @@
 package com.vladmihalcea.phd.orm.dto2entity.service;
 
 import com.vladmihalcea.phd.orm.dto2entity.domain.Post;
-import com.vladmihalcea.phd.orm.dto2entity.domain.PostComment;
-import com.vladmihalcea.phd.orm.dto2entity.domain.Tag;
 import com.vladmihalcea.phd.orm.dto2entity.dto.PostDTO;
 import com.vladmihalcea.phd.orm.dto2entity.dto.mapper.PostMapper;
 import com.vladmihalcea.phd.orm.dto2entity.repository.PostRepository;
@@ -11,10 +9,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 /**
  * @author Vlad Mihalcea
@@ -41,78 +35,12 @@ public class ForumService {
     @Transactional(readOnly = true)
     public Post convertDTOToPost(PostDTO postDTO) {
         Post postFromDatabase = postRepository.findByIdWithAuthorAndComments(postDTO.getId());
-        Post postFromDTO = postMapper.toEntity(postDTO);
-
-        postMapper.updateFromDTO(postDTO, postFromDatabase);
-
-        mergeComments(postFromDatabase, postFromDTO.getComments());
-        mergeTags(postFromDatabase, postFromDTO.getTags());
-
+        postMapper.merge(postDTO, postFromDatabase);
         return postFromDatabase;
     }
 
     @Transactional
-    public void mergePost(Post post) {
+    public void updatePost(Post post) {
         postRepository.save(post);
-    }
-
-    private void mergeComments(Post postFromDatabase, List<PostComment> commentsFromDTO) {
-        List<PostComment> commentsFromDatabase = postFromDatabase.getComments();
-
-        List<PostComment> removedComments = new ArrayList<>(commentsFromDatabase);
-        removedComments.removeAll(commentsFromDTO);
-
-        for(PostComment removedComment : removedComments) {
-            postFromDatabase.removeComment(removedComment);
-        }
-
-        List<PostComment> newComments = new ArrayList<>(commentsFromDTO);
-        newComments.removeAll(commentsFromDatabase);
-        commentsFromDTO.removeAll(newComments);
-
-        Map<Long, PostComment> postCommentByIdMap = commentsFromDatabase
-            .stream()
-            .collect(Collectors.toMap(PostComment::getId, Function.identity()));
-
-        for(PostComment updatingComment : commentsFromDTO) {
-            PostComment existingComment = postCommentByIdMap.get(updatingComment.getId());
-            if(existingComment != null) {
-                existingComment.setContent(updatingComment.getContent());
-            }
-        }
-
-        for(PostComment newComment : newComments) {
-            postFromDatabase.addComment(newComment);
-        }
-    }
-
-    private void mergeTags(Post postFromDatabase, Set<Tag> tagsFromDTO) {
-        Set<Tag> tagsFromDatabase = postFromDatabase.getTags();
-
-        Set<Tag> removedTags = new HashSet<>(tagsFromDatabase);
-        removedTags.removeAll(tagsFromDTO);
-
-        for(Tag removedTag : removedTags) {
-            postFromDatabase.removeTag(removedTag);
-        }
-
-        Set<Tag> newTags = new HashSet<>(tagsFromDTO);
-        newTags.removeAll(tagsFromDatabase);
-        tagsFromDTO.removeAll(newTags);
-
-        Map<Long, Tag> tagByIdMap = tagsFromDatabase
-            .stream()
-            .collect(Collectors.toMap(Tag::getId, Function.identity()));
-
-        for(Tag updatingTag : tagsFromDTO) {
-            Tag existingTag = tagByIdMap.get(updatingTag.getId());
-            if(existingTag != null) {
-                existingTag.setName(updatingTag.getName());
-            }
-        }
-
-        for(Tag newTag : newTags) {
-            postFromDatabase.addTag(newTag);
-        }
     }
 }

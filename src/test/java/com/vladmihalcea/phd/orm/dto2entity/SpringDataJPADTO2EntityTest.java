@@ -9,7 +9,7 @@ import com.vladmihalcea.phd.orm.dto2entity.dto.PostCommentDTO;
 import com.vladmihalcea.phd.orm.dto2entity.dto.PostDTO;
 import com.vladmihalcea.phd.orm.dto2entity.dto.TagDTO;
 import com.vladmihalcea.phd.orm.dto2entity.dto.UserContext;
-import com.vladmihalcea.phd.orm.dto2entity.dto.converter.UserDTOConverter;
+import com.vladmihalcea.phd.orm.dto2entity.dto.mapper.UserMapper;
 import com.vladmihalcea.phd.orm.dto2entity.service.ForumFacadeService;
 import com.vladmihalcea.phd.orm.dto2entity.service.ForumService;
 import com.vladmihalcea.phd.orm.util.AbstractSpringTest;
@@ -21,6 +21,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.support.TransactionTemplate;
+
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -37,6 +39,9 @@ public class SpringDataJPADTO2EntityTest extends AbstractSpringTest {
 
     @Autowired
     private ForumFacadeService forumFacadeService;
+
+    @Autowired
+    private UserMapper userMapper;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -74,7 +79,7 @@ public class SpringDataJPADTO2EntityTest extends AbstractSpringTest {
             entityManager.persist(jane);
 
             UserContext.setCurrentUser(
-                UserDTOConverter.of(vlad)
+                userMapper.toDTO(vlad)
             );
 
             entityManager.persist(
@@ -112,12 +117,17 @@ public class SpringDataJPADTO2EntityTest extends AbstractSpringTest {
 
         PostDTO postDTO = forumService.findWithCommentsAndTagsById(1L);
 
-        postDTO.setTitle("DTO to Entity Auto-Sync Pattern");
-        postDTO.getReplies().remove(0);
-        postDTO.getReplies().forEach(PostCommentDTO::upvote);
-        postDTO.getReplies().add(
+        postDTO
+            .setTitle("DTO to Entity Auto-Sync Pattern")
+            .upvote();
+
+        List<PostCommentDTO> replies = postDTO.getReplies();
+        replies.removeFirst();
+        replies.forEach(PostCommentDTO::upvote);
+        replies.add(
             new PostCommentDTO()
                 .setContent("Does it work with Entity Framework?")
+                .setParentId(replies.getFirst().getId())
         );
         postDTO.getTags().remove(
             postDTO.getTags().stream()
@@ -130,6 +140,7 @@ public class SpringDataJPADTO2EntityTest extends AbstractSpringTest {
         forumFacadeService.updatePost(postDTO);
 
         PostDTO updatedPostDTO = forumService.findWithCommentsAndTagsById(1L);
+
         assertEquals(
             postDTO,
             updatedPostDTO

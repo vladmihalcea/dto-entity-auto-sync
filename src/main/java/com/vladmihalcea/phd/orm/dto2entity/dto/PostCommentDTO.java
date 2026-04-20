@@ -17,7 +17,7 @@ public class PostCommentDTO {
 
     private int votes;
 
-    private List<PostCommentDTO> replies = new ArrayList<>();
+    private Long parentId;
 
     public Long getId() {
         return id;
@@ -65,23 +65,23 @@ public class PostCommentDTO {
         return this;
     }
 
-    public List<PostCommentDTO> getReplies() {
-        return replies;
+    public Long getParentId() {
+        return parentId;
     }
 
-    public PostCommentDTO addReply(PostCommentDTO reply) {
-        this.replies.add(reply);
+    public PostCommentDTO setParentId(Long parentId) {
+        this.parentId = parentId;
         return this;
     }
 
     @Override
     public boolean equals(Object o) {
         if (!(o instanceof PostCommentDTO that)) return false;
-        return Objects.equals(getContent(), that.getContent()) && Objects.equals(getReplies(), that.getReplies());
+        return Objects.equals(getContent(), that.getContent()) && Objects.equals(getParentId(), that.getParentId());
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(getId(), getContent(), getAuthor(), getReplies());
+        return Objects.hash(getId(), getContent(), getAuthor(), getParentId());
     }
 }
