@@ -10,7 +10,6 @@ import com.vladmihalcea.phd.orm.dto2entity.dto.PostDTO;
 import com.vladmihalcea.phd.orm.dto2entity.dto.TagDTO;
 import com.vladmihalcea.phd.orm.dto2entity.dto.UserContext;
 import com.vladmihalcea.phd.orm.dto2entity.dto.mapper.UserMapper;
-import com.vladmihalcea.phd.orm.dto2entity.service.ForumFacadeService;
 import com.vladmihalcea.phd.orm.dto2entity.service.ForumService;
 import com.vladmihalcea.phd.orm.util.AbstractSpringTest;
 import jakarta.persistence.EntityManager;
@@ -25,7 +24,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Vlad Mihalcea
@@ -36,9 +34,6 @@ public class SpringDataJPADTO2EntityTest extends AbstractSpringTest {
 
     @Autowired
     private ForumService forumService;
-
-    @Autowired
-    private ForumFacadeService forumFacadeService;
 
     @Autowired
     private UserMapper userMapper;
@@ -137,7 +132,7 @@ public class SpringDataJPADTO2EntityTest extends AbstractSpringTest {
         );
         postDTO.getTags().add(new TagDTO().setName("Jakarta Persistence"));
 
-        forumFacadeService.updatePost(postDTO);
+        forumService.updatePost(postDTO);
 
         PostDTO updatedPostDTO = forumService.findWithCommentsAndTagsById(1L);
 

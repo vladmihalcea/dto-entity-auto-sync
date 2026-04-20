@@ -3,7 +3,6 @@ package com.vladmihalcea.phd.orm.dto2entity.dto.mapper;
 import com.vladmihalcea.phd.orm.dto2entity.domain.Post;
 import com.vladmihalcea.phd.orm.dto2entity.domain.PostComment;
 import com.vladmihalcea.phd.orm.dto2entity.domain.Tag;
-import com.vladmihalcea.phd.orm.dto2entity.dto.PostCommentDTO;
 import com.vladmihalcea.phd.orm.dto2entity.dto.PostDTO;
 import com.vladmihalcea.phd.orm.dto2entity.dto.TagDTO;
 import com.vladmihalcea.phd.orm.dto2entity.dto.UserContext;

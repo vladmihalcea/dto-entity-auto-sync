@@ -3,7 +3,6 @@ package com.vladmihalcea.phd.orm.dto2entity.dto.mapper;
 import com.vladmihalcea.phd.orm.dto2entity.domain.PostComment;
 import com.vladmihalcea.phd.orm.dto2entity.dto.PostCommentDTO;
 import com.vladmihalcea.phd.orm.dto2entity.repository.PostCommentRepository;
-import jakarta.persistence.EntityManager;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;

@@ -2,14 +2,11 @@ package com.vladmihalcea.phd.orm.dto2entity.config;
 
 import com.vladmihalcea.phd.orm.util.database.DataSourceProvider;
 import com.vladmihalcea.phd.orm.util.database.Database;
-import com.vladmihalcea.phd.orm.util.logging.DataSourceProxyType;
-import com.vladmihalcea.phd.orm.util.logging.InlineQueryLogEntryCreator;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import jakarta.persistence.EntityManagerFactory;
 import net.ttddyy.dsproxy.listener.ChainListener;
 import net.ttddyy.dsproxy.listener.DataSourceQueryCountListener;
-import net.ttddyy.dsproxy.listener.logging.SLF4JQueryLoggingListener;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
 import org.hibernate.cfg.AvailableSettings;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,7 +32,7 @@ import java.util.Properties;
 @EnableAspectJAutoProxy
 public abstract class SpringDataJPABaseConfiguration {
 
-    public static final String DATA_SOURCE_PROXY_NAME = DataSourceProxyType.DATA_SOURCE_PROXY.name();
+    public static final String DATA_SOURCE_PROXY_NAME = "DATA_SOURCE_PROXY";
 
     @Bean
     public Database database() {
@@ -57,9 +54,6 @@ public abstract class SpringDataJPABaseConfiguration {
     @Bean
     public DataSource dataSource() {
         ChainListener listener = new ChainListener();
-        SLF4JQueryLoggingListener loggingListener = new SLF4JQueryLoggingListener();
-        loggingListener.setQueryLogEntryCreator(new InlineQueryLogEntryCreator());
-        listener.addListener(loggingListener);
         listener.addListener(new DataSourceQueryCountListener());
         return ProxyDataSourceBuilder
             .create(poolingDataSource())

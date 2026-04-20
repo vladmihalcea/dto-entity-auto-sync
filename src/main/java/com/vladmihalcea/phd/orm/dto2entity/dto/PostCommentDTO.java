@@ -1,7 +1,5 @@
 package com.vladmihalcea.phd.orm.dto2entity.dto;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Objects;
 
 /**
