@@ -4,11 +4,10 @@ import com.vladmihalcea.phd.orm.dto2entity.domain.Post;
 import com.vladmihalcea.phd.orm.dto2entity.domain.PostComment;
 import com.vladmihalcea.phd.orm.dto2entity.domain.Tag;
 import com.vladmihalcea.phd.orm.dto2entity.dto.PostDTO;
-import com.vladmihalcea.phd.orm.dto2entity.dto.converter.PostDTOConverter;
+import com.vladmihalcea.phd.orm.dto2entity.dto.mapper.PostMapper;
 import com.vladmihalcea.phd.orm.dto2entity.repository.PostRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,22 +28,23 @@ public class ForumService {
     @Autowired
     private PostRepository postRepository;
 
+    @Autowired
+    private PostMapper postMapper;
+
     public PostDTO findWithCommentsAndTagsById(Long id) {
         Post post = postRepository.findByIdWithAuthorAndComments(id);
         LOGGER.debug("Post [{}] fetched with comments", post.getId());
         post = postRepository.findByIdWithTags(id);
-        return PostDTOConverter.of(post);
+        return postMapper.toDTO(post);
     }
 
     @Transactional(readOnly = true)
     public Post convertDTOToPost(PostDTO postDTO) {
         Post postFromDatabase = postRepository.findByIdWithAuthorAndComments(postDTO.getId());
-        Post postFromDTO = PostDTOConverter.of(postDTO);
+        Post postFromDTO = postMapper.toEntity(postDTO);
 
-        postFromDatabase.setTitle(postDTO.getTitle());
-        postFromDatabase.setContent(postDTO.getContent());
-        postFromDatabase.setVotes(postDTO.getVotes());
-        
+        postMapper.updateFromDTO(postDTO, postFromDatabase);
+
         mergeComments(postFromDatabase, postFromDTO.getComments());
         mergeTags(postFromDatabase, postFromDTO.getTags());
 

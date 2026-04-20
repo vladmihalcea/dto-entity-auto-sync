@@ -1,7 +1,6 @@
 package com.vladmihalcea.phd.orm.dto2entity.config;
 
 import com.vladmihalcea.phd.orm.dto2entity.domain.Post;
-import io.hypersistence.utils.spring.repository.BaseJpaRepositoryImpl;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
@@ -17,8 +16,7 @@ import java.util.Properties;
     }
 )
 @EnableJpaRepositories(
-    basePackages = "com.vladmihalcea.phd.orm.dto2entity.repository",
-    repositoryBaseClass = BaseJpaRepositoryImpl.class
+    basePackages = "com.vladmihalcea.phd.orm.dto2entity.repository"
 )
 public class SpringDataJPADTO2EntityConfiguration extends SpringDataJPABaseConfiguration {
 

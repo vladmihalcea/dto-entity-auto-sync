@@ -1,20 +1,17 @@
 package com.vladmihalcea.phd.orm.dto2entity.config;
 
-import com.vladmihalcea.phd.orm.dto2entity.dto.PostDTO;
 import com.vladmihalcea.phd.orm.util.database.DataSourceProvider;
-import com.vladmihalcea.phd.orm.util.logging.DataSourceProxyType;
 import com.vladmihalcea.phd.orm.util.database.Database;
+import com.vladmihalcea.phd.orm.util.logging.DataSourceProxyType;
 import com.vladmihalcea.phd.orm.util.logging.InlineQueryLogEntryCreator;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import io.hypersistence.utils.hibernate.type.util.ClassImportIntegrator;
 import jakarta.persistence.EntityManagerFactory;
 import net.ttddyy.dsproxy.listener.ChainListener;
 import net.ttddyy.dsproxy.listener.DataSourceQueryCountListener;
 import net.ttddyy.dsproxy.listener.logging.SLF4JQueryLoggingListener;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
 import org.hibernate.cfg.AvailableSettings;
-import org.hibernate.jpa.boot.spi.IntegratorProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,8 +24,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.sql.DataSource;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Properties;
 
 /**
@@ -102,12 +97,6 @@ public abstract class SpringDataJPABaseConfiguration {
     protected Properties properties() {
         Properties properties = new Properties();
         properties.setProperty("hibernate.hbm2ddl.auto", "create-drop");
-        properties.put(
-            "hibernate.integrator_provider",
-            (IntegratorProvider) () -> Collections.singletonList(
-                new ClassImportIntegrator(Arrays.asList(PostDTO.class))
-            )
-        );
         additionalProperties(properties);
         return properties;
     }

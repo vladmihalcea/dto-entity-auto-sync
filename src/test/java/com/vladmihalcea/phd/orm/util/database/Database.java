@@ -1,7 +1,6 @@
 package com.vladmihalcea.phd.orm.util.database;
 
-import io.hypersistence.utils.common.ReflectionUtils;
-import org.hibernate.dialect.Dialect;
+import org.springframework.beans.BeanUtils;
 import org.testcontainers.containers.JdbcDatabaseContainer;
 import org.testcontainers.containers.PostgreSQLContainer;
 
@@ -32,7 +31,7 @@ public enum Database {
 	}
 
 	public DataSourceProvider dataSourceProvider() {
-		return ReflectionUtils.newInstance(dataSourceProviderClass().getName());
+        return BeanUtils.instantiateClass(dataSourceProviderClass());
 	}
 	
 	public abstract Class<? extends DataSourceProvider> dataSourceProviderClass();
@@ -70,20 +69,5 @@ public enum Database {
 
 	protected boolean supportsCredentials() {
 		return true;
-	}
-
-	public static Database of(Dialect dialect) {
-		Class<? extends Dialect> dialectClass = dialect.getClass();
-		for(Database database : values()) {
-			if(database.dataSourceProvider().hibernateDialectClass().isAssignableFrom(dialectClass)) {
-				return database;
-			}
-		}
-		throw new UnsupportedOperationException(
-			String.format(
-				"The provided Dialect [%s] is not supported!",
-				dialectClass
-			)
-		);
 	}
 }

@@ -1,8 +1,5 @@
 package com.vladmihalcea.phd.orm.util.database;
 
-import io.hypersistence.utils.common.ReflectionUtils;
-import org.hibernate.dialect.Dialect;
-
 import javax.sql.DataSource;
 import java.util.Properties;
 
@@ -28,8 +25,4 @@ public interface DataSourceProvider {
 	String password();
 
 	Database database();
-
-	default Class<? extends Dialect> hibernateDialectClass() {
-		return ReflectionUtils.getClass(hibernateDialect());
-	}
 }
