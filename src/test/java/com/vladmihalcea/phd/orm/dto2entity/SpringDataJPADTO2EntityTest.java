@@ -24,6 +24,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Vlad Mihalcea
@@ -109,36 +110,55 @@ public class SpringDataJPADTO2EntityTest extends AbstractSpringTest {
     @Test
     public void testDtoToEntitySync() {
         LOGGER.info("Sync DTOs and JPA entity state");
+        {
+            PostDTO postDTO = forumService.findWithCommentsAndTagsById(1L);
 
-        PostDTO postDTO = forumService.findWithCommentsAndTagsById(1L);
+            postDTO
+                .setTitle("DTO to Entity Auto-Sync Pattern")
+                .upvote();
 
-        postDTO
-            .setTitle("DTO to Entity Auto-Sync Pattern")
-            .upvote();
+            List<PostCommentDTO> replies = postDTO.getReplies();
+            replies.removeFirst();
+            replies.forEach(PostCommentDTO::upvote);
+            replies.add(
+                new PostCommentDTO()
+                    .setContent("Does it work with Entity Framework?")
+                    .setParentId(replies.getFirst().getId())
+            );
+            postDTO.getTags().remove(
+                postDTO.getTags().stream()
+                    .filter(t -> t.getName().equals("JPA"))
+                    .findFirst()
+                    .orElseThrow()
+            );
+            postDTO.getTags().add(new TagDTO().setName("Jakarta Persistence"));
 
-        List<PostCommentDTO> replies = postDTO.getReplies();
-        replies.removeFirst();
-        replies.forEach(PostCommentDTO::upvote);
-        replies.add(
-            new PostCommentDTO()
-                .setContent("Does it work with Entity Framework?")
-                .setParentId(replies.getFirst().getId())
-        );
-        postDTO.getTags().remove(
-            postDTO.getTags().stream()
-                .filter(t -> t.getName().equals("JPA"))
-                .findFirst()
-                .orElseThrow()
-        );
-        postDTO.getTags().add(new TagDTO().setName("Jakarta Persistence"));
+            forumService.updatePost(postDTO);
 
-        forumService.updatePost(postDTO);
+            PostDTO updatedPostDTO = forumService.findWithCommentsAndTagsById(1L);
 
-        PostDTO updatedPostDTO = forumService.findWithCommentsAndTagsById(1L);
+            assertEquals(
+                postDTO,
+                updatedPostDTO
+            );
+        }
+        LOGGER.info("Remove a parent PostCommentDTO and see whether the children are also removed");
+        {
+            PostDTO postDTO = forumService.findWithCommentsAndTagsById(1L);
 
-        assertEquals(
-            postDTO,
-            updatedPostDTO
-        );
+            List<PostCommentDTO> replies = postDTO.getReplies();
+            assertEquals(2, replies.size());
+            PostCommentDTO parentCommentDTO = replies.getFirst();
+            replies.stream()
+                .filter(child -> parentCommentDTO.getId().equals(child.getParentId()))
+                .findAny()
+                .orElseThrow();
+            replies.remove(parentCommentDTO);
+
+            forumService.updatePost(postDTO);
+
+            PostDTO updatedPostDTO = forumService.findWithCommentsAndTagsById(1L);
+            assertTrue(updatedPostDTO.getReplies().isEmpty());
+        }
     }
 }

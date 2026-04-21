@@ -117,16 +117,16 @@ public abstract class PostMapper {
         Consumer<E> removeFn,
         BiConsumer<E, E> updateFn
     ) {
-        // 1. Remove items no longer present in the DTO
+        // Identify new items and items to update
+        List<E> toAdd = new ArrayList<>(dtoCollection);
+        toAdd.removeAll(dbCollection);
+
+        // Remove items no longer present in the DTO
         List<E> toRemove = new ArrayList<>(dbCollection);
         toRemove.removeAll(dtoCollection);
         toRemove.forEach(removeFn);
 
-        // 2. Identify new items and items to update
-        List<E> toAdd = new ArrayList<>(dtoCollection);
-        toAdd.removeAll(dbCollection);
-
-        // 3. Update existing items
+        // Update existing items
         Map<K, E> dbMap = dbCollection.stream()
             .collect(Collectors.toMap(keyExtractor, Function.identity()));
 
@@ -139,7 +139,7 @@ public abstract class PostMapper {
             }
         }
 
-        // 4. Add new items
+        // Add new items
         toAdd.forEach(addFn);
     }
 

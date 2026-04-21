@@ -92,6 +92,14 @@ public class Post {
     }
 
     public Post removeComment(PostComment comment) {
+        comments.stream()
+            .filter(c -> comment.equals(c.getParent()))
+            .toList()
+            .forEach(child -> {
+                child.setParent(null);
+                removeComment(child);
+            });
+
         comments.remove(comment);
         comment.setPost(null);
         return this;
