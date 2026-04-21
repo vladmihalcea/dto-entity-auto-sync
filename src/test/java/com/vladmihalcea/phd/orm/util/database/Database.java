@@ -41,12 +41,8 @@ public enum Database {
 			.withReuse(true)
 			.withEnv(Collections.singletonMap("ACCEPT_EULA", "Y"))
 			.withTmpFs(Collections.singletonMap("/testtmpfs", "rw"));
-		if(supportsDatabaseName()) {
-			container.withDatabaseName(databaseName());
-		}
-		if(supportsCredentials()) {
-			container.withUsername(username).withPassword(password);
-		}
+        container.withDatabaseName(databaseName());
+        container.withUsername(username).withPassword(password);
 		container.start();
 	}
 
@@ -59,15 +55,7 @@ public enum Database {
 		);
 	}
 
-	protected boolean supportsDatabaseName() {
-		return true;
-	}
-
 	protected String databaseName() {
-		return "high-performance-java-persistence";
-	}
-
-	protected boolean supportsCredentials() {
-		return true;
+		return "dto2entity";
 	}
 }

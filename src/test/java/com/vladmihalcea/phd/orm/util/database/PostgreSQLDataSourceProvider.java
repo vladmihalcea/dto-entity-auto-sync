@@ -12,17 +12,6 @@ import java.util.Properties;
  */
 public class PostgreSQLDataSourceProvider extends AbstractContainerDataSourceProvider {
 
-    private Boolean reWriteBatchedInserts;
-
-    public boolean getReWriteBatchedInserts() {
-        return reWriteBatchedInserts;
-    }
-
-    public PostgreSQLDataSourceProvider setReWriteBatchedInserts(boolean reWriteBatchedInserts) {
-        this.reWriteBatchedInserts = reWriteBatchedInserts;
-        return this;
-    }
-
     @Override
     public String hibernateDialect() {
         return PostgreSQLDialect.class.getName();
@@ -30,7 +19,7 @@ public class PostgreSQLDataSourceProvider extends AbstractContainerDataSourcePro
 
     @Override
     protected String defaultJdbcUrl() {
-        return "jdbc:postgresql://localhost/high_performance_java_persistence";
+        return "jdbc:postgresql://localhost/dto2entity";
     }
 
     protected DataSource newDataSource() {
@@ -38,9 +27,6 @@ public class PostgreSQLDataSourceProvider extends AbstractContainerDataSourcePro
         dataSource.setURL(url());
         dataSource.setUser(username());
         dataSource.setPassword(password());
-        if (reWriteBatchedInserts != null) {
-            dataSource.setReWriteBatchedInserts(reWriteBatchedInserts);
-        }
 
         return dataSource;
     }
@@ -58,13 +44,10 @@ public class PostgreSQLDataSourceProvider extends AbstractContainerDataSourcePro
     @Override
     public Properties dataSourceProperties() {
         Properties properties = new Properties();
-        properties.setProperty("databaseName", "high_performance_java_persistence");
+        properties.setProperty("databaseName", "dto2entity");
         properties.setProperty("serverName", "localhost");
         properties.setProperty("user", username());
         properties.setProperty("password", password());
-        if (reWriteBatchedInserts != null) {
-            properties.setProperty("reWriteBatchedInserts", String.valueOf(reWriteBatchedInserts));
-        }
         return properties;
     }
 
