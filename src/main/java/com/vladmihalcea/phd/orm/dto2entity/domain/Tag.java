@@ -23,7 +23,11 @@ public class Tag {
 
     private String description;
 
-    @ManyToMany(mappedBy = "tags")
+    @ManyToMany
+    @JoinTable(name = "post_tag",
+        joinColumns = @JoinColumn(name = "post_id"),
+        inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
     private List<Post> posts = new ArrayList<>();
 
     public Long getId() {
