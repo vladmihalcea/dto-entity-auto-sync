@@ -5,8 +5,10 @@ import com.vladmihalcea.phd.orm.dto2entity.domain.PostComment;
 import com.vladmihalcea.phd.orm.dto2entity.domain.Tag;
 import com.vladmihalcea.phd.orm.dto2entity.dto.PostDTO;
 import com.vladmihalcea.phd.orm.dto2entity.dto.TagDTO;
-import com.vladmihalcea.phd.orm.dto2entity.dto.UserContext;
-import org.mapstruct.*;
+import org.mapstruct.CollectionMappingStrategy;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
@@ -31,37 +33,20 @@ public abstract class PostMapper {
     @Autowired
     TagMapper tagMapper;
 
-    @Autowired
-    UserMapper userMapper;
-
-    @Mapping(target = "author", expression = "java(post.getAuthor().getFirstName() + \" \" + post.getAuthor().getLastName())")
     @Mapping(target = "replies", source = "comments")
     public abstract PostDTO toDTO(Post post);
 
-    @Mapping(target = "author", ignore = true)
     @Mapping(target = "comments", source = "replies")
     @Mapping(target = "tags", source = "tags")
     public abstract Post toEntity(PostDTO dto);
 
-    @AfterMapping
-    protected void setAuthorFromContext(PostDTO dto, @MappingTarget Post post) {
-        if (dto.getId() == null) {
-            post.setAuthor(userMapper.toEntity(UserContext.getCurrentUser()));
-        }
-        for (PostComment comment : post.getComments()) {
-            if (comment.getId() == null) {
-                comment.setAuthor(userMapper.toEntity(UserContext.getCurrentUser()));
-            }
-        }
-    }
 
     /**
      * Updates all scalar properties of the target entity from the DTO.
-     * Collections (comments, tags) and author are ignored — they require
+     * Collections (comments, tags) are ignored — they require
      * diff-based merge handled by {@link #merge}.
      */
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "author", ignore = true)
     @Mapping(target = "comments", ignore = true)
     @Mapping(target = "tags", ignore = true)
     public abstract void updateFromDTO(PostDTO dto, @MappingTarget Post entity);

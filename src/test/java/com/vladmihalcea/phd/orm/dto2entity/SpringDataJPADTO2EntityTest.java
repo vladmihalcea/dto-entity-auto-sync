@@ -11,6 +11,7 @@ import com.vladmihalcea.phd.orm.dto2entity.dto.TagDTO;
 import com.vladmihalcea.phd.orm.dto2entity.dto.UserContext;
 import com.vladmihalcea.phd.orm.dto2entity.dto.mapper.UserMapper;
 import com.vladmihalcea.phd.orm.dto2entity.service.ForumService;
+import com.vladmihalcea.phd.orm.dto2entity.util.TimeSortedIdentifierGenerator;
 import com.vladmihalcea.phd.orm.util.AbstractSpringTest;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -55,9 +56,11 @@ public class SpringDataJPADTO2EntityTest extends AbstractSpringTest {
         };
     }
 
+    private Long postId;
+
     @Override
     public void afterInit() {
-        transactionTemplate.execute(transactionStatus -> {
+        postId = transactionTemplate.<Long>execute(transactionStatus -> {
             User vlad = new User()
                 .setEmail("vlad@acme.com")
                 .setFirstName("Vlad")
@@ -78,32 +81,31 @@ public class SpringDataJPADTO2EntityTest extends AbstractSpringTest {
                 userMapper.toDTO(vlad)
             );
 
-            entityManager.persist(
-                new Post()
-                    .setId(1L)
-                    .setTitle("DTO to Entity Auto-Sync")
-                    .setContent("""
+            Post post = new Post()
+                .setTitle("DTO to Entity Auto-Sync")
+                .setContent("""
                         Spring and Hibernate can help you do the aut-sync
                         between DTOs and JPA entities
                         """)
-                    .setAuthor(vlad)
-                    .addComment(
-                        new PostComment()
-                            .setContent("Interesting topic, but I would like to see more examples")
-                            .setAuthor(john)
-                    )
-                    .addComment(
-                        new PostComment()
-                            .setContent("Can you apply this pattern to other platforms?")
-                            .setAuthor(jane)
-                    )
-                    .addTag(new Tag().setName("Spring"))
-                    .addTag(new Tag().setName("JPA"))
-                    .addTag(new Tag().setName("Hibernate"))
-                    .addTag(new Tag().setName("MapStruct"))
-            );
+                .setAuthor(vlad)
+                .addComment(
+                    new PostComment()
+                        .setContent("Interesting topic, but I would like to see more examples")
+                        .setAuthor(john)
+                )
+                .addComment(
+                    new PostComment()
+                        .setContent("Can you apply this pattern to other platforms?")
+                        .setAuthor(jane)
+                )
+                .addTag(new Tag().setName("Spring"))
+                .addTag(new Tag().setName("JPA"))
+                .addTag(new Tag().setName("Hibernate"))
+                .addTag(new Tag().setName("MapStruct"));
 
-            return null;
+            entityManager.persist(post);
+
+            return post.getId();
         });
     }
 
@@ -111,7 +113,7 @@ public class SpringDataJPADTO2EntityTest extends AbstractSpringTest {
     public void testDtoToEntitySync() {
         LOGGER.info("Sync DTOs and JPA entity state");
         {
-            PostDTO postDTO = forumService.findWithCommentsAndTagsById(1L);
+            PostDTO postDTO = forumService.findWithCommentsAndTagsById(postId);
 
             postDTO
                 .setTitle("DTO to Entity Auto-Sync Pattern")
@@ -122,7 +124,9 @@ public class SpringDataJPADTO2EntityTest extends AbstractSpringTest {
             replies.forEach(PostCommentDTO::upvote);
             replies.add(
                 new PostCommentDTO()
+                    .setId(TimeSortedIdentifierGenerator.generate())
                     .setContent("Does it work with Entity Framework?")
+                    .setAuthor(UserContext.getCurrentUser())
                     .setParentId(replies.getFirst().getId())
             );
             postDTO.getTags().remove(
@@ -131,11 +135,15 @@ public class SpringDataJPADTO2EntityTest extends AbstractSpringTest {
                     .findFirst()
                     .orElseThrow()
             );
-            postDTO.getTags().add(new TagDTO().setName("Jakarta Persistence"));
+            postDTO.getTags().add(
+                new TagDTO()
+                    .setId(TimeSortedIdentifierGenerator.generate())
+                    .setName("Jakarta Persistence")
+            );
 
             forumService.updatePost(postDTO);
 
-            PostDTO updatedPostDTO = forumService.findWithCommentsAndTagsById(1L);
+            PostDTO updatedPostDTO = forumService.findWithCommentsAndTagsById(postId);
 
             assertEquals(
                 postDTO,
@@ -144,7 +152,7 @@ public class SpringDataJPADTO2EntityTest extends AbstractSpringTest {
         }
         LOGGER.info("Remove a parent PostCommentDTO and see whether the children are also removed");
         {
-            PostDTO postDTO = forumService.findWithCommentsAndTagsById(1L);
+            PostDTO postDTO = forumService.findWithCommentsAndTagsById(postId);
 
             List<PostCommentDTO> replies = postDTO.getReplies();
             assertEquals(2, replies.size());
@@ -157,7 +165,7 @@ public class SpringDataJPADTO2EntityTest extends AbstractSpringTest {
 
             forumService.updatePost(postDTO);
 
-            PostDTO updatedPostDTO = forumService.findWithCommentsAndTagsById(1L);
+            PostDTO updatedPostDTO = forumService.findWithCommentsAndTagsById(postId);
             assertTrue(updatedPostDTO.getReplies().isEmpty());
         }
     }

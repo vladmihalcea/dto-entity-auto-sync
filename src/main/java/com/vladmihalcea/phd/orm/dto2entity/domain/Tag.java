@@ -5,18 +5,13 @@ import org.hibernate.annotations.NaturalId;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 /**
  * @author Vlad Mihalcea
  */
 @Entity
 @Table(name = "tags")
-public class Tag {
-
-    @Id
-    @GeneratedValue
-    private Long id;
+public class Tag extends Identifiable<Tag> {
 
     @NaturalId
     private String name;
@@ -30,13 +25,8 @@ public class Tag {
     )
     private List<Post> posts = new ArrayList<>();
 
-    public Long getId() {
-        return id;
-    }
-
-    public Tag setId(Long id) {
-        this.id = id;
-        return this;
+    public Tag() {
+        super(Tag.class);
     }
 
     public String getName() {
@@ -59,17 +49,5 @@ public class Tag {
     public Tag setDescription(String description) {
         this.description = description;
         return this;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Tag tag)) return false;
-        return Objects.equals(getName(), tag.getName());
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(getName());
     }
 }

@@ -12,19 +12,16 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "posts")
-public class Post {
-
-    @Id
-    private Long id;
+public class Post extends Identifiable<Post> {
 
     private String title;
 
     private String content;
 
+    private int votes;
+
     @ManyToOne(fetch = FetchType.LAZY)
     private User author;
-
-    private int votes;
 
     @OneToMany(mappedBy = "post", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<PostComment> comments = new ArrayList<>();
@@ -34,13 +31,8 @@ public class Post {
     )
     private Set<Tag> tags = new HashSet<>();
 
-    public Long getId() {
-        return id;
-    }
-
-    public Post setId(Long id) {
-        this.id = id;
-        return this;
+    public Post() {
+        super(Post.class);
     }
 
     public String getTitle() {
@@ -120,17 +112,5 @@ public class Post {
     public void removeTag(Tag tag) {
         tags.remove(tag);
         tag.getPosts().remove(this);
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Post)) return false;
-        return id != null && id.equals(((Post) o).getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
     }
 }

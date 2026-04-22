@@ -18,23 +18,19 @@ public abstract class PostCommentMapper {
     @Autowired
     private PostCommentRepository postCommentRepository;
 
-    @Mapping(target = "author", expression = "java(comment.getAuthor().getFirstName() + \" \" + comment.getAuthor().getLastName())")
     @Mapping(target = "parentId", source = "parent.id")
     public abstract PostCommentDTO toDTO(PostComment comment);
 
-    @Mapping(target = "author", ignore = true)
     @Mapping(target = "post", ignore = true)
     @Mapping(target = "parent", source = "parentId", qualifiedByName = "parentReference")
     public abstract PostComment toEntity(PostCommentDTO dto);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "author", ignore = true)
     @Mapping(target = "post", ignore = true)
     @Mapping(target = "parent", source = "parentId", qualifiedByName = "parentReference")
     public abstract void updateFromDTO(PostCommentDTO dto, @MappingTarget PostComment entity);
 
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "author", ignore = true)
     @Mapping(target = "post", ignore = true)
     @Mapping(target = "parent", ignore = true)
     public abstract void updateFromEntity(PostComment source, @MappingTarget PostComment target);

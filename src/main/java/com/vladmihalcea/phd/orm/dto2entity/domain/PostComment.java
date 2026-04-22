@@ -1,19 +1,20 @@
 package com.vladmihalcea.phd.orm.dto2entity.domain;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 
 /**
  * @author Vlad Mihalcea
  */
 @Entity
 @Table(name = "post_comments")
-public class PostComment {
-
-    @Id
-    @GeneratedValue
-    private Long id;
+public class PostComment extends Identifiable<PostComment> {
 
     private String content;
+
+    private int votes;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Post post;
@@ -24,15 +25,8 @@ public class PostComment {
     @ManyToOne(fetch = FetchType.LAZY)
     private PostComment parent;
 
-    private int votes;
-
-    public Long getId() {
-        return id;
-    }
-
-    public PostComment setId(Long id) {
-        this.id = id;
-        return this;
+    public PostComment() {
+        super(PostComment.class);
     }
 
     public String getContent() {
@@ -77,17 +71,5 @@ public class PostComment {
     public PostComment setVotes(int votes) {
         this.votes = votes;
         return this;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof PostComment)) return false;
-        return id != null && id.equals(((PostComment) o).getId());
-    }
-
-    @Override
-    public int hashCode() {
-        return getClass().hashCode();
     }
 }

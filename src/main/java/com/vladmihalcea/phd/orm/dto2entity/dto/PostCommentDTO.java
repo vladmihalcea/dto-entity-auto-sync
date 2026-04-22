@@ -11,7 +11,7 @@ public class PostCommentDTO {
 
     private String content;
 
-    private String author;
+    private UserDTO author;
 
     private int votes;
 
@@ -35,11 +35,11 @@ public class PostCommentDTO {
         return this;
     }
 
-    public String getAuthor() {
+    public UserDTO getAuthor() {
         return author;
     }
 
-    public PostCommentDTO setAuthor(String author) {
+    public PostCommentDTO setAuthor(UserDTO author) {
         this.author = author;
         return this;
     }

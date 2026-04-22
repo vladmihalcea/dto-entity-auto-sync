@@ -1,6 +1,8 @@
 package com.vladmihalcea.phd.orm.dto2entity.domain;
 
-import jakarta.persistence.*;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 import org.hibernate.annotations.NaturalId;
 
 import java.util.Objects;
@@ -10,11 +12,7 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "users")
-public class User {
-
-    @Id
-    @GeneratedValue
-    private Long id;
+public class User extends Identifiable<User> {
 
     @NaturalId
     private String email;
@@ -25,13 +23,8 @@ public class User {
     @Column(name = "last_name")
     private String lastName;
 
-    public Long getId() {
-        return id;
-    }
-
-    public User setId(Long id) {
-        this.id = id;
-        return this;
+    public User() {
+        super(User.class);
     }
 
     public String getEmail() {
