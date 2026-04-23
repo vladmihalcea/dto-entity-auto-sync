@@ -8,11 +8,10 @@ import com.vladmihalcea.phd.orm.dto2entity.dto.TagDTO;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.util.*;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Function;
+import java.util.Set;
 import java.util.stream.Collectors;
+
+import static com.vladmihalcea.phd.orm.dto2entity.dto.mapper.DTOMapperUtil.mergeCollection;
 
 /**
  * @author Vlad Mihalcea
@@ -75,56 +74,6 @@ public abstract class PostMapper {
             (source, target) -> tagMapper.updateFromEntity(source, target)
         );
     }
-
-    /**
-     * Generic diff-based collection merge.
-     * <p>
-     * Removes items present in {@code dbCollection} but absent from {@code dtoCollection},
-     * updates matching items via {@code updateFn}, and adds new items via {@code addFn}.
-     * Equality for remove/add detection relies on the entity {@code equals}/{@code hashCode}
-     * contract (e.g. id for PostComment, name for Tag).
-     *
-     * @param dbCollection  the live managed collection from the database entity
-     * @param dtoCollection the detached collection built from the DTO
-     * @param keyExtractor  extracts the key used to pair existing with incoming items for update
-     * @param addChildFunction         adds a new item to the parent entity (should maintain bidirectional links)
-     * @param removeChildFunction      removes an item from the parent entity (should maintain bidirectional links)
-     * @param updateChildFunction      copies mutable properties from the incoming item to the existing managed item
-     */
-    protected <E, K> void mergeCollection(
-        Collection<E> dbCollection,
-        Collection<E> dtoCollection,
-        Function<E, K> keyExtractor,
-        Consumer<E> addChildFunction,
-        Consumer<E> removeChildFunction,
-        BiConsumer<E, E> updateChildFunction
-    ) {
-        // Identify new items and items to update
-        List<E> toAdd = new ArrayList<>(dtoCollection);
-        toAdd.removeAll(dbCollection);
-
-        // Remove items no longer present in the DTO
-        List<E> toRemove = new ArrayList<>(dbCollection);
-        toRemove.removeAll(dtoCollection);
-        toRemove.forEach(removeChildFunction);
-
-        // Update existing items
-        Map<K, E> dbMap = dbCollection.stream()
-            .collect(Collectors.toMap(keyExtractor, Function.identity()));
-
-        for (E incoming : dtoCollection) {
-            if (!toAdd.contains(incoming)) {
-                E existing = dbMap.get(keyExtractor.apply(incoming));
-                if (existing != null) {
-                    updateChildFunction.accept(incoming, existing);
-                }
-            }
-        }
-
-        // Add new items
-        toAdd.forEach(addChildFunction);
-    }
-
 
     protected Set<TagDTO> toTagDTOSet(Set<Tag> tags) {
         if (tags == null) {
