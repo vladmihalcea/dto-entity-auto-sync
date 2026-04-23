@@ -34,11 +34,11 @@ public abstract class Identifiable<T extends Identifiable<T>> {
     public boolean equals(Object o) {
         if (!(o instanceof Identifiable<?> that)) return false;
         return Objects.equals(entityClass, that.entityClass) &&
-               Objects.equals(getId(), that.getId());
+               Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(entityClass, getId());
+        return Objects.hash(entityClass, id);
     }
 }

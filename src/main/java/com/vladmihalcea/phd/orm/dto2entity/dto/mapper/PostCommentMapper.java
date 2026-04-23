@@ -2,21 +2,18 @@ package com.vladmihalcea.phd.orm.dto2entity.dto.mapper;
 
 import com.vladmihalcea.phd.orm.dto2entity.domain.PostComment;
 import com.vladmihalcea.phd.orm.dto2entity.dto.PostCommentDTO;
-import com.vladmihalcea.phd.orm.dto2entity.repository.PostCommentRepository;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.Named;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import org.mapstruct.*;
 
 /**
  * @author Vlad Mihalcea
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public abstract class PostCommentMapper {
 
-    @Autowired
-    private PostCommentRepository postCommentRepository;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Mapping(target = "parentId", source = "parent.id")
     public abstract PostCommentDTO toDTO(PostComment comment);
@@ -27,16 +24,11 @@ public abstract class PostCommentMapper {
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "post", ignore = true)
-    @Mapping(target = "parent", source = "parentId", qualifiedByName = "parentReference")
-    public abstract void updateFromDTO(PostCommentDTO dto, @MappingTarget PostComment entity);
-
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "post", ignore = true)
     @Mapping(target = "parent", ignore = true)
     public abstract void updateFromEntity(PostComment source, @MappingTarget PostComment target);
 
     @Named("parentReference")
     protected PostComment parentReference(Long parentId) {
-        return parentId != null ? postCommentRepository.getReferenceById(parentId) : null;
+        return parentId != null ? entityManager.getReference(PostComment.class, parentId) : null;
     }
 }

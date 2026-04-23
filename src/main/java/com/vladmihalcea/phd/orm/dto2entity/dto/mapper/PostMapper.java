@@ -5,10 +5,7 @@ import com.vladmihalcea.phd.orm.dto2entity.domain.PostComment;
 import com.vladmihalcea.phd.orm.dto2entity.domain.Tag;
 import com.vladmihalcea.phd.orm.dto2entity.dto.PostDTO;
 import com.vladmihalcea.phd.orm.dto2entity.dto.TagDTO;
-import org.mapstruct.CollectionMappingStrategy;
-import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
-import org.mapstruct.MappingTarget;
+import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.*;
@@ -21,17 +18,17 @@ import java.util.stream.Collectors;
  * @author Vlad Mihalcea
  */
 @Mapper(
-    componentModel = "spring",
+    componentModel = MappingConstants.ComponentModel.SPRING,
     collectionMappingStrategy = CollectionMappingStrategy.ADDER_PREFERRED,
     uses = {TagMapper.class, PostCommentMapper.class, UserMapper.class}
 )
 public abstract class PostMapper {
 
     @Autowired
-    PostCommentMapper postCommentMapper;
+    private PostCommentMapper postCommentMapper;
 
     @Autowired
-    TagMapper tagMapper;
+    private TagMapper tagMapper;
 
     @Mapping(target = "replies", source = "comments")
     public abstract PostDTO toDTO(Post post);
@@ -90,17 +87,17 @@ public abstract class PostMapper {
      * @param dbCollection  the live managed collection from the database entity
      * @param dtoCollection the detached collection built from the DTO
      * @param keyExtractor  extracts the key used to pair existing with incoming items for update
-     * @param addFn         adds a new item to the parent entity (should maintain bidirectional links)
-     * @param removeFn      removes an item from the parent entity (should maintain bidirectional links)
-     * @param updateFn      copies mutable properties from the incoming item to the existing managed item
+     * @param addChildFunction         adds a new item to the parent entity (should maintain bidirectional links)
+     * @param removeChildFunction      removes an item from the parent entity (should maintain bidirectional links)
+     * @param updateChildFunction      copies mutable properties from the incoming item to the existing managed item
      */
     protected <E, K> void mergeCollection(
         Collection<E> dbCollection,
         Collection<E> dtoCollection,
         Function<E, K> keyExtractor,
-        Consumer<E> addFn,
-        Consumer<E> removeFn,
-        BiConsumer<E, E> updateFn
+        Consumer<E> addChildFunction,
+        Consumer<E> removeChildFunction,
+        BiConsumer<E, E> updateChildFunction
     ) {
         // Identify new items and items to update
         List<E> toAdd = new ArrayList<>(dtoCollection);
@@ -109,7 +106,7 @@ public abstract class PostMapper {
         // Remove items no longer present in the DTO
         List<E> toRemove = new ArrayList<>(dbCollection);
         toRemove.removeAll(dtoCollection);
-        toRemove.forEach(removeFn);
+        toRemove.forEach(removeChildFunction);
 
         // Update existing items
         Map<K, E> dbMap = dbCollection.stream()
@@ -119,13 +116,13 @@ public abstract class PostMapper {
             if (!toAdd.contains(incoming)) {
                 E existing = dbMap.get(keyExtractor.apply(incoming));
                 if (existing != null) {
-                    updateFn.accept(incoming, existing);
+                    updateChildFunction.accept(incoming, existing);
                 }
             }
         }
 
         // Add new items
-        toAdd.forEach(addFn);
+        toAdd.forEach(addChildFunction);
     }
 
 
@@ -134,7 +131,10 @@ public abstract class PostMapper {
             return null;
         }
         return tags.stream()
-            .map(t -> new TagDTO().setId(t.getId()).setName(t.getName()))
-            .collect(Collectors.toCollection(HashSet::new));
+            .map(t -> new TagDTO()
+                .setId(t.getId())
+                .setName(t.getName())
+            )
+            .collect(Collectors.toSet());
     }
 }

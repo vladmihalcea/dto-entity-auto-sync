@@ -4,12 +4,13 @@ import com.vladmihalcea.phd.orm.dto2entity.domain.Tag;
 import com.vladmihalcea.phd.orm.dto2entity.dto.TagDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
 import org.mapstruct.MappingTarget;
 
 /**
  * @author Vlad Mihalcea
  */
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface TagMapper {
 
     TagDTO toDTO(Tag tag);
