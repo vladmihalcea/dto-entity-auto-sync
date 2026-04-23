@@ -1,5 +1,10 @@
 package com.vladmihalcea.phd.orm.dto2entity.dto.mapper;
 
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.metamodel.Attribute;
+import org.hibernate.SessionFactory;
+import org.springframework.beans.BeanUtils;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -12,7 +17,18 @@ import java.util.stream.Collectors;
 /**
  * @author Vlad Mihalcea
  */
-public class DTOMapperUtil {
+public class EntityMergeUtil {
+
+    public static <T> void mergeBasicAttributes(EntityManagerFactory entityManagerFactory, T source, T target) {
+        SessionFactory sessionFactory = entityManagerFactory.unwrap(SessionFactory.class);
+        List<String> associations = sessionFactory.getMetamodel().entity(source.getClass())
+                .getAttributes()
+                .stream()
+                .filter(attribute -> attribute.isAssociation() || attribute.isCollection())
+                .map(Attribute::getName)
+                .toList();
+        BeanUtils.copyProperties(source, target, associations.toArray(new String[0]));
+    }
 
     /**
      * Generic diff-based collection merge.

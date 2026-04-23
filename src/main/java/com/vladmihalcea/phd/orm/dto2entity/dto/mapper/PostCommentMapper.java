@@ -4,7 +4,10 @@ import com.vladmihalcea.phd.orm.dto2entity.domain.PostComment;
 import com.vladmihalcea.phd.orm.dto2entity.dto.PostCommentDTO;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import org.mapstruct.*;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingConstants;
+import org.mapstruct.Named;
 
 /**
  * @author Vlad Mihalcea
@@ -21,11 +24,6 @@ public abstract class PostCommentMapper {
     @Mapping(target = "post", ignore = true)
     @Mapping(target = "parent", source = "parentId", qualifiedByName = "parentReference")
     public abstract PostComment toEntity(PostCommentDTO dto);
-
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "post", ignore = true)
-    @Mapping(target = "parent", ignore = true)
-    public abstract void updateFromEntity(PostComment source, @MappingTarget PostComment target);
 
     @Named("parentReference")
     protected PostComment parentReference(Long parentId) {

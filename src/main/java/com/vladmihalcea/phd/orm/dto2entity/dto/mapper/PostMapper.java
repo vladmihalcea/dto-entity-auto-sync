@@ -5,13 +5,15 @@ import com.vladmihalcea.phd.orm.dto2entity.domain.PostComment;
 import com.vladmihalcea.phd.orm.dto2entity.domain.Tag;
 import com.vladmihalcea.phd.orm.dto2entity.dto.PostDTO;
 import com.vladmihalcea.phd.orm.dto2entity.dto.TagDTO;
+import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.PersistenceUnit;
 import org.mapstruct.*;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.vladmihalcea.phd.orm.dto2entity.dto.mapper.DTOMapperUtil.mergeCollection;
+import static com.vladmihalcea.phd.orm.dto2entity.dto.mapper.EntityMergeUtil.mergeBasicAttributes;
+import static com.vladmihalcea.phd.orm.dto2entity.dto.mapper.EntityMergeUtil.mergeCollection;
 
 /**
  * @author Vlad Mihalcea
@@ -23,11 +25,8 @@ import static com.vladmihalcea.phd.orm.dto2entity.dto.mapper.DTOMapperUtil.merge
 )
 public abstract class PostMapper {
 
-    @Autowired
-    private PostCommentMapper postCommentMapper;
-
-    @Autowired
-    private TagMapper tagMapper;
+    @PersistenceUnit
+    private EntityManagerFactory entityManagerFactory;
 
     @Mapping(target = "replies", source = "comments")
     public abstract PostDTO toDTO(Post post);
@@ -62,7 +61,8 @@ public abstract class PostMapper {
             PostComment::getId,
             c -> postFromDatabase.addComment(c),
             c -> postFromDatabase.removeComment(c),
-            (source, target) -> postCommentMapper.updateFromEntity(source, target)
+            (source, target) -> mergeBasicAttributes(
+                entityManagerFactory, source, target)
         );
 
         mergeCollection(
@@ -71,7 +71,8 @@ public abstract class PostMapper {
             Tag::getId,
             t -> postFromDatabase.addTag(t),
             t -> postFromDatabase.removeTag(t),
-            (source, target) -> tagMapper.updateFromEntity(source, target)
+            (source, target) -> mergeBasicAttributes(
+                entityManagerFactory, source, target)
         );
     }
 
