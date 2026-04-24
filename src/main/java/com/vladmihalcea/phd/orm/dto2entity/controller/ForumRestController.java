@@ -20,6 +20,6 @@ public class ForumRestController {
     @GetMapping("/post")
     public PostDTO findById(
         @RequestParam("postId") Long postId) {
-        return forumService.findWithCommentsAndTagsById(postId);
+        return forumService.loadPostDTO(postId);
     }
 }

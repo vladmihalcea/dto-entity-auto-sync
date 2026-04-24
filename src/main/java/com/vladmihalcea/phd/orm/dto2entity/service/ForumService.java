@@ -16,7 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
  * @author Vlad Mihalcea
  */
 @Service
-@Transactional(readOnly = true)
 public class ForumService {
 
     protected final Logger LOGGER = LoggerFactory.getLogger(getClass());
@@ -30,25 +29,31 @@ public class ForumService {
     @PersistenceContext
     private EntityManager entityManager;
 
-    public PostDTO findWithCommentsAndTagsById(Long id) {
-        Post post = postRepository.findByIdWithAuthorAndComments(id);
-        LOGGER.debug("Post [{}] fetched with comments", post.getId());
-        post = postRepository.findByIdWithTags(id);
-        return postMapper.toDTO(post);
+    @Transactional(readOnly = true)
+    public PostDTO loadPostDTO(Long id) {
+        return postMapper.toDTO(
+            loadPostEntityWithAllAssociations(id)
+        );
+    }
+
+    private Post loadPostEntityWithAllAssociations(Long id) {
+        Post post = postRepository.findByIdWithComments(id);
+        return postRepository.findByIdWithTags(post.getId());
     }
 
     @Transactional
     public void updatePost(PostDTO postDTO) {
-        LOGGER.info("Convert DTO to JPA entity");
-        Post postFromDatabase = postRepository.findByIdWithAuthorAndComments(postDTO.getId());
-        postMapper.merge(postDTO, postFromDatabase);
-        LOGGER.info("Auto-Flush the JPA entity");
+        postMapper.merge(
+            postDTO,
+            loadPostEntityWithAllAssociations(postDTO.getId())
+        );
+        LOGGER.info("Auto-flush the JPA entity");
     }
 
     @Transactional
     public void updateDetachedPost(PostDTO postDTO) {
         LOGGER.info("Convert DTO to JPA entity");
-        Post postFromDatabase = postRepository.findByIdWithAuthorAndComments(postDTO.getId());
+        Post postFromDatabase = loadPostEntityWithAllAssociations(postDTO.getId());
         postMapper.merge(postDTO, postFromDatabase);
         LOGGER.info("Merge updated JPA entity");
         entityManager.detach(postFromDatabase);

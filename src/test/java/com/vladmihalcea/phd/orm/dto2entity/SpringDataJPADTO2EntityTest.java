@@ -17,6 +17,8 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -113,7 +115,7 @@ public class SpringDataJPADTO2EntityTest extends AbstractSpringTest {
     public void testDtoToEntitySync() {
         LOGGER.info("Sync DTOs and JPA entity state");
         {
-            PostDTO postDTO = forumService.findWithCommentsAndTagsById(postId);
+            PostDTO postDTO = forumService.loadPostDTO(postId);
 
             postDTO
                 .setTitle("DTO to Entity Auto-Sync Pattern")
@@ -141,9 +143,11 @@ public class SpringDataJPADTO2EntityTest extends AbstractSpringTest {
                     .setName("Jakarta Persistence")
             );
 
+            LOGGER.info("Update JPA entity state from PostDTO");
             forumService.updatePost(postDTO);
 
-            PostDTO updatedPostDTO = forumService.findWithCommentsAndTagsById(postId);
+            LOGGER.info("Reload PostDTO to check the modifications");
+            PostDTO updatedPostDTO = forumService.loadPostDTO(postId);
 
             assertEquals(
                 postDTO,
@@ -152,7 +156,7 @@ public class SpringDataJPADTO2EntityTest extends AbstractSpringTest {
         }
         LOGGER.info("Remove a parent PostCommentDTO and see whether the children are also removed");
         {
-            PostDTO postDTO = forumService.findWithCommentsAndTagsById(postId);
+            PostDTO postDTO = forumService.loadPostDTO(postId);
 
             List<PostCommentDTO> replies = postDTO.getReplies();
             assertEquals(2, replies.size());
@@ -165,7 +169,7 @@ public class SpringDataJPADTO2EntityTest extends AbstractSpringTest {
 
             forumService.updatePost(postDTO);
 
-            PostDTO updatedPostDTO = forumService.findWithCommentsAndTagsById(postId);
+            PostDTO updatedPostDTO = forumService.loadPostDTO(postId);
             assertTrue(updatedPostDTO.getReplies().isEmpty());
         }
     }

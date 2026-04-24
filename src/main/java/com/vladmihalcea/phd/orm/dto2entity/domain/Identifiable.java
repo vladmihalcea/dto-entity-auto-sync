@@ -3,6 +3,7 @@ package com.vladmihalcea.phd.orm.dto2entity.domain;
 import com.vladmihalcea.phd.orm.dto2entity.util.TimeSortedIdentifierGenerator;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Transient;
 
 import java.util.Objects;
 
@@ -12,6 +13,7 @@ import java.util.Objects;
 @MappedSuperclass
 public abstract class Identifiable<T extends Identifiable<T>> {
 
+    @Transient
     private final Class<T> entityClass;
 
     @Id

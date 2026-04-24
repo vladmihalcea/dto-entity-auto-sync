@@ -25,7 +25,7 @@ public interface PostRepository extends JpaRepository<Post, Long> {
         where p.id = :id
         order by pc.id
         """)
-    Post findByIdWithAuthorAndComments(@Param("id") Long id);
+    Post findByIdWithComments(@Param("id") Long id);
 
     @Query("""
         select p
