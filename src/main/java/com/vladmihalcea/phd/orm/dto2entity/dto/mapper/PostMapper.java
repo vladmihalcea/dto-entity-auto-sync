@@ -5,15 +5,11 @@ import com.vladmihalcea.phd.orm.dto2entity.domain.PostComment;
 import com.vladmihalcea.phd.orm.dto2entity.domain.Tag;
 import com.vladmihalcea.phd.orm.dto2entity.dto.PostDTO;
 import com.vladmihalcea.phd.orm.dto2entity.dto.TagDTO;
-import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.PersistenceUnit;
 import org.mapstruct.*;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import static com.vladmihalcea.phd.orm.dto2entity.dto.mapper.EntityMergeUtil.mergeBasicAttributes;
-import static com.vladmihalcea.phd.orm.dto2entity.dto.mapper.EntityMergeUtil.mergeCollection;
 
 /**
  * @author Vlad Mihalcea
@@ -25,8 +21,8 @@ import static com.vladmihalcea.phd.orm.dto2entity.dto.mapper.EntityMergeUtil.mer
 )
 public abstract class PostMapper {
 
-    @PersistenceUnit
-    private EntityManagerFactory entityManagerFactory;
+    @Autowired
+    private EntityMerger entityMerger;
 
     @Mapping(target = "replies", source = "comments")
     public abstract PostDTO toDTO(Post post);
@@ -35,11 +31,10 @@ public abstract class PostMapper {
     @Mapping(target = "tags", source = "tags")
     public abstract Post toEntity(PostDTO dto);
 
-
     /**
      * Updates all scalar properties of the target entity from the DTO.
-     * Collections (comments, tags) are ignored — they require
-     * diff-based merge handled by {@link #merge}.
+     * Collections (comments, tags) are ignored since they require
+     * a diff-based merge that is handled by the {@link #merge} method.
      */
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "comments", ignore = true)
@@ -47,32 +42,32 @@ public abstract class PostMapper {
     public abstract void updateFromDTO(PostDTO dto, @MappingTarget Post entity);
 
     /**
-     * Full merge: converts the DTO to entity, updates scalar properties on the
-     * database entity, then diff-merges comment and tag collections.
+     * Converts the DTO to entity and updates the scalar properties on the
+     * database entity, then diff-merges the comment and tag collections.
      */
     public void merge(PostDTO postDTO, Post postFromDatabase) {
         Post postFromDTO = toEntity(postDTO);
 
         updateFromDTO(postDTO, postFromDatabase);
 
-        mergeCollection(
+        entityMerger.mergeCollection(
             postFromDatabase.getComments(),
             postFromDTO.getComments(),
             PostComment::getId,
             c -> postFromDatabase.addComment(c),
             c -> postFromDatabase.removeComment(c),
-            (source, target) -> mergeBasicAttributes(
-                entityManagerFactory, source, target)
+            (source, target) -> entityMerger.mergeBasicAttributes(
+                source, target)
         );
 
-        mergeCollection(
+        entityMerger.mergeCollection(
             postFromDatabase.getTags(),
             postFromDTO.getTags(),
             Tag::getId,
             t -> postFromDatabase.addTag(t),
             t -> postFromDatabase.removeTag(t),
-            (source, target) -> mergeBasicAttributes(
-                entityManagerFactory, source, target)
+            (source, target) -> entityMerger.mergeBasicAttributes(
+                source, target)
         );
     }
 

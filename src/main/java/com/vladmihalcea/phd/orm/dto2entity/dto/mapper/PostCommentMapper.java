@@ -27,6 +27,8 @@ public abstract class PostCommentMapper {
 
     @Named("parentReference")
     protected PostComment parentReference(Long parentId) {
-        return parentId != null ? entityManager.getReference(PostComment.class, parentId) : null;
+        return parentId != null ?
+            entityManager.getReference(PostComment.class, parentId) :
+            null;
     }
 }

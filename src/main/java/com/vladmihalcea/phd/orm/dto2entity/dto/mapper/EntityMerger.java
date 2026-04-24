@@ -4,11 +4,10 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.metamodel.Attribute;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -17,17 +16,28 @@ import java.util.stream.Collectors;
 /**
  * @author Vlad Mihalcea
  */
-public class EntityMergeUtil {
+@Component
+public class EntityMerger {
 
-    public static <T> void mergeBasicAttributes(EntityManagerFactory entityManagerFactory, T source, T target) {
+    private final Map<Class<?>, String[]> entityAssociationMap = new HashMap<>();
+
+    public EntityMerger(@Autowired EntityManagerFactory entityManagerFactory) {
         SessionFactory sessionFactory = entityManagerFactory.unwrap(SessionFactory.class);
-        List<String> associations = sessionFactory.getMetamodel().entity(source.getClass())
-                .getAttributes()
-                .stream()
-                .filter(attribute -> attribute.isAssociation() || attribute.isCollection())
-                .map(Attribute::getName)
-                .toList();
-        BeanUtils.copyProperties(source, target, associations.toArray(new String[0]));
+        sessionFactory.getMetamodel().getEntities()
+            .forEach(entityType -> {
+                entityAssociationMap.put(
+                    entityType.getJavaType(), entityType.getAttributes()
+                        .stream()
+                        .filter(attribute -> attribute.isAssociation() || attribute.isCollection())
+                        .map(Attribute::getName)
+                        .toList()
+                        .toArray(new String[0])
+                );
+            });
+    }
+
+    public <T> void mergeBasicAttributes(T source, T target) {
+        BeanUtils.copyProperties(source, target, entityAssociationMap.get(source.getClass()));
     }
 
     /**
@@ -45,7 +55,7 @@ public class EntityMergeUtil {
      * @param removeChildFunction      removes an item from the parent entity (should maintain bidirectional links)
      * @param updateChildFunction      copies mutable properties from the incoming item to the existing managed item
      */
-    public static <E, K> void mergeCollection(
+    public <E, K> void mergeCollection(
         Collection<E> dbCollection,
         Collection<E> dtoCollection,
         Function<E, K> keyExtractor,
