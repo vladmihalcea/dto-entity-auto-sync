@@ -7,7 +7,10 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -19,21 +22,21 @@ import java.util.stream.Collectors;
 @Component
 public class EntityMerger {
 
-    private final Map<Class<?>, String[]> entityAssociationMap = new HashMap<>();
+    private final Map<Class<?>, String[]> entityAssociationMap;
 
     public EntityMerger(@Autowired EntityManagerFactory entityManagerFactory) {
-        SessionFactory sessionFactory = entityManagerFactory.unwrap(SessionFactory.class);
-        sessionFactory.getMetamodel().getEntities()
-            .forEach(entityType -> {
-                entityAssociationMap.put(
-                    entityType.getJavaType(), entityType.getAttributes()
-                        .stream()
-                        .filter(attribute -> attribute.isAssociation() || attribute.isCollection())
-                        .map(Attribute::getName)
-                        .toList()
-                        .toArray(new String[0])
-                );
-            });
+        entityAssociationMap = entityManagerFactory.unwrap(SessionFactory.class).getMetamodel()
+            .getEntities()
+            .stream()
+            .collect(Collectors.toMap(
+                entityType -> entityType.getJavaType(),
+                entityType -> entityType.getAttributes()
+                    .stream()
+                    .filter(attribute ->
+                        attribute.isAssociation() || attribute.isCollection())
+                    .map(Attribute::getName)
+                    .toArray(String[]::new)
+            ));
     }
 
     /**
