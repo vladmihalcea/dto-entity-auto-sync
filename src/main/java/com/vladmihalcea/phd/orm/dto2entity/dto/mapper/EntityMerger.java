@@ -36,6 +36,12 @@ public class EntityMerger {
             });
     }
 
+    /**
+     * Copies all non-association properties from the source to the target entity.
+     * @param source the detached entity built from the DTO, containing the new state for scalar attributes
+     * @param target t
+     * @param <T> the entity type
+     */
     public <T> void mergeBasicAttributes(T source, T target) {
         BeanUtils.copyProperties(source, target, entityAssociationMap.get(source.getClass()));
     }

@@ -4,12 +4,8 @@ import com.vladmihalcea.phd.orm.dto2entity.domain.Post;
 import com.vladmihalcea.phd.orm.dto2entity.domain.PostComment;
 import com.vladmihalcea.phd.orm.dto2entity.domain.Tag;
 import com.vladmihalcea.phd.orm.dto2entity.dto.PostDTO;
-import com.vladmihalcea.phd.orm.dto2entity.dto.TagDTO;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * @author Vlad Mihalcea
@@ -28,7 +24,6 @@ public abstract class PostMapper {
     public abstract PostDTO toDTO(Post post);
 
     @Mapping(target = "comments", source = "replies")
-    @Mapping(target = "tags", source = "tags")
     public abstract Post toEntity(PostDTO dto);
 
     /**
@@ -69,17 +64,5 @@ public abstract class PostMapper {
             (source, target) -> entityMerger.mergeBasicAttributes(
                 source, target)
         );
-    }
-
-    protected Set<TagDTO> toTagDTOSet(Set<Tag> tags) {
-        if (tags == null) {
-            return null;
-        }
-        return tags.stream()
-            .map(t -> new TagDTO()
-                .setId(t.getId())
-                .setName(t.getName())
-            )
-            .collect(Collectors.toSet());
     }
 }
