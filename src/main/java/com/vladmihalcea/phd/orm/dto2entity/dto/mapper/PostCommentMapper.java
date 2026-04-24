@@ -25,16 +25,6 @@ public abstract class PostCommentMapper {
     @Mapping(target = "parent", source = "parentId", qualifiedByName = "parentReference")
     public abstract PostComment toEntity(PostCommentDTO dto);
 
-    /**
-     * Update an existing PostComment entity from the DTO.
-     * The parentId is mapped to a reference using {@link #parentReference(Long)}
-     * so we avoid loading the parent entity from the database unnecessarily.
-     */
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "post", ignore = true)
-    @Mapping(target = "parent", source = "parentId", qualifiedByName = "parentReference")
-    public abstract void updateFromDTO(PostCommentDTO dto, @org.mapstruct.MappingTarget PostComment entity);
-
     @Named("parentReference")
     protected PostComment parentReference(Long parentId) {
         return parentId != null ?

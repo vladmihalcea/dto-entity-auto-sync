@@ -40,26 +40,18 @@ public class ForumService {
     @Transactional
     public void updatePost(PostDTO postDTO) {
         LOGGER.info("Convert DTO to JPA entity");
-        Post post = convertDTOToPost(postDTO);
+        Post postFromDatabase = postRepository.findByIdWithAuthorAndComments(postDTO.getId());
+        postMapper.merge(postDTO, postFromDatabase);
         LOGGER.info("Auto-Flush the JPA entity");
     }
 
     @Transactional
     public void updateDetachedPost(PostDTO postDTO) {
         LOGGER.info("Convert DTO to JPA entity");
-        Post post = convertDTOToPost(postDTO);
-        LOGGER.info("Merge updated JPA entity");
-        entityManager.detach(post);
-        updatePost(post);
-    }
-
-    private Post convertDTOToPost(PostDTO postDTO) {
         Post postFromDatabase = postRepository.findByIdWithAuthorAndComments(postDTO.getId());
         postMapper.merge(postDTO, postFromDatabase);
-        return postFromDatabase;
-    }
-
-    private void updatePost(Post post) {
-        postRepository.save(post);
+        LOGGER.info("Merge updated JPA entity");
+        entityManager.detach(postFromDatabase);
+        postRepository.save(postFromDatabase);
     }
 }
