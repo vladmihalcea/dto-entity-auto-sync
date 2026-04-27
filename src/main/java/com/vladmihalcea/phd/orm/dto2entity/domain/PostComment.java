@@ -4,12 +4,15 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 /**
  * @author Vlad Mihalcea
  */
 @Entity
 @Table(name = "post_comments")
+@DynamicInsert @DynamicUpdate
 public class PostComment extends Identifiable<PostComment> {
 
     private String content;

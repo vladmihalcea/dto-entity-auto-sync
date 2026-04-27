@@ -1,6 +1,8 @@
 package com.vladmihalcea.phd.orm.dto2entity.domain;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -12,6 +14,7 @@ import java.util.Set;
  */
 @Entity
 @Table(name = "posts")
+@DynamicInsert @DynamicUpdate
 public class Post extends Identifiable<Post> {
 
     private String title;

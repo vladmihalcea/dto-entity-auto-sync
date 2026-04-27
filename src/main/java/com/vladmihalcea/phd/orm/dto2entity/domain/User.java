@@ -3,6 +3,8 @@ package com.vladmihalcea.phd.orm.dto2entity.domain;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.NaturalId;
 
 import java.util.Objects;
@@ -12,6 +14,7 @@ import java.util.Objects;
  */
 @Entity
 @Table(name = "users")
+@DynamicInsert @DynamicUpdate
 public class User extends Identifiable<User> {
 
     @NaturalId

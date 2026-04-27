@@ -41,7 +41,7 @@ public class EntityMerger {
 
     /**
      * Copies all non-association properties from the source to the target entity.
-     * @param source the detached entity built from the DTO, containing the new state for scalar attributes
+     * @param source the detached entity built from the DTO, containing the new state for basic attributes
      * @param target t
      * @param <T> the entity type
      */

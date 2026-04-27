@@ -27,7 +27,7 @@ public abstract class PostMapper {
     public abstract Post toEntity(PostDTO dto);
 
     /**
-     * Updates all scalar properties of the target entity from the DTO.
+     * Updates all basic properties of the target entity from the DTO.
      * Collections (comments, tags) are ignored since they require
      * a diff-based merge that is handled by the {@link #merge} method.
      */
@@ -37,7 +37,7 @@ public abstract class PostMapper {
     public abstract void updateFromDTO(PostDTO dto, @MappingTarget Post entity);
 
     /**
-     * Converts the DTO to entity and updates the scalar properties on the
+     * Converts the DTO to entity and updates the basic properties on the
      * database entity, then diff-merges the comment and tag collections.
      */
     public void merge(PostDTO postDTO, Post postFromDatabase) {

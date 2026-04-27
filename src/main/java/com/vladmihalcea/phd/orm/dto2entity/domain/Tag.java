@@ -1,16 +1,19 @@
 package com.vladmihalcea.phd.orm.dto2entity.domain;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.NaturalId;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Vlad Mihalcea
  */
 @Entity
 @Table(name = "tags")
+@DynamicInsert @DynamicUpdate
 public class Tag extends Identifiable<Tag> {
 
     @NaturalId
@@ -23,7 +26,7 @@ public class Tag extends Identifiable<Tag> {
         joinColumns = @JoinColumn(name = "post_id"),
         inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
-    private List<Post> posts = new ArrayList<>();
+    private Set<Post> posts = new HashSet<>();
 
     public Tag() {
         super(Tag.class);
@@ -38,7 +41,7 @@ public class Tag extends Identifiable<Tag> {
         return this;
     }
 
-    public List<Post> getPosts() {
+    public Set<Post> getPosts() {
         return posts;
     }
 
