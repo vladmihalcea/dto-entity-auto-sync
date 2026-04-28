@@ -1,6 +1,6 @@
 package com.vladmihalcea.phd.orm.dto2entity.dto.mapper;
 
-import com.vladmihalcea.phd.common.util.dto.PostCommentDTO;
+import com.vladmihalcea.phd.common.dto.PostCommentDTO;
 import com.vladmihalcea.phd.orm.dto2entity.domain.PostComment;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;

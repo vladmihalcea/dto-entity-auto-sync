@@ -1,6 +1,6 @@
 package com.vladmihalcea.phd.orm.dto2entity.service;
 
-import com.vladmihalcea.phd.common.util.dto.PostDTO;
+import com.vladmihalcea.phd.common.dto.PostDTO;
 import com.vladmihalcea.phd.orm.dto2entity.domain.Post;
 import com.vladmihalcea.phd.orm.dto2entity.dto.mapper.PostMapper;
 import com.vladmihalcea.phd.orm.dto2entity.repository.PostRepository;

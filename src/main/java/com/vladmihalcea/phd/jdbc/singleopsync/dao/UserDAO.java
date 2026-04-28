@@ -1,6 +1,6 @@
 package com.vladmihalcea.phd.jdbc.singleopsync.dao;
 
-import com.vladmihalcea.phd.common.util.dto.UserDTO;
+import com.vladmihalcea.phd.common.dto.UserDTO;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
@@ -27,14 +27,6 @@ public class UserDAO {
 
     public UserDAO(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-    }
-
-    public UserDTO findById(Long id) {
-        return jdbcTemplate.queryForObject(FIND_BY_ID, new UserRowMapper(), id);
-    }
-
-    public UserDTO findByEmail(String email) {
-        return jdbcTemplate.queryForObject(FIND_BY_EMAIL, new UserRowMapper(), email);
     }
 
     public void insert(UserDTO user) {

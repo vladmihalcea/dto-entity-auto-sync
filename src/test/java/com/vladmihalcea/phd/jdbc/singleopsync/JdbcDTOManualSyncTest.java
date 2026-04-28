@@ -1,12 +1,11 @@
 package com.vladmihalcea.phd.jdbc.singleopsync;
 
+import com.vladmihalcea.phd.common.dto.*;
 import com.vladmihalcea.phd.common.util.AbstractSpringTest;
 import com.vladmihalcea.phd.common.util.TimeSortedIdentifierGenerator;
-import com.vladmihalcea.phd.common.util.dto.*;
 import com.vladmihalcea.phd.jdbc.singleopsync.config.JdbcDTOManualSyncConfiguration;
 import com.vladmihalcea.phd.jdbc.singleopsync.dao.UserDAO;
 import com.vladmihalcea.phd.jdbc.singleopsync.service.ForumService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;

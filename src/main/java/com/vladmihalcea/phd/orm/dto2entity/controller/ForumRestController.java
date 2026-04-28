@@ -1,6 +1,6 @@
 package com.vladmihalcea.phd.orm.dto2entity.controller;
 
-import com.vladmihalcea.phd.common.util.dto.PostDTO;
+import com.vladmihalcea.phd.common.dto.PostDTO;
 import com.vladmihalcea.phd.orm.dto2entity.service.ForumService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

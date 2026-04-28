@@ -1,6 +1,6 @@
 package com.vladmihalcea.phd.jdbc.singleopsync.dao;
 
-import com.vladmihalcea.phd.common.util.dto.TagDTO;
+import com.vladmihalcea.phd.common.dto.TagDTO;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;

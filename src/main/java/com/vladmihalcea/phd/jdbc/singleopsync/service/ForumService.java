@@ -1,8 +1,8 @@
 package com.vladmihalcea.phd.jdbc.singleopsync.service;
 
-import com.vladmihalcea.phd.common.util.dto.PostCommentDTO;
-import com.vladmihalcea.phd.common.util.dto.PostDTO;
-import com.vladmihalcea.phd.common.util.dto.TagDTO;
+import com.vladmihalcea.phd.common.dto.PostCommentDTO;
+import com.vladmihalcea.phd.common.dto.PostDTO;
+import com.vladmihalcea.phd.common.dto.TagDTO;
 import com.vladmihalcea.phd.jdbc.singleopsync.dao.PostCommentDAO;
 import com.vladmihalcea.phd.jdbc.singleopsync.dao.PostDAO;
 import com.vladmihalcea.phd.jdbc.singleopsync.dao.TagDAO;

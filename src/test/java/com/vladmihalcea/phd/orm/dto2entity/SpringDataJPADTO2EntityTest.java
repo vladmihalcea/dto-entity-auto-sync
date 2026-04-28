@@ -2,10 +2,10 @@ package com.vladmihalcea.phd.orm.dto2entity;
 
 import com.vladmihalcea.phd.common.util.AbstractSpringTest;
 import com.vladmihalcea.phd.common.util.TimeSortedIdentifierGenerator;
-import com.vladmihalcea.phd.common.util.dto.PostCommentDTO;
-import com.vladmihalcea.phd.common.util.dto.PostDTO;
-import com.vladmihalcea.phd.common.util.dto.TagDTO;
-import com.vladmihalcea.phd.common.util.dto.UserContext;
+import com.vladmihalcea.phd.common.dto.PostCommentDTO;
+import com.vladmihalcea.phd.common.dto.PostDTO;
+import com.vladmihalcea.phd.common.dto.TagDTO;
+import com.vladmihalcea.phd.common.dto.UserContext;
 import com.vladmihalcea.phd.orm.dto2entity.config.SpringDataJPADTO2EntityConfiguration;
 import com.vladmihalcea.phd.orm.dto2entity.domain.Post;
 import com.vladmihalcea.phd.orm.dto2entity.domain.PostComment;

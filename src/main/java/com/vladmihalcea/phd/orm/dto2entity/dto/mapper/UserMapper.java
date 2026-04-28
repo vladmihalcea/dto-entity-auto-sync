@@ -1,6 +1,6 @@
 package com.vladmihalcea.phd.orm.dto2entity.dto.mapper;
 
-import com.vladmihalcea.phd.common.util.dto.UserDTO;
+import com.vladmihalcea.phd.common.dto.UserDTO;
 import com.vladmihalcea.phd.orm.dto2entity.domain.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;

@@ -1,7 +1,7 @@
 package com.vladmihalcea.phd.jdbc.singleopsync.dao;
 
-import com.vladmihalcea.phd.common.util.dto.PostDTO;
-import com.vladmihalcea.phd.common.util.dto.UserDTO;
+import com.vladmihalcea.phd.common.dto.PostDTO;
+import com.vladmihalcea.phd.common.dto.UserDTO;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;

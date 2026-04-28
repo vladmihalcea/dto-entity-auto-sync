@@ -1,4 +1,4 @@
-package com.vladmihalcea.phd.common.util.dto;
+package com.vladmihalcea.phd.common.dto;
 
 import java.util.List;
 import java.util.Objects;
