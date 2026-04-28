@@ -1,12 +1,13 @@
 package com.vladmihalcea.phd.orm.dto2entity.jmh;
 
-import com.vladmihalcea.phd.common.config.SpringWebConfiguration;
 import com.vladmihalcea.phd.common.dto.PostCommentDTO;
 import com.vladmihalcea.phd.common.dto.PostDTO;
 import com.vladmihalcea.phd.common.dto.TagDTO;
 import com.vladmihalcea.phd.common.dto.UserContext;
 import com.vladmihalcea.phd.common.util.TimeSortedIdentifierGenerator;
 import com.vladmihalcea.phd.orm.dto2entity.config.SpringDataJPADTO2EntityConfiguration;
+import com.vladmihalcea.phd.orm.dto2entity.jmh.rest.SpringDataJPAForumBenchmarkSetup;
+import com.vladmihalcea.phd.orm.dto2entity.service.ForumService;
 import org.openjdk.jmh.annotations.Benchmark;
 import org.openjdk.jmh.annotations.BenchmarkMode;
 import org.openjdk.jmh.annotations.Level;
@@ -19,37 +20,35 @@ import org.openjdk.jmh.annotations.TearDown;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.core.env.Environment;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
- * JMH benchmark that measures the HTTP response time of the {@code loadPostDTO}
- * and {@code updatePost} REST endpoints for the two main test scenarios:
+ * JMH benchmark that measures the execution time of {@link ForumService}
+ * for the two main test scenarios defined in
+ * {@code SpringDataJPADTO2EntityTest}:
  * <ul>
  *   <li>{@link #benchmarkDtoToEntitySync()} — mirrors {@code testDtoToEntitySync}</li>
  *   <li>{@link #benchmarkRemoveParentPostComment()} — mirrors {@code testRemoveParentPostComment}</li>
  * </ul>
  *
- * <p>The Spring Boot context (web server + JPA + TestContainers) is started once
- * per trial and the test dataset is rebuilt before every measurement iteration
- * so each invocation always starts from the same known state.
+ * <p>The Spring context (JPA + TestContainers, no web server) is started once
+ * per trial and the test dataset is rebuilt before every invocation so each
+ * call always starts from the same known state.
  *
  * @author Vlad Mihalcea
  */
 @BenchmarkMode(Mode.SampleTime)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @State(Scope.Benchmark)
-public class SpringDataJPAForumRestBenchmark {
+public class SpringDataJPAForumServiceBenchmark {
 
     private ConfigurableApplicationContext context;
+    private ForumService forumService;
     private SpringDataJPAForumBenchmarkSetup benchmarkSetup;
-    private final RestTemplate restTemplate = new RestTemplate();
 
-    private int port;
     private Long postId;
 
     // -------------------------------------------------------------------------
@@ -59,15 +58,13 @@ public class SpringDataJPAForumRestBenchmark {
     @Setup(Level.Trial)
     public void startContext() {
         SpringApplication app = new SpringApplication(
-            SpringDataJPADTO2EntityConfiguration.class,
-            SpringWebConfiguration.class
+            SpringDataJPADTO2EntityConfiguration.class
         );
-        app.setWebApplicationType(WebApplicationType.SERVLET);
-        app.setDefaultProperties(Map.of("server.port", "0"));
+        app.setWebApplicationType(WebApplicationType.NONE);
+        app.setDefaultProperties(Map.of("spring.main.web-application-type", "none"));
         context = app.run();
 
-        port = context.getBean(Environment.class)
-            .getRequiredProperty("local.server.port", Integer.class);
+        forumService   = context.getBean(ForumService.class);
         benchmarkSetup = context.getBean(SpringDataJPAForumBenchmarkSetup.class);
     }
 
@@ -86,41 +83,17 @@ public class SpringDataJPAForumRestBenchmark {
     }
 
     // -------------------------------------------------------------------------
-    // Helpers
-    // -------------------------------------------------------------------------
-
-    private String baseUrl() {
-        return "http://localhost:" + port;
-    }
-
-    private PostDTO loadPostDTO() {
-        return restTemplate.getForObject(
-            baseUrl() + "/post?postId={postId}",
-            PostDTO.class,
-            postId
-        );
-    }
-
-    private void updatePost(PostDTO postDTO) {
-        restTemplate.postForObject(
-            baseUrl() + "/post",
-            postDTO,
-            Void.class
-        );
-    }
-
-    // -------------------------------------------------------------------------
     // Benchmarks
     // -------------------------------------------------------------------------
 
     /**
-     * Mirrors {@code SpringDataJPADTO2EntityRestTest#testDtoToEntitySync}:
+     * Mirrors {@code SpringDataJPADTO2EntityTest#testDtoToEntitySync}:
      * loads the post DTO, modifies title / votes / comments / tags, persists
-     * the changes and reloads to verify round-trip correctness.
+     * the changes and reloads to verify the round-trip.
      */
     @Benchmark
     public PostDTO benchmarkDtoToEntitySync() {
-        PostDTO postDTO = loadPostDTO();
+        PostDTO postDTO = forumService.loadPostDTO(postId);
 
         postDTO.setTitle("DTO to Entity Auto-Sync Pattern").upvote();
 
@@ -146,19 +119,19 @@ public class SpringDataJPAForumRestBenchmark {
                 .setName("Jakarta Persistence")
         );
 
-        updatePost(postDTO);
+        forumService.updatePost(postDTO);
 
         // reload and return so JMH dead-code elimination cannot skip the call
-        return loadPostDTO();
+        return forumService.loadPostDTO(postId);
     }
 
     /**
-     * Mirrors {@code SpringDataJPADTO2EntityRestTest#testRemoveParentPostComment}:
+     * Mirrors {@code SpringDataJPADTO2EntityTest#testRemoveParentPostComment}:
      * loads the post DTO, removes the root comment (and its child) and persists.
      */
     @Benchmark
     public PostDTO benchmarkRemoveParentPostComment() {
-        PostDTO postDTO = loadPostDTO();
+        PostDTO postDTO = forumService.loadPostDTO(postId);
 
         List<PostCommentDTO> replies = postDTO.getReplies();
         PostCommentDTO parent = replies.stream()
@@ -167,10 +140,9 @@ public class SpringDataJPAForumRestBenchmark {
             .orElseThrow();
         replies.remove(parent);
 
-        updatePost(postDTO);
+        forumService.updatePost(postDTO);
 
-        return loadPostDTO();
+        return forumService.loadPostDTO(postId);
     }
 }
-
 

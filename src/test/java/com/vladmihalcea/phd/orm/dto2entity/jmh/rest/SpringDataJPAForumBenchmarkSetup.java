@@ -1,4 +1,4 @@
-package com.vladmihalcea.phd.orm.dto2entity.jmh;
+package com.vladmihalcea.phd.orm.dto2entity.jmh.rest;
 
 import com.vladmihalcea.phd.common.dto.UserContext;
 import com.vladmihalcea.phd.orm.dto2entity.domain.Post;

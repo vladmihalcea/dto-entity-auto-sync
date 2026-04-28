@@ -1,4 +1,4 @@
-package com.vladmihalcea.phd.orm.dto2entity.jmh;
+package com.vladmihalcea.phd.orm.dto2entity.jmh.rest;
 
 import org.junit.jupiter.api.Test;
 import org.openjdk.jmh.results.RunResult;
