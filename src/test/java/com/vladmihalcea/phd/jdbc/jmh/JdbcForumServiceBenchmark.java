@@ -1,21 +1,13 @@
-package com.vladmihalcea.phd.jdbc.multi_ops_sync.jmh;
+package com.vladmihalcea.phd.jdbc.jmh;
 
 import com.vladmihalcea.phd.common.dto.PostCommentDTO;
 import com.vladmihalcea.phd.common.dto.PostDTO;
 import com.vladmihalcea.phd.common.dto.TagDTO;
 import com.vladmihalcea.phd.common.dto.UserContext;
 import com.vladmihalcea.phd.common.util.TimeSortedIdentifierGenerator;
-import com.vladmihalcea.phd.jdbc.multi_ops_sync.config.JdbcDTOManualSyncConfiguration;
-import com.vladmihalcea.phd.jdbc.multi_ops_sync.service.ForumService;
-import org.openjdk.jmh.annotations.Benchmark;
-import org.openjdk.jmh.annotations.BenchmarkMode;
-import org.openjdk.jmh.annotations.Level;
-import org.openjdk.jmh.annotations.Mode;
-import org.openjdk.jmh.annotations.OutputTimeUnit;
-import org.openjdk.jmh.annotations.Scope;
-import org.openjdk.jmh.annotations.Setup;
-import org.openjdk.jmh.annotations.State;
-import org.openjdk.jmh.annotations.TearDown;
+import com.vladmihalcea.phd.jdbc.config.JdbcDTOManualSyncConfiguration;
+import com.vladmihalcea.phd.jdbc.service.ForumService;
+import org.openjdk.jmh.annotations.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -98,7 +90,8 @@ public class JdbcForumServiceBenchmark {
         forumService.updatePost(postDTO);
 
         List<PostCommentDTO> replies = postDTO.getReplies();
-        PostCommentDTO removed = replies.removeFirst();
+        PostCommentDTO removed = replies.stream().filter(comment -> comment.getParentId() != null).findFirst().orElseThrow();
+        replies.remove(removed);
         forumService.removePostComment(removed.getId());
 
         for (PostCommentDTO r : replies) {

@@ -1,4 +1,4 @@
-package com.vladmihalcea.phd.jdbc.multi_ops_sync.jmh;
+package com.vladmihalcea.phd.jdbc.jmh;
 
 import org.junit.jupiter.api.Test;
 import org.openjdk.jmh.results.RunResult;

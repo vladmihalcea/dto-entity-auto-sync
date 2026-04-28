@@ -1,4 +1,4 @@
-package com.vladmihalcea.phd.jdbc.multi_ops_sync.dao;
+package com.vladmihalcea.phd.jdbc.dao;
 
 import com.vladmihalcea.phd.common.dto.UserDTO;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -44,4 +44,5 @@ public class UserDAO {
         }
     }
 }
+
 

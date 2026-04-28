@@ -1,4 +1,5 @@
-package com.vladmihalcea.phd.jooq.multi_ops_sync.dao;
+package com.vladmihalcea.phd.jooq.dao;
+
 import com.vladmihalcea.phd.common.dto.PostCommentDTO;
 import com.vladmihalcea.phd.common.dto.UserDTO;
 import org.jooq.CommonTableExpression;
@@ -6,8 +7,10 @@ import org.jooq.DSLContext;
 import org.jooq.Field;
 import org.jooq.impl.DSL;
 import org.springframework.stereotype.Repository;
+
 import java.util.List;
-import static com.vladmihalcea.phd.jooq.multi_ops_sync.schema.Tables.*;
+
+import static com.vladmihalcea.phd.jooq.schema.Tables.*;
 /**
  * @author Vlad Mihalcea
  */

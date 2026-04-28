@@ -24,7 +24,7 @@ public enum Database {
 	}
 	;
 
-	private JdbcDatabaseContainer container;
+	private transient JdbcDatabaseContainer container;
 
 	public JdbcDatabaseContainer getContainer() {
 		return container;

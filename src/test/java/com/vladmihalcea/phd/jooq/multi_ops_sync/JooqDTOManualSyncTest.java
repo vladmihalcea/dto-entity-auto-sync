@@ -3,9 +3,9 @@ package com.vladmihalcea.phd.jooq.multi_ops_sync;
 import com.vladmihalcea.phd.common.dto.*;
 import com.vladmihalcea.phd.common.util.AbstractSpringTest;
 import com.vladmihalcea.phd.common.util.TimeSortedIdentifierGenerator;
-import com.vladmihalcea.phd.jooq.multi_ops_sync.config.JooqDTOManualSyncConfiguration;
-import com.vladmihalcea.phd.jooq.multi_ops_sync.dao.UserDAO;
-import com.vladmihalcea.phd.jooq.multi_ops_sync.service.ForumService;
+import com.vladmihalcea.phd.jooq.config.JooqDTOManualSyncConfiguration;
+import com.vladmihalcea.phd.jooq.dao.UserDAO;
+import com.vladmihalcea.phd.jooq.service.ForumService;
 import org.jooq.DSLContext;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -77,9 +77,9 @@ public class JooqDTOManualSyncTest extends AbstractSpringTest {
             .setId(TimeSortedIdentifierGenerator.generate())
             .setTitle("DTO to Entity Auto-Sync")
             .setContent("""
-                Spring and Hibernate can help you do the aut-sync
-                between DTOs and JPA entities
-                """)
+                    Spring and Hibernate can help you do the aut-sync
+                    between DTOs and JPA entities
+                    """)
             .setAuthor(vlad)
             .setReplies(List.of())
             .setTags(new LinkedHashSet<>());
@@ -120,7 +120,8 @@ public class JooqDTOManualSyncTest extends AbstractSpringTest {
         forumService.updatePost(postDTO);
 
         List<PostCommentDTO> replies = postDTO.getReplies();
-        PostCommentDTO removed = replies.removeFirst();
+        PostCommentDTO removed = replies.stream().filter(comment -> comment.getParentId() != null).findFirst().orElseThrow();
+        replies.remove(removed);
         forumService.removePostComment(removed.getId());
 
         for (PostCommentDTO r : replies) {

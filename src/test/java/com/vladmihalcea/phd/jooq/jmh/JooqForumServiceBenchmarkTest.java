@@ -1,4 +1,4 @@
-package com.vladmihalcea.phd.jooq.multi_ops_sync.jmh;
+package com.vladmihalcea.phd.jooq.jmh;
 
 import org.junit.jupiter.api.Test;
 import org.openjdk.jmh.results.RunResult;

@@ -1,4 +1,4 @@
-package com.vladmihalcea.phd.jdbc.multi_ops_sync.config;
+package com.vladmihalcea.phd.jdbc.config;
 
 import com.vladmihalcea.phd.common.util.database.DataSourceProvider;
 import com.vladmihalcea.phd.common.util.database.Database;
@@ -30,7 +30,7 @@ import java.util.Properties;
  */
 @Configuration
 @EnableTransactionManagement
-@ComponentScan(basePackages = "com.vladmihalcea.phd.jdbc.multi_ops_sync")
+@ComponentScan(basePackages = "com.vladmihalcea.phd.jdbc")
 public class JdbcDTOManualSyncConfiguration {
 
     public static final String DATA_SOURCE_PROXY_NAME = "JDBC_DATA_SOURCE_PROXY";
@@ -98,5 +98,6 @@ public class JdbcDTOManualSyncConfiguration {
         return emf;
     }
 }
+
 
 

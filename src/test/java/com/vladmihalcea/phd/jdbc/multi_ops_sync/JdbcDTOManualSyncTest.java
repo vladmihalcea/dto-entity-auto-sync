@@ -3,9 +3,9 @@ package com.vladmihalcea.phd.jdbc.multi_ops_sync;
 import com.vladmihalcea.phd.common.dto.*;
 import com.vladmihalcea.phd.common.util.AbstractSpringTest;
 import com.vladmihalcea.phd.common.util.TimeSortedIdentifierGenerator;
-import com.vladmihalcea.phd.jdbc.multi_ops_sync.config.JdbcDTOManualSyncConfiguration;
-import com.vladmihalcea.phd.jdbc.multi_ops_sync.dao.UserDAO;
-import com.vladmihalcea.phd.jdbc.multi_ops_sync.service.ForumService;
+import com.vladmihalcea.phd.jdbc.config.JdbcDTOManualSyncConfiguration;
+import com.vladmihalcea.phd.jdbc.dao.UserDAO;
+import com.vladmihalcea.phd.jdbc.service.ForumService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
@@ -128,7 +128,8 @@ public class JdbcDTOManualSyncTest extends AbstractSpringTest {
         forumService.updatePost(postDTO);
 
         List<PostCommentDTO> replies = postDTO.getReplies();
-        PostCommentDTO removed = replies.removeFirst();
+        PostCommentDTO removed = replies.stream().filter(comment -> comment.getParentId() != null).findFirst().orElseThrow();
+        replies.remove(removed);
         forumService.removePostComment(removed.getId());
 
         for (PostCommentDTO r : replies) {

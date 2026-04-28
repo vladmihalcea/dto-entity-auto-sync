@@ -1,4 +1,4 @@
-package com.vladmihalcea.phd.jooq.multi_ops_sync.config;
+package com.vladmihalcea.phd.jooq.config;
 
 import com.vladmihalcea.phd.common.util.database.DataSourceProvider;
 import com.vladmihalcea.phd.common.util.database.Database;
@@ -13,14 +13,14 @@ import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
 import org.hibernate.cfg.AvailableSettings;
 import org.jooq.DSLContext;
 import org.jooq.SQLDialect;
-import org.jooq.impl.DefaultDSLContext;
 import org.jooq.impl.DefaultConfiguration;
-import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
+import org.jooq.impl.DefaultDSLContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 import org.springframework.orm.jpa.JpaVendorAdapter;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
@@ -36,7 +36,7 @@ import java.util.Properties;
  */
 @Configuration
 @EnableTransactionManagement
-@ComponentScan(basePackages = "com.vladmihalcea.phd.jooq.multi_ops_sync")
+@ComponentScan(basePackages = "com.vladmihalcea.phd.jooq")
 public class JooqDTOManualSyncConfiguration {
 
     public static final String DATA_SOURCE_PROXY_NAME = "JOOQ_DATA_SOURCE_PROXY";
@@ -54,6 +54,7 @@ public class JooqDTOManualSyncConfiguration {
     public DataSource poolingDataSource() {
         HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setAutoCommit(false);
+        hikariConfig.setMaximumPoolSize(1);
         hikariConfig.setDataSource(dataSourceProvider().dataSource());
         return new HikariDataSource(hikariConfig);
     }
@@ -70,14 +71,14 @@ public class JooqDTOManualSyncConfiguration {
             .name(DATA_SOURCE_PROXY_NAME)
             .listener(listener)
             .build();
-        return new TransactionAwareDataSourceProxy(dataSource);
+        return dataSource;
     }
 
     @Bean
     public DSLContext dslContext(DataSource dataSource) {
         DefaultConfiguration configuration = new DefaultConfiguration();
         configuration.setSQLDialect(SQLDialect.POSTGRES);
-        configuration.setDataSource(dataSource);
+        configuration.setDataSource(new TransactionAwareDataSourceProxy(dataSource));
         return new DefaultDSLContext(configuration);
     }
 

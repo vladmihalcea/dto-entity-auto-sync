@@ -1,4 +1,4 @@
-package com.vladmihalcea.phd.jooq.multi_ops_sync.schema;
+package com.vladmihalcea.phd.jooq.schema;
 
 import org.jooq.Field;
 import org.jooq.Record;

@@ -1,4 +1,4 @@
-package com.vladmihalcea.phd.jdbc.multi_ops_sync.dao;
+package com.vladmihalcea.phd.jdbc.dao;
 
 import com.vladmihalcea.phd.common.dto.PostCommentDTO;
 import com.vladmihalcea.phd.common.dto.UserDTO;
@@ -87,5 +87,6 @@ public class PostCommentDAO {
         }
     }
 }
+
 
 
