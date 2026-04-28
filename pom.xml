@@ -39,6 +39,8 @@
         <mapstruct.version>1.6.3</mapstruct.version>
 
         <hypersistence-utils-hibernate-71>3.15.2</hypersistence-utils-hibernate-71>
+
+        <jmh.version>1.37</jmh.version>
     </properties>
 
     <dependencyManagement>
@@ -205,6 +207,20 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- JMH benchmarks -->
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-core</artifactId>
+            <version>${jmh.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.openjdk.jmh</groupId>
+            <artifactId>jmh-generator-annprocess</artifactId>
+            <version>${jmh.version}</version>
+            <scope>test</scope>
+        </dependency>
+
     </dependencies>
 
     <build>
@@ -215,6 +231,18 @@
                 <version>${maven-compiler-plugin.version}</version>
                 <configuration>
                     <release>${jdk.version}</release>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.mapstruct</groupId>
+                            <artifactId>mapstruct-processor</artifactId>
+                            <version>${mapstruct.version}</version>
+                        </path>
+                        <path>
+                            <groupId>org.openjdk.jmh</groupId>
+                            <artifactId>jmh-generator-annprocess</artifactId>
+                            <version>${jmh.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
                 </configuration>
             </plugin>
             <plugin>
