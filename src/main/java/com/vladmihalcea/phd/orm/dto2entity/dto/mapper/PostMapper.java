@@ -1,9 +1,9 @@
 package com.vladmihalcea.phd.orm.dto2entity.dto.mapper;
 
+import com.vladmihalcea.phd.common.util.dto.PostDTO;
 import com.vladmihalcea.phd.orm.dto2entity.domain.Post;
 import com.vladmihalcea.phd.orm.dto2entity.domain.PostComment;
 import com.vladmihalcea.phd.orm.dto2entity.domain.Tag;
-import com.vladmihalcea.phd.orm.dto2entity.dto.PostDTO;
 import org.mapstruct.*;
 import org.springframework.beans.factory.annotation.Autowired;
 

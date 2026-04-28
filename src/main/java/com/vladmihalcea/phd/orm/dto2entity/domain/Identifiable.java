@@ -1,6 +1,6 @@
 package com.vladmihalcea.phd.orm.dto2entity.domain;
 
-import com.vladmihalcea.phd.orm.dto2entity.util.TimeSortedIdentifierGenerator;
+import com.vladmihalcea.phd.common.util.TimeSortedIdentifierGenerator;
 import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import jakarta.persistence.Transient;

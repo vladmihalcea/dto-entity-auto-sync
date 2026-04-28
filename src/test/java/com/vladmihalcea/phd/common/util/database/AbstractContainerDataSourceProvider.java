@@ -1,4 +1,4 @@
-package com.vladmihalcea.phd.orm.util.database;
+package com.vladmihalcea.phd.common.util.database;
 
 import org.testcontainers.containers.JdbcDatabaseContainer;
 

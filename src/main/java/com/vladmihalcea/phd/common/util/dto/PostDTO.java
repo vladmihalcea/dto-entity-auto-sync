@@ -1,4 +1,4 @@
-package com.vladmihalcea.phd.orm.dto2entity.dto;
+package com.vladmihalcea.phd.common.util.dto;
 
 import java.util.List;
 import java.util.Objects;

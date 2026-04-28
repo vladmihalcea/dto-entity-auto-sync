@@ -1,24 +1,22 @@
 package com.vladmihalcea.phd.orm.dto2entity;
 
+import com.vladmihalcea.phd.common.util.AbstractSpringTest;
+import com.vladmihalcea.phd.common.util.TimeSortedIdentifierGenerator;
+import com.vladmihalcea.phd.common.util.dto.PostCommentDTO;
+import com.vladmihalcea.phd.common.util.dto.PostDTO;
+import com.vladmihalcea.phd.common.util.dto.TagDTO;
+import com.vladmihalcea.phd.common.util.dto.UserContext;
 import com.vladmihalcea.phd.orm.dto2entity.config.SpringDataJPADTO2EntityConfiguration;
 import com.vladmihalcea.phd.orm.dto2entity.domain.Post;
 import com.vladmihalcea.phd.orm.dto2entity.domain.PostComment;
 import com.vladmihalcea.phd.orm.dto2entity.domain.Tag;
 import com.vladmihalcea.phd.orm.dto2entity.domain.User;
-import com.vladmihalcea.phd.orm.dto2entity.dto.PostCommentDTO;
-import com.vladmihalcea.phd.orm.dto2entity.dto.PostDTO;
-import com.vladmihalcea.phd.orm.dto2entity.dto.TagDTO;
-import com.vladmihalcea.phd.orm.dto2entity.dto.UserContext;
 import com.vladmihalcea.phd.orm.dto2entity.dto.mapper.UserMapper;
 import com.vladmihalcea.phd.orm.dto2entity.service.ForumService;
-import com.vladmihalcea.phd.orm.dto2entity.util.TimeSortedIdentifierGenerator;
-import com.vladmihalcea.phd.orm.util.AbstractSpringTest;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -47,16 +45,6 @@ public class SpringDataJPADTO2EntityTest extends AbstractSpringTest {
 
     @Autowired
     private TransactionTemplate transactionTemplate;
-
-    @Override
-    protected Class<?>[] entities() {
-        return new Class[] {
-            Post.class,
-            PostComment.class,
-            Tag.class,
-            User.class
-        };
-    }
 
     private Long postId;
 

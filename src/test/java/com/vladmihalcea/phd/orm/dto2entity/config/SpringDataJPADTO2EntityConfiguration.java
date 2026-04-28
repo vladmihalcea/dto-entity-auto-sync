@@ -1,8 +1,8 @@
 package com.vladmihalcea.phd.orm.dto2entity.config;
 
+import com.vladmihalcea.phd.common.util.database.DataSourceProvider;
+import com.vladmihalcea.phd.common.util.database.Database;
 import com.vladmihalcea.phd.orm.dto2entity.domain.Post;
-import com.vladmihalcea.phd.orm.util.database.DataSourceProvider;
-import com.vladmihalcea.phd.orm.util.database.Database;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import jakarta.persistence.EntityManagerFactory;

@@ -1,5 +1,9 @@
-package com.vladmihalcea.phd.orm.util;
+package com.vladmihalcea.phd.common.util;
 
+import com.vladmihalcea.phd.orm.dto2entity.domain.Post;
+import com.vladmihalcea.phd.orm.dto2entity.domain.PostComment;
+import com.vladmihalcea.phd.orm.dto2entity.domain.Tag;
+import com.vladmihalcea.phd.orm.dto2entity.domain.User;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -29,19 +33,30 @@ public abstract class AbstractSpringTest {
     @BeforeEach
     public void init() {
         transactionTemplate.execute(transactionStatus -> {
-            CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-
-            for(Class entityClass : entities()) {
-                CriteriaDelete criteria = builder.createCriteriaDelete(entityClass);
-                criteria.from(entityClass);
-                entityManager.createQuery(criteria).executeUpdate();
-            }
+            deleteAll();
             return null;
         });
         afterInit();
     }
 
-    protected abstract Class<?>[] entities();
+    protected Class<?>[] entities() {
+        return new Class[] {
+            Post.class,
+            PostComment.class,
+            Tag.class,
+            User.class
+        };
+    }
+
+    protected void deleteAll() {
+        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
+
+        for(Class entityClass : entities()) {
+            CriteriaDelete criteria = builder.createCriteriaDelete(entityClass);
+            criteria.from(entityClass);
+            entityManager.createQuery(criteria).executeUpdate();
+        }
+    }
 
     protected void afterInit() {
     }

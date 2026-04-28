@@ -1,4 +1,4 @@
-package com.vladmihalcea.phd.orm.dto2entity.util;
+package com.vladmihalcea.phd.common.util;
 
 import io.hypersistence.tsid.TSID;
 

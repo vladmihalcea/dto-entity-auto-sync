@@ -1,7 +1,7 @@
 package com.vladmihalcea.phd.orm.dto2entity.dto.mapper;
 
+import com.vladmihalcea.phd.common.util.dto.TagDTO;
 import com.vladmihalcea.phd.orm.dto2entity.domain.Tag;
-import com.vladmihalcea.phd.orm.dto2entity.dto.TagDTO;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 
