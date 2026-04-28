@@ -94,7 +94,8 @@ public class JooqDTOManualSyncTest extends AbstractSpringTest {
         PostCommentDTO janeReply = new PostCommentDTO()
             .setId(TimeSortedIdentifierGenerator.generate())
             .setContent("Can you apply this pattern to other platforms?")
-            .setAuthor(jane);
+            .setAuthor(jane)
+            .setParentId(johnReply.getId());
 
         forumService.createPostComment(postId, johnReply);
         forumService.createPostComment(postId, janeReply);
@@ -113,63 +114,62 @@ public class JooqDTOManualSyncTest extends AbstractSpringTest {
     @Test
     public void testSingleOpDtoSync() {
         LOGGER.info("Sync DTOs and jOOQ state");
-        {
-            PostDTO postDTO = forumService.loadPostDTO(postId);
+        PostDTO postDTO = forumService.loadPostDTO(postId);
 
-            postDTO.setTitle("Single-Op DTO Sync Pattern").upvote();
-            forumService.updatePost(postDTO);
+        postDTO.setTitle("Single-Op DTO Sync Pattern").upvote();
+        forumService.updatePost(postDTO);
 
-            List<PostCommentDTO> replies = postDTO.getReplies();
-            PostCommentDTO removed = replies.removeFirst();
-            forumService.removePostComment(removed.getId());
+        List<PostCommentDTO> replies = postDTO.getReplies();
+        PostCommentDTO removed = replies.removeFirst();
+        forumService.removePostComment(removed.getId());
 
-            for (PostCommentDTO r : replies) {
-                r.upvote();
-                forumService.updatePostComment(r);
-            }
-
-            PostCommentDTO newReply = new PostCommentDTO()
-                .setId(TimeSortedIdentifierGenerator.generate())
-                .setContent("Does it work with jOOQ?")
-                .setAuthor(UserContext.getCurrentUser())
-                .setParentId(replies.getFirst().getId());
-            replies.add(newReply);
-            forumService.createPostComment(postId, newReply);
-
-            TagDTO jpaTag = postDTO.getTags().stream()
-                .filter(t -> t.getName().equals("JPA"))
-                .findFirst()
-                .orElseThrow();
-            postDTO.getTags().remove(jpaTag);
-            forumService.removeTag(postId, jpaTag);
-
-            TagDTO jakarta = new TagDTO()
-                .setId(TimeSortedIdentifierGenerator.generate())
-                .setName("Jakarta Persistence");
-            postDTO.getTags().add(jakarta);
-            forumService.createTag(postId, jakarta);
-
-            PostDTO updatedPostDTO = forumService.loadPostDTO(postId);
-            assertEquals(postDTO, updatedPostDTO);
+        for (PostCommentDTO r : replies) {
+            r.upvote();
+            forumService.updatePostComment(r);
         }
 
+        PostCommentDTO newReply = new PostCommentDTO()
+            .setId(TimeSortedIdentifierGenerator.generate())
+            .setContent("Does it work with jOOQ?")
+            .setAuthor(UserContext.getCurrentUser())
+            .setParentId(replies.getFirst().getId());
+        replies.add(newReply);
+        forumService.createPostComment(postId, newReply);
+
+        TagDTO jpaTag = postDTO.getTags().stream()
+            .filter(t -> t.getName().equals("JPA"))
+            .findFirst()
+            .orElseThrow();
+        postDTO.getTags().remove(jpaTag);
+        forumService.removeTag(postId, jpaTag);
+
+        TagDTO jakarta = new TagDTO()
+            .setId(TimeSortedIdentifierGenerator.generate())
+            .setName("Jakarta Persistence");
+        postDTO.getTags().add(jakarta);
+        forumService.createTag(postId, jakarta);
+
+        PostDTO updatedPostDTO = forumService.loadPostDTO(postId);
+        assertEquals(postDTO, updatedPostDTO);
+    }
+
+    @Test
+    public void testRemoveParentPostComment() {
         LOGGER.info("Remove a parent PostCommentDTO and see whether the children are also removed");
-        {
-            PostDTO postDTO = forumService.loadPostDTO(postId);
+        PostDTO postDTO = forumService.loadPostDTO(postId);
 
-            List<PostCommentDTO> replies = postDTO.getReplies();
-            assertEquals(2, replies.size());
-            PostCommentDTO parentCommentDTO = replies.getFirst();
-            replies.stream()
-                .filter(child -> parentCommentDTO.getId().equals(child.getParentId()))
-                .findAny()
-                .orElseThrow();
+        List<PostCommentDTO> replies = postDTO.getReplies();
+        assertEquals(2, replies.size());
+        PostCommentDTO parentCommentDTO = replies.getFirst();
+        replies.stream()
+            .filter(child -> parentCommentDTO.getId().equals(child.getParentId()))
+            .findAny()
+            .orElseThrow();
 
-            forumService.removePostComment(parentCommentDTO.getId());
+        forumService.removePostComment(parentCommentDTO.getId());
 
-            PostDTO updatedPostDTO = forumService.loadPostDTO(postId);
-            assertTrue(updatedPostDTO.getReplies().isEmpty());
-        }
+        PostDTO updatedPostDTO = forumService.loadPostDTO(postId);
+        assertTrue(updatedPostDTO.getReplies().isEmpty());
     }
 }
 

@@ -71,6 +71,15 @@ public class SpringDataJPADTO2EntityTest extends AbstractSpringTest {
                 userMapper.toDTO(vlad)
             );
 
+            PostComment parentPostComment = new PostComment()
+                .setContent("Interesting topic, but I would like to see more examples")
+                .setAuthor(john);
+
+            PostComment childPostComment = new PostComment()
+                .setContent("Can you apply this pattern to other platforms?")
+                .setAuthor(jane)
+                .setParent(parentPostComment);
+
             Post post = new Post()
                 .setTitle("DTO to Entity Auto-Sync")
                 .setContent("""
@@ -78,16 +87,8 @@ public class SpringDataJPADTO2EntityTest extends AbstractSpringTest {
                         between DTOs and JPA entities
                         """)
                 .setAuthor(vlad)
-                .addComment(
-                    new PostComment()
-                        .setContent("Interesting topic, but I would like to see more examples")
-                        .setAuthor(john)
-                )
-                .addComment(
-                    new PostComment()
-                        .setContent("Can you apply this pattern to other platforms?")
-                        .setAuthor(jane)
-                )
+                .addComment(parentPostComment)
+                .addComment(childPostComment)
                 .addTag(new Tag().setName("Spring"))
                 .addTag(new Tag().setName("JPA"))
                 .addTag(new Tag().setName("Hibernate"))
@@ -102,63 +103,63 @@ public class SpringDataJPADTO2EntityTest extends AbstractSpringTest {
     @Test
     public void testDtoToEntitySync() {
         LOGGER.info("Sync DTOs and JPA entity state");
-        {
-            PostDTO postDTO = forumService.loadPostDTO(postId);
+        PostDTO postDTO = forumService.loadPostDTO(postId);
 
-            postDTO
-                .setTitle("DTO to Entity Auto-Sync Pattern")
-                .upvote();
+        postDTO
+            .setTitle("DTO to Entity Auto-Sync Pattern")
+            .upvote();
 
-            List<PostCommentDTO> replies = postDTO.getReplies();
-            replies.removeFirst();
-            replies.forEach(PostCommentDTO::upvote);
-            replies.add(
-                new PostCommentDTO()
-                    .setId(TimeSortedIdentifierGenerator.generate())
-                    .setContent("Does it work with Entity Framework?")
-                    .setAuthor(UserContext.getCurrentUser())
-                    .setParentId(replies.getFirst().getId())
-            );
-            postDTO.getTags().remove(
-                postDTO.getTags().stream()
-                    .filter(t -> t.getName().equals("JPA"))
-                    .findFirst()
-                    .orElseThrow()
-            );
-            postDTO.getTags().add(
-                new TagDTO()
-                    .setId(TimeSortedIdentifierGenerator.generate())
-                    .setName("Jakarta Persistence")
-            );
+        List<PostCommentDTO> replies = postDTO.getReplies();
+        replies.removeIf(comment -> comment.getParentId() != null);
+        replies.forEach(PostCommentDTO::upvote);
+        replies.add(
+            new PostCommentDTO()
+                .setId(TimeSortedIdentifierGenerator.generate())
+                .setContent("Does it work with Entity Framework?")
+                .setAuthor(UserContext.getCurrentUser())
+                .setParentId(replies.getFirst().getId())
+        );
+        postDTO.getTags().remove(
+            postDTO.getTags().stream()
+                .filter(t -> t.getName().equals("JPA"))
+                .findFirst()
+                .orElseThrow()
+        );
+        postDTO.getTags().add(
+            new TagDTO()
+                .setId(TimeSortedIdentifierGenerator.generate())
+                .setName("Jakarta Persistence")
+        );
 
-            LOGGER.info("Update JPA entity state from PostDTO");
-            forumService.updatePost(postDTO);
+        LOGGER.info("Update JPA entity state from PostDTO");
+        forumService.updatePost(postDTO);
 
-            LOGGER.info("Reload PostDTO to check the modifications");
-            PostDTO updatedPostDTO = forumService.loadPostDTO(postId);
+        LOGGER.info("Reload PostDTO to check the modifications");
+        PostDTO updatedPostDTO = forumService.loadPostDTO(postId);
 
-            assertEquals(
-                postDTO,
-                updatedPostDTO
-            );
-        }
+        assertEquals(
+            postDTO,
+            updatedPostDTO
+        );
+    }
+
+    @Test
+    public void testRemoveParentPostComment() {
         LOGGER.info("Remove a parent PostCommentDTO and see whether the children are also removed");
-        {
-            PostDTO postDTO = forumService.loadPostDTO(postId);
+        PostDTO postDTO = forumService.loadPostDTO(postId);
 
-            List<PostCommentDTO> replies = postDTO.getReplies();
-            assertEquals(2, replies.size());
-            PostCommentDTO parentCommentDTO = replies.getFirst();
-            replies.stream()
-                .filter(child -> parentCommentDTO.getId().equals(child.getParentId()))
-                .findAny()
-                .orElseThrow();
-            replies.remove(parentCommentDTO);
+        List<PostCommentDTO> replies = postDTO.getReplies();
+        assertEquals(2, replies.size());
+        PostCommentDTO parentCommentDTO = replies.getFirst();
+        replies.stream()
+            .filter(child -> parentCommentDTO.getId().equals(child.getParentId()))
+            .findAny()
+            .orElseThrow();
+        replies.remove(parentCommentDTO);
 
-            forumService.updatePost(postDTO);
+        forumService.updatePost(postDTO);
 
-            PostDTO updatedPostDTO = forumService.loadPostDTO(postId);
-            assertTrue(updatedPostDTO.getReplies().isEmpty());
-        }
+        PostDTO updatedPostDTO = forumService.loadPostDTO(postId);
+        assertTrue(updatedPostDTO.getReplies().isEmpty());
     }
 }

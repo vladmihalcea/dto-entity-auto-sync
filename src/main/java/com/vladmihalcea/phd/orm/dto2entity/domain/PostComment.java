@@ -63,8 +63,9 @@ public class PostComment extends Identifiable<PostComment> {
         return parent;
     }
 
-    public void setParent(PostComment parent) {
+    public PostComment setParent(PostComment parent) {
         this.parent = parent;
+        return this;
     }
 
     public int getVotes() {
