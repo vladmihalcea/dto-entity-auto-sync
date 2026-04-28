@@ -1,0 +1,195 @@
+package com.vladmihalcea.phd.orm.dto2entity;
+
+import com.vladmihalcea.phd.common.dto.PostCommentDTO;
+import com.vladmihalcea.phd.common.dto.PostDTO;
+import com.vladmihalcea.phd.common.dto.TagDTO;
+import com.vladmihalcea.phd.common.dto.UserContext;
+import com.vladmihalcea.phd.common.util.AbstractSpringTest;
+import com.vladmihalcea.phd.common.util.TimeSortedIdentifierGenerator;
+import com.vladmihalcea.phd.orm.dto2entity.config.SpringDataJPADTO2EntityConfiguration;
+import com.vladmihalcea.phd.common.config.SpringWebConfiguration;
+import com.vladmihalcea.phd.orm.dto2entity.domain.Post;
+import com.vladmihalcea.phd.orm.dto2entity.domain.PostComment;
+import com.vladmihalcea.phd.orm.dto2entity.domain.Tag;
+import com.vladmihalcea.phd.orm.dto2entity.domain.User;
+import com.vladmihalcea.phd.orm.dto2entity.dto.mapper.UserMapper;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.transaction.support.TransactionTemplate;
+import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+/**
+ * @author Vlad Mihalcea
+ */
+@SpringBootTest(
+    classes = {
+        SpringDataJPADTO2EntityConfiguration.class,
+        SpringWebConfiguration.class
+    },
+    webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
+)
+public class SpringDataJPADTO2EntityRestTest extends AbstractSpringTest {
+
+    @LocalServerPort
+    private int port;
+
+    @Autowired
+    private UserMapper userMapper;
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    @Autowired
+    private TransactionTemplate transactionTemplate;
+
+    private final RestTemplate restTemplate = new RestTemplate();
+
+    private Long postId;
+
+    @Override
+    public void afterInit() {
+        postId = transactionTemplate.<Long>execute(transactionStatus -> {
+            User vlad = new User()
+                .setEmail("vlad@acme.com")
+                .setFirstName("Vlad")
+                .setLastName("Mihalcea");
+            User john = new User()
+                .setEmail("john@acme.com")
+                .setFirstName("John")
+                .setLastName("Doe");
+            User jane = new User()
+                .setEmail("jane@acme.com")
+                .setFirstName("Jane")
+                .setLastName("Doe");
+            entityManager.persist(vlad);
+            entityManager.persist(john);
+            entityManager.persist(jane);
+
+            UserContext.setCurrentUser(
+                userMapper.toDTO(vlad)
+            );
+
+            PostComment parentPostComment = new PostComment()
+                .setContent("Interesting topic, but I would like to see more examples")
+                .setAuthor(john);
+
+            PostComment childPostComment = new PostComment()
+                .setContent("Can you apply this pattern to other platforms?")
+                .setAuthor(jane)
+                .setParent(parentPostComment);
+
+            Post post = new Post()
+                .setTitle("DTO to Entity Auto-Sync")
+                .setContent("""
+                        Spring and Hibernate can help you do the aut-sync
+                        between DTOs and JPA entities
+                        """)
+                .setAuthor(vlad)
+                .addComment(parentPostComment)
+                .addComment(childPostComment)
+                .addTag(new Tag().setName("Spring"))
+                .addTag(new Tag().setName("JPA"))
+                .addTag(new Tag().setName("Hibernate"))
+                .addTag(new Tag().setName("MapStruct"));
+
+            entityManager.persist(post);
+
+            return post.getId();
+        });
+    }
+
+    private String baseUrl() {
+        return "http://localhost:" + port;
+    }
+
+    private PostDTO loadPostDTO(Long postId) {
+        return restTemplate.getForObject(
+            baseUrl() + "/post?postId={postId}",
+            PostDTO.class,
+            postId
+        );
+    }
+
+    private void updatePost(PostDTO postDTO) {
+        restTemplate.postForObject(
+            baseUrl() + "/post",
+            postDTO,
+            Void.class
+        );
+    }
+
+    @Test
+    public void testDtoToEntitySync() {
+        LOGGER.info("Sync DTOs and JPA entity state");
+        PostDTO postDTO = loadPostDTO(postId);
+
+        postDTO
+            .setTitle("DTO to Entity Auto-Sync Pattern")
+            .upvote();
+
+        List<PostCommentDTO> replies = postDTO.getReplies();
+        replies.removeIf(comment -> comment.getParentId() != null);
+        replies.forEach(PostCommentDTO::upvote);
+        replies.add(
+            new PostCommentDTO()
+                .setId(TimeSortedIdentifierGenerator.generate())
+                .setContent("Does it work with Entity Framework?")
+                .setAuthor(UserContext.getCurrentUser())
+                .setParentId(replies.getFirst().getId())
+        );
+        postDTO.getTags().remove(
+            postDTO.getTags().stream()
+                .filter(t -> t.getName().equals("JPA"))
+                .findFirst()
+                .orElseThrow()
+        );
+        postDTO.getTags().add(
+            new TagDTO()
+                .setId(TimeSortedIdentifierGenerator.generate())
+                .setName("Jakarta Persistence")
+        );
+
+        LOGGER.info("Update JPA entity state from PostDTO");
+        updatePost(postDTO);
+
+        LOGGER.info("Reload PostDTO to check the modifications");
+        PostDTO updatedPostDTO = loadPostDTO(postId);
+
+        assertEquals(postDTO, updatedPostDTO);
+    }
+
+    @Test
+    public void testRemoveParentPostComment() {
+        LOGGER.info("Remove a parent PostCommentDTO and see whether the children are also removed");
+        PostDTO postDTO = loadPostDTO(postId);
+
+        List<PostCommentDTO> replies = postDTO.getReplies();
+        assertEquals(2, replies.size());
+        PostCommentDTO parentCommentDTO = replies.stream()
+            .filter(comment -> comment.getParentId() == null)
+            .findFirst()
+            .orElseThrow();
+        replies.stream()
+            .filter(child -> parentCommentDTO.getId().equals(child.getParentId()))
+            .findAny()
+            .orElseThrow();
+        replies.remove(parentCommentDTO);
+
+        updatePost(postDTO);
+
+        PostDTO updatedPostDTO = loadPostDTO(postId);
+        assertTrue(updatedPostDTO.getReplies().isEmpty());
+    }
+}
+
+
+

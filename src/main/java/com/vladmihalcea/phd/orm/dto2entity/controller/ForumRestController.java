@@ -4,6 +4,8 @@ import com.vladmihalcea.phd.common.dto.PostDTO;
 import com.vladmihalcea.phd.orm.dto2entity.service.ForumService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -21,5 +23,10 @@ public class ForumRestController {
     public PostDTO findById(
         @RequestParam("postId") Long postId) {
         return forumService.loadPostDTO(postId);
+    }
+
+    @PostMapping("/post")
+    public void updatePost(@RequestBody PostDTO postDTO) {
+        forumService.updatePost(postDTO);
     }
 }

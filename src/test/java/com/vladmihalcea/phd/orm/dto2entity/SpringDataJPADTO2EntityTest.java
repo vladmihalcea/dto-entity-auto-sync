@@ -150,7 +150,10 @@ public class SpringDataJPADTO2EntityTest extends AbstractSpringTest {
 
         List<PostCommentDTO> replies = postDTO.getReplies();
         assertEquals(2, replies.size());
-        PostCommentDTO parentCommentDTO = replies.getFirst();
+        PostCommentDTO parentCommentDTO = replies.stream()
+            .filter(comment -> comment.getParentId() == null)
+            .findFirst()
+            .orElseThrow();
         replies.stream()
             .filter(child -> parentCommentDTO.getId().equals(child.getParentId()))
             .findAny()
