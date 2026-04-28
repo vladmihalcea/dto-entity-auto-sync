@@ -1,0 +1,102 @@
+package com.vladmihalcea.phd.jdbc.multi_ops_sync.config;
+
+import com.vladmihalcea.phd.common.util.database.DataSourceProvider;
+import com.vladmihalcea.phd.common.util.database.Database;
+import com.vladmihalcea.phd.orm.dto2entity.domain.Post;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
+import net.ttddyy.dsproxy.listener.ChainListener;
+import net.ttddyy.dsproxy.listener.DataSourceQueryCountListener;
+import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
+import org.hibernate.cfg.AvailableSettings;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
+import org.springframework.orm.jpa.JpaVendorAdapter;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.transaction.support.TransactionTemplate;
+
+import javax.sql.DataSource;
+import java.util.Properties;
+
+/**
+ * @author Vlad Mihalcea
+ */
+@Configuration
+@EnableTransactionManagement
+@ComponentScan(basePackages = "com.vladmihalcea.phd.jdbc.multi_ops_sync")
+public class JdbcDTOManualSyncConfiguration {
+
+    public static final String DATA_SOURCE_PROXY_NAME = "JDBC_DATA_SOURCE_PROXY";
+
+    @Bean
+    public Database database() {
+        return Database.POSTGRESQL;
+    }
+
+    @Bean
+    public DataSourceProvider dataSourceProvider() {
+        return database().dataSourceProvider();
+    }
+
+    public DataSource poolingDataSource() {
+        HikariConfig hikariConfig = new HikariConfig();
+        hikariConfig.setAutoCommit(false);
+        hikariConfig.setDataSource(dataSourceProvider().dataSource());
+        return new HikariDataSource(hikariConfig);
+    }
+
+    @Bean
+    public DataSource dataSource() {
+        ChainListener listener = new ChainListener();
+        listener.addListener(new DataSourceQueryCountListener());
+        return ProxyDataSourceBuilder
+            .create(poolingDataSource())
+            .name(DATA_SOURCE_PROXY_NAME)
+            .listener(listener)
+            .build();
+    }
+
+    @Bean
+    public JdbcTemplate jdbcTemplate(DataSource dataSource) {
+        return new JdbcTemplate(dataSource);
+    }
+
+    @Bean
+    public PlatformTransactionManager transactionManager(DataSource dataSource) {
+        return new DataSourceTransactionManager(dataSource);
+    }
+
+    @Bean
+    public TransactionTemplate transactionTemplate(PlatformTransactionManager transactionManager) {
+        return new TransactionTemplate(transactionManager);
+    }
+
+    /**
+     * This is used ONLY to bootstrap the schema via hbm2ddl=create-drop.
+     * JDBC code never touches the EntityManager.
+     */
+    @Bean
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory(
+        @Autowired DataSource dataSource) {
+        LocalContainerEntityManagerFactoryBean emf = new LocalContainerEntityManagerFactoryBean();
+        emf.setPersistenceUnitName(getClass().getSimpleName());
+        emf.setPackagesToScan(Post.class.getPackageName());
+        emf.setDataSource(dataSource);
+        JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+        emf.setJpaVendorAdapter(vendorAdapter);
+        Properties props = new Properties();
+        props.setProperty("hibernate.hbm2ddl.auto", "create");
+        props.setProperty(AvailableSettings.STATEMENT_BATCH_SIZE, "10");
+        emf.setJpaProperties(props);
+        return emf;
+    }
+}
+
+
