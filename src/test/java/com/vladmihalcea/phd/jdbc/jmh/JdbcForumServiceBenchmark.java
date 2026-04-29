@@ -1,5 +1,8 @@
 package com.vladmihalcea.phd.jdbc.jmh;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.diff.JsonDiff;
 import com.vladmihalcea.phd.common.dto.PostCommentDTO;
 import com.vladmihalcea.phd.common.dto.PostDTO;
 import com.vladmihalcea.phd.common.dto.TagDTO;
@@ -15,6 +18,8 @@ import org.springframework.context.ConfigurableApplicationContext;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  * JMH benchmark that measures the execution time of the JDBC
@@ -38,6 +43,7 @@ public class JdbcForumServiceBenchmark {
 
     private ConfigurableApplicationContext context;
     private ForumService forumService;
+    private final ObjectMapper patchMapper = new ObjectMapper();
     private JdbcForumBenchmarkSetup benchmarkSetup;
 
     private Long postId;
@@ -55,7 +61,7 @@ public class JdbcForumServiceBenchmark {
         app.setDefaultProperties(Map.of("spring.main.web-application-type", "none"));
         context = app.run();
 
-        forumService   = context.getBean(ForumService.class);
+        forumService = context.getBean(ForumService.class);
         benchmarkSetup = context.getBean(JdbcForumBenchmarkSetup.class);
     }
 
@@ -83,7 +89,7 @@ public class JdbcForumServiceBenchmark {
      * remaining comments, adds a new reply, swaps one tag.
      */
     @Benchmark
-    public PostDTO benchmarkSingleOpDtoSync() {
+    public void benchmarkSingleOpDtoSync() {
         PostDTO postDTO = forumService.loadPostDTO(postId);
 
         postDTO.setTitle("Single-Op DTO Sync Pattern").upvote();
@@ -119,9 +125,6 @@ public class JdbcForumServiceBenchmark {
             .setName("Jakarta Persistence");
         postDTO.getTags().add(jakarta);
         forumService.createTag(postId, jakarta);
-
-        // reload and return so JMH dead-code elimination cannot skip the call
-        return forumService.loadPostDTO(postId);
     }
 
     /**
@@ -130,7 +133,7 @@ public class JdbcForumServiceBenchmark {
      * children) and verifies the post has no remaining replies.
      */
     @Benchmark
-    public PostDTO benchmarkRemoveParentPostComment() {
+    public void benchmarkRemoveParentPostComment() {
         PostDTO postDTO = forumService.loadPostDTO(postId);
 
         List<PostCommentDTO> replies = postDTO.getReplies();
@@ -139,8 +142,76 @@ public class JdbcForumServiceBenchmark {
             .findFirst()
             .orElseThrow();
         forumService.removePostComment(parent.getId());
+    }
 
-        return forumService.loadPostDTO(postId);
+    @Benchmark
+    public void benchmarkJsonPatchSync() {
+        PostDTO originalPost = forumService.loadPostDTO(postId);
+        PostDTO desiredPost  = forumService.loadPostDTO(postId);   // independent copy
+
+        desiredPost.setTitle("Single-Op DTO Sync Pattern").upvote();
+
+        List<PostCommentDTO> replies = desiredPost.getReplies();
+        replies.removeIf(comment -> comment.getParentId() != null);
+        replies.forEach(PostCommentDTO::upvote);
+
+        PostCommentDTO newReply = new PostCommentDTO()
+            .setId(TimeSortedIdentifierGenerator.generate())
+            .setContent("Does it work with jOOQ?")
+            .setAuthor(UserContext.getCurrentUser())
+            .setParentId(replies.getFirst().getId());
+        replies.add(newReply);
+
+        TagDTO jpaTag = desiredPost.getTags().stream()
+            .filter(t -> t.getName().equals("JPA"))
+            .findFirst()
+            .orElseThrow();
+        desiredPost.getTags().remove(jpaTag);
+        desiredPost.getTags().add(
+            new TagDTO()
+                .setId(TimeSortedIdentifierGenerator.generate())
+                .setName("Jakarta Persistence")
+        );
+
+        JsonPatch patch = JsonDiff.asJsonPatch(
+            patchMapper.valueToTree(originalPost),
+            patchMapper.valueToTree(desiredPost)
+        );
+
+        forumService.syncPost(originalPost, patch);
+    }
+
+    /**
+     * Mirrors {@code JdbcDTOManualSyncTest#testRemoveParentPostComment}:
+     * loads the post DTO, removes the root comment (which cascades to its
+     * children) and verifies the post has no remaining replies.
+     */
+    @Benchmark
+    public void benchmarkJsonPatchRemoveParentPostComment() {
+        PostDTO originalPost = forumService.loadPostDTO(postId);
+        PostDTO desiredPost  = forumService.loadPostDTO(postId);
+
+        List<PostCommentDTO> replies = desiredPost.getReplies();
+        assertEquals(2, replies.size());
+
+        PostCommentDTO parentCommentDTO = replies.stream()
+            .filter(comment -> comment.getParentId() == null)
+            .findFirst()
+            .orElseThrow();
+        replies.stream()
+            .filter(child -> parentCommentDTO.getId().equals(child.getParentId()))
+            .findAny()
+            .orElseThrow();
+
+        // desired state: no replies
+        replies.clear();
+
+        JsonPatch patch = JsonDiff.asJsonPatch(
+            patchMapper.valueToTree(originalPost),
+            patchMapper.valueToTree(desiredPost)
+        );
+
+        forumService.syncPost(originalPost, patch);
     }
 }
 

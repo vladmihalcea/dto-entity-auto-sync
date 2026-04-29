@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * JUnit 5 test that executes the {@link JdbcForumServiceBenchmark} via the
+ * Junit 6 test that executes the {@link JdbcForumServiceBenchmark} via the
  * JMH programmatic API and asserts that the average execution time of each
  * scenario does not exceed the defined threshold.
  *
@@ -23,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class JdbcForumServiceBenchmarkTest {
 
     /** Maximum acceptable average execution time per benchmark method (ms). */
-    private static final double MAX_AVG_EXECUTION_TIME_MS = 500.0;
+    private static final double MAX_AVG_EXECUTION_TIME_MS = 50.0;
 
     @Test
     public void testMultiOpsDtoSyncExecutionTime() throws RunnerException {
@@ -38,6 +38,24 @@ public class JdbcForumServiceBenchmarkTest {
     public void testRemoveParentPostCommentExecutionTime() throws RunnerException {
         Collection<RunResult> results = runBenchmark(
             "benchmarkRemoveParentPostComment"
+        );
+
+        assertMaxAverageTime(results, MAX_AVG_EXECUTION_TIME_MS);
+    }
+
+    @Test
+    public void testJsonPatchSyncExecutionTime() throws RunnerException {
+        Collection<RunResult> results = runBenchmark(
+            "benchmarkJsonPatchSync"
+        );
+
+        assertMaxAverageTime(results, MAX_AVG_EXECUTION_TIME_MS);
+    }
+
+    @Test
+    public void testJsonPatchRemoveParentPostCommentExecutionTime() throws RunnerException {
+        Collection<RunResult> results = runBenchmark(
+            "benchmarkJsonPatchRemoveParentPostComment"
         );
 
         assertMaxAverageTime(results, MAX_AVG_EXECUTION_TIME_MS);

@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
- * JUnit 5 test that executes the {@link SpringDataJPAForumRestBenchmark} via the JMH
+ * Junit 6 test that executes the {@link SpringDataJPAForumRestBenchmark} via the JMH
  * programmatic API and asserts that the average response time of each
  * scenario does not exceed the defined thresholds.
  *

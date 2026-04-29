@@ -142,12 +142,12 @@ public class JdbcJsonPatchDTOManualSyncTest extends AbstractSpringTest {
     // -------------------------------------------------------------------------
 
     /**
-     * Mirrors {@code testMultiOpsDtoSync}: the full mutation sequence
+     * Mirrors {@code testJsonPatchSync}: the full mutation sequence
      * (title + vote, remove a comment, upvote remaining, add new reply, swap
      * tag) is expressed as a single JSON Patch and applied in one transaction.
      */
     @Test
-    public void testMultiOpsDtoSync() {
+    public void testJsonPatchSync() {
         LOGGER.info("Sync DTOs and JDBC state via a single JSON Patch");
 
         // --- build the desired post state in memory ---
@@ -194,11 +194,11 @@ public class JdbcJsonPatchDTOManualSyncTest extends AbstractSpringTest {
     }
 
     /**
-     * Mirrors {@code testRemoveParentPostComment}: removing the parent comment
+     * Mirrors {@code testJsonPatchRemoveParentPostComment}: removing the parent comment
      * via a JSON Patch causes the child to be cascade-deleted as well.
      */
     @Test
-    public void testRemoveParentPostComment() {
+    public void testJsonPatchRemoveParentPostComment() {
         LOGGER.info("Remove a parent PostCommentDTO via JSON Patch and verify children are also removed");
 
         PostDTO originalPost = forumService.loadPostDTO(postId);

@@ -84,7 +84,7 @@ public class SpringDataJPAForumServiceBenchmark {
      * the changes and reloads to verify the round-trip.
      */
     @Benchmark
-    public PostDTO benchmarkDtoToEntitySync() {
+    public void benchmarkDtoToEntitySync() {
         PostDTO postDTO = forumService.loadPostDTO(postId);
 
         postDTO.setTitle("DTO to Entity Auto-Sync Pattern").upvote();
@@ -112,9 +112,6 @@ public class SpringDataJPAForumServiceBenchmark {
         );
 
         forumService.updatePost(postDTO);
-
-        // reload and return so JMH dead-code elimination cannot skip the call
-        return forumService.loadPostDTO(postId);
     }
 
     /**
@@ -122,7 +119,7 @@ public class SpringDataJPAForumServiceBenchmark {
      * loads the post DTO, removes the root comment (and its child) and persists.
      */
     @Benchmark
-    public PostDTO benchmarkRemoveParentPostComment() {
+    public void benchmarkRemoveParentPostComment() {
         PostDTO postDTO = forumService.loadPostDTO(postId);
 
         List<PostCommentDTO> replies = postDTO.getReplies();
@@ -133,8 +130,6 @@ public class SpringDataJPAForumServiceBenchmark {
         replies.remove(parent);
 
         forumService.updatePost(postDTO);
-
-        return forumService.loadPostDTO(postId);
     }
 }
 
