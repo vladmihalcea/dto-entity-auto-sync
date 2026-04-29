@@ -1,5 +1,6 @@
 package com.vladmihalcea.phd.jooq.dao;
 
+import com.vladmihalcea.phd.common.dao.AbstractUserDAO;
 import com.vladmihalcea.phd.common.dto.UserDTO;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
@@ -10,7 +11,7 @@ import static com.vladmihalcea.phd.jooq.schema.Tables.*;
  * @author Vlad Mihalcea
  */
 @Repository
-public class UserDAO {
+public class UserDAO implements AbstractUserDAO {
 
     private final DSLContext ctx;
 

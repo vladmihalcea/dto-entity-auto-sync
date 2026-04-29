@@ -1,5 +1,6 @@
 package com.vladmihalcea.phd.jooq.dao;
 
+import com.vladmihalcea.phd.common.dao.AbstractPostCommentDAO;
 import com.vladmihalcea.phd.common.dto.PostCommentDTO;
 import com.vladmihalcea.phd.common.dto.UserDTO;
 import org.jooq.CommonTableExpression;
@@ -15,7 +16,7 @@ import static com.vladmihalcea.phd.jooq.schema.Tables.*;
  * @author Vlad Mihalcea
  */
 @Repository
-public class PostCommentDAO {
+public class PostCommentDAO implements AbstractPostCommentDAO {
 
     private final DSLContext ctx;
 

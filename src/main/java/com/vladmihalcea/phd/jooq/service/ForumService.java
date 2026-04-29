@@ -1,9 +1,6 @@
 package com.vladmihalcea.phd.jooq.service;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.fge.jsonpatch.JsonPatch;
-import com.github.fge.jsonpatch.JsonPatchException;
+import com.vladmihalcea.phd.common.dto.DTOMerger;
 import com.vladmihalcea.phd.common.dto.PostCommentDTO;
 import com.vladmihalcea.phd.common.dto.PostDTO;
 import com.vladmihalcea.phd.common.dto.TagDTO;
@@ -13,12 +10,8 @@ import com.vladmihalcea.phd.jooq.dao.TagDAO;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.IOException;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * @author Vlad Mihalcea
@@ -27,19 +20,16 @@ import java.util.stream.Collectors;
 @Transactional
 public class ForumService {
 
-    /**
-     * Jackson 2 ObjectMapper used exclusively for JSON-Patch serialization.
-     */
-    private static final ObjectMapper PATCH_MAPPER = new ObjectMapper();
-
     private final PostDAO postDAO;
     private final PostCommentDAO postCommentDAO;
     private final TagDAO tagDAO;
+    private final DTOMerger dtoMerger;
 
     public ForumService(PostDAO postDAO, PostCommentDAO postCommentDAO, TagDAO tagDAO) {
         this.postDAO = postDAO;
         this.postCommentDAO = postCommentDAO;
         this.tagDAO = tagDAO;
+        this.dtoMerger = new DTOMerger(postDAO, postCommentDAO, tagDAO);
     }
 
     @Transactional(readOnly = true)
@@ -81,55 +71,7 @@ public class ForumService {
 
     @Transactional
     public void diffMerge(PostDTO originalPost, PostDTO modifiedPost) {
-        if (!Objects.equals(originalPost.getTitle(), modifiedPost.getTitle()) ||
-            !Objects.equals(originalPost.getContent(), modifiedPost.getContent()) ||
-            originalPost.getVotes() != modifiedPost.getVotes()) {
-            postDAO.update(modifiedPost);
-        }
-
-        Map<Long, PostCommentDTO> originalComments = originalPost.getReplies().stream()
-            .collect(Collectors.toMap(PostCommentDTO::getId, c -> c));
-        Map<Long, PostCommentDTO> modifiedComments = modifiedPost.getReplies().stream()
-            .collect(Collectors.toMap(PostCommentDTO::getId, c -> c));
-
-        for (Map.Entry<Long, PostCommentDTO> entry : originalComments.entrySet()) {
-            if (!modifiedComments.containsKey(entry.getKey())) {
-                postCommentDAO.deleteChildrenOf(entry.getKey());
-                postCommentDAO.delete(entry.getKey());
-            }
-        }
-
-        // Insertions and updates
-        for (Map.Entry<Long, PostCommentDTO> entry : modifiedComments.entrySet()) {
-            Long id = entry.getKey();
-            PostCommentDTO original = originalComments.get(id);
-            PostCommentDTO modified = entry.getValue();
-            if (original == null) {
-                postCommentDAO.insert(originalPost.getId(), modified);
-            } else if (!Objects.equals(original.getContent(), modified.getContent()) ||
-                       original.getVotes() != modified.getVotes() ||
-                       !Objects.equals(original.getParentId(), modified.getParentId())) {
-                postCommentDAO.update(modified);
-            }
-        }
-
-        Map<Long, TagDTO> originalTags = originalPost.getTags().stream()
-            .collect(Collectors.toMap(TagDTO::getId, t -> t));
-        Map<Long, TagDTO> modifiedTags = modifiedPost.getTags().stream()
-            .collect(Collectors.toMap(TagDTO::getId, t -> t));
-
-        for (Long id : originalTags.keySet()) {
-            if (!modifiedTags.containsKey(id)) {
-                postDAO.unlinkTag(originalPost.getId(), id);
-            }
-        }
-
-        for (Map.Entry<Long, TagDTO> entry : modifiedTags.entrySet()) {
-            if (!originalTags.containsKey(entry.getKey())) {
-                TagDTO upserted = tagDAO.upsert(entry.getValue());
-                postDAO.linkTag(originalPost.getId(), upserted.getId());
-            }
-        }
+        dtoMerger.diffMergePostDTO(originalPost, modifiedPost);
     }
 }
 

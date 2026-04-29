@@ -1,5 +1,6 @@
 package com.vladmihalcea.phd.jooq.dao;
 
+import com.vladmihalcea.phd.common.dao.AbstractTagDAO;
 import com.vladmihalcea.phd.common.dto.TagDTO;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
@@ -12,7 +13,7 @@ import static com.vladmihalcea.phd.jooq.schema.Tables.*;
  * @author Vlad Mihalcea
  */
 @Repository
-public class TagDAO {
+public class TagDAO implements AbstractTagDAO {
 
     private final DSLContext ctx;
 

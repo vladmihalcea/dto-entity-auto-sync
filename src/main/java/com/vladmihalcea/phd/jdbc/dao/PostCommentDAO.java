@@ -1,5 +1,6 @@
 package com.vladmihalcea.phd.jdbc.dao;
 
+import com.vladmihalcea.phd.common.dao.AbstractPostCommentDAO;
 import com.vladmihalcea.phd.common.dto.PostCommentDTO;
 import com.vladmihalcea.phd.common.dto.UserDTO;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -14,7 +15,7 @@ import java.util.List;
  * @author Vlad Mihalcea
  */
 @Repository
-public class PostCommentDAO {
+public class PostCommentDAO implements AbstractPostCommentDAO {
 
     private static final String FIND_BY_POST_ID =
         "SELECT pc.id, pc.content, pc.votes, pc.parent_id, " +
@@ -45,25 +46,30 @@ public class PostCommentDAO {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    @Override
     public List<PostCommentDTO> findByPostId(Long postId) {
         return jdbcTemplate.query(FIND_BY_POST_ID, new PostCommentRowMapper(), postId);
     }
 
+    @Override
     public void insert(Long postId, PostCommentDTO comment) {
         jdbcTemplate.update(INSERT,
             comment.getId(), comment.getContent(), comment.getVotes(),
             postId, comment.getAuthor().getId(), comment.getParentId());
     }
 
+    @Override
     public void update(PostCommentDTO comment) {
         jdbcTemplate.update(UPDATE,
             comment.getContent(), comment.getVotes(), comment.getParentId(), comment.getId());
     }
 
+    @Override
     public void delete(Long id) {
         jdbcTemplate.update(DELETE, id);
     }
 
+    @Override
     public void deleteChildrenOf(Long parentId) {
         jdbcTemplate.update(DELETE_CHILDREN_RECURSIVE, parentId);
     }

@@ -1,5 +1,6 @@
 package com.vladmihalcea.phd.jdbc.dao;
 
+import com.vladmihalcea.phd.common.dao.AbstractPostDAO;
 import com.vladmihalcea.phd.common.dto.PostDTO;
 import com.vladmihalcea.phd.common.dto.UserDTO;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -13,7 +14,7 @@ import java.sql.SQLException;
  * @author Vlad Mihalcea
  */
 @Repository
-public class PostDAO {
+public class PostDAO implements AbstractPostDAO {
 
     private static final String FIND_BY_ID =
         "SELECT p.id, p.title, p.content, p.votes, " +
@@ -41,28 +42,34 @@ public class PostDAO {
         this.jdbcTemplate = jdbcTemplate;
     }
 
+    @Override
     public PostDTO findById(Long id) {
         return jdbcTemplate.queryForObject(FIND_BY_ID, new PostRowMapper(), id);
     }
 
+    @Override
     public void insert(PostDTO post) {
         jdbcTemplate.update(INSERT,
             post.getId(), post.getTitle(), post.getContent(),
             post.getVotes(), post.getAuthor().getId());
     }
 
+    @Override
     public void update(PostDTO post) {
         jdbcTemplate.update(UPDATE, post.getTitle(), post.getContent(), post.getVotes(), post.getId());
     }
 
+    @Override
     public void delete(Long id) {
         jdbcTemplate.update(DELETE, id);
     }
 
+    @Override
     public void linkTag(Long postId, Long tagId) {
         jdbcTemplate.update(LINK_TAG, tagId, postId);
     }
 
+    @Override
     public void unlinkTag(Long postId, Long tagId) {
         jdbcTemplate.update(UNLINK_TAG, tagId, postId);
     }
