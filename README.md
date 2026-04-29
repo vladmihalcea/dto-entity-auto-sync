@@ -15,11 +15,11 @@ This project provides several patterns that are implemented using JDBC, jOOQ, Sp
 For JDBC and jOOQ, there are two patterns that are implemented:
 
 1. Multi-Op Sync: After users load a hierarchical DTO structure, they can modify it by issuing individual operations for every change (e.g. "add comment", "remove tag", "upvote comment"). 
-2. JSON Patch Sync: With the hierarchical DTO structur loaded previously, users can modify it in-memory and then call a service method to persist the changes. The service method accepts a JSON Patch document that describes the changes to be applied to the entity, then applies the patch and synchronizes the database with the modified entity. This is a more flexible approach that allows for partial updates without needing to send the entire DTO.
+2. **Diff-Merge** : With the previously loaded hierarchical DTO structure , users can modify it in-memory and then call a service method to persist the changes. The service method accepts the modified DTO and the original one and applies the changes by comparing the two structures. This is a more efficient approach since all changes are done in the context of a single database transaction.
 
 ### Spring Data JPA with MapStruct
 
-For Spring Data JPA, the project provides an auto-sync pattern based on a **diff-and-merge** approach that works as follows:
+For Spring Data JPA, the project provides an auto-sync pattern based on a **Diff-Merge** approach that works as follows:
 
 1. The user loads a graph of entities and use MapStruct to transform it to a hierarchical DTO structure and sends it to the client.
 2. The client makes in-memory modifications to the DTO (e.g. changing a post title, upvoting a comment, adding/removing tags), then sends the modified DTO back to the server.
@@ -116,4 +116,3 @@ This means tests are fully self-contained — just have Docker running and execu
 - **Testcontainers 2** — zero-config database provisioning
 - **Hypersistence Utils** — TSID-based entity identifiers
 - **JMH** — micro-benchmark support
-- **JSON Patch** — alternative patch-based sync variant

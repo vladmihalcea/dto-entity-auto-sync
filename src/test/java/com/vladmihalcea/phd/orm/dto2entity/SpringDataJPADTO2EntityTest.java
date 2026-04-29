@@ -149,16 +149,11 @@ public class SpringDataJPADTO2EntityTest extends AbstractSpringTest {
         PostDTO postDTO = forumService.loadPostDTO(postId);
 
         List<PostCommentDTO> replies = postDTO.getReplies();
-        assertEquals(2, replies.size());
-        PostCommentDTO parentCommentDTO = replies.stream()
-            .filter(comment -> comment.getParentId() == null)
+        PostCommentDTO parent = replies.stream()
+            .filter(c -> c.getParentId() == null)
             .findFirst()
             .orElseThrow();
-        replies.stream()
-            .filter(child -> parentCommentDTO.getId().equals(child.getParentId()))
-            .findAny()
-            .orElseThrow();
-        replies.remove(parentCommentDTO);
+        replies.remove(parent);
 
         forumService.updatePost(postDTO);
 

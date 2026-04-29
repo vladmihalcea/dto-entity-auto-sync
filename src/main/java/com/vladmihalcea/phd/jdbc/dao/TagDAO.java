@@ -29,6 +29,12 @@ public class TagDAO {
     private static final String DELETE =
         "DELETE FROM tags WHERE id = ?";
 
+    private static final String UPSERT =
+        "INSERT INTO tags (id, name, description) " +
+        "VALUES (?, ?, ?) " +
+        "ON CONFLICT (id) DO UPDATE " +
+        "SET name = ?, description = ?";
+
     private final JdbcTemplate jdbcTemplate;
 
     public TagDAO(JdbcTemplate jdbcTemplate) {
@@ -53,6 +59,11 @@ public class TagDAO {
 
     public void delete(Long id) {
         jdbcTemplate.update(DELETE, id);
+    }
+
+    public TagDTO upsert(TagDTO tag) {
+        jdbcTemplate.update(UPSERT, tag.getId(), tag.getName(), null, tag.getName(), null);
+        return tag;
     }
 
     public static class TagRowMapper implements RowMapper<TagDTO> {

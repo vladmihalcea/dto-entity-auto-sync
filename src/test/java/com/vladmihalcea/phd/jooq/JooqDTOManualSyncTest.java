@@ -1,17 +1,18 @@
 package com.vladmihalcea.phd.jooq;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.fge.jsonpatch.JsonPatch;
-import com.github.fge.jsonpatch.diff.JsonDiff;
 import com.vladmihalcea.phd.common.dto.*;
 import com.vladmihalcea.phd.common.util.AbstractSpringTest;
+import com.vladmihalcea.phd.common.util.JsonUtil;
 import com.vladmihalcea.phd.common.util.TimeSortedIdentifierGenerator;
 import com.vladmihalcea.phd.jooq.config.JooqDTOManualSyncConfiguration;
+import com.vladmihalcea.phd.jooq.dao.PostDAO;
 import com.vladmihalcea.phd.jooq.dao.UserDAO;
 import com.vladmihalcea.phd.jooq.service.ForumService;
 import org.jooq.DSLContext;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -28,11 +29,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = JooqDTOManualSyncConfiguration.class)
 public class JooqDTOManualSyncTest extends AbstractSpringTest {
-
-    private final ObjectMapper patchMapper = new ObjectMapper();
+    
+    protected final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private ForumService forumService;
+
+    @Autowired
+    private PostDAO postDAO;
 
     @Autowired
     private UserDAO userDAO;
@@ -53,67 +57,70 @@ public class JooqDTOManualSyncTest extends AbstractSpringTest {
 
     @Override
     public void afterInit() {
-        UserDTO vlad = new UserDTO()
-            .setId(TimeSortedIdentifierGenerator.generate())
-            .setEmail("vlad@acme.com")
-            .setFirstName("Vlad")
-            .setLastName("Mihalcea");
-        UserDTO john = new UserDTO()
-            .setId(TimeSortedIdentifierGenerator.generate())
-            .setEmail("john@acme.com")
-            .setFirstName("John")
-            .setLastName("Doe");
-        UserDTO jane = new UserDTO()
-            .setId(TimeSortedIdentifierGenerator.generate())
-            .setEmail("jane@acme.com")
-            .setFirstName("Jane")
-            .setLastName("Doe");
+        postId = transactionTemplate.<Long>execute(transactionStatus -> {
+            UserDTO vlad = new UserDTO()
+                .setId(TimeSortedIdentifierGenerator.generate())
+                .setEmail("vlad@acme.com")
+                .setFirstName("Vlad")
+                .setLastName("Mihalcea");
+            UserDTO john = new UserDTO()
+                .setId(TimeSortedIdentifierGenerator.generate())
+                .setEmail("john@acme.com")
+                .setFirstName("John")
+                .setLastName("Doe");
+            UserDTO jane = new UserDTO()
+                .setId(TimeSortedIdentifierGenerator.generate())
+                .setEmail("jane@acme.com")
+                .setFirstName("Jane")
+                .setLastName("Doe");
 
-        transactionTemplate.execute(status -> {
-            userDAO.insert(vlad);
-            userDAO.insert(john);
-            userDAO.insert(jane);
-            return null;
-        });
+            transactionTemplate.execute(status -> {
+                userDAO.insert(vlad);
+                userDAO.insert(john);
+                userDAO.insert(jane);
+                return null;
+            });
 
-        UserContext.setCurrentUser(vlad);
+            UserContext.setCurrentUser(vlad);
 
-        PostDTO post = new PostDTO()
-            .setId(TimeSortedIdentifierGenerator.generate())
-            .setTitle("DTO to Entity Auto-Sync")
-            .setContent("""
+            PostDTO post = new PostDTO()
+                .setId(TimeSortedIdentifierGenerator.generate())
+                .setTitle("DTO to Entity Auto-Sync")
+                .setContent("""
                     Spring and Hibernate can help you do the aut-sync
                     between DTOs and JPA entities
                     """)
-            .setAuthor(vlad)
-            .setReplies(List.of())
-            .setTags(new LinkedHashSet<>());
+                .setAuthor(vlad)
+                .setReplies(List.of())
+                .setTags(new LinkedHashSet<>());
 
-        forumService.createPost(post);
-        postId = post.getId();
+            postDAO.insert(post);
+            postId = post.getId();
 
-        PostCommentDTO johnReply = new PostCommentDTO()
-            .setId(TimeSortedIdentifierGenerator.generate())
-            .setContent("Interesting topic, but I would like to see more examples")
-            .setAuthor(john);
-        PostCommentDTO janeReply = new PostCommentDTO()
-            .setId(TimeSortedIdentifierGenerator.generate())
-            .setContent("Can you apply this pattern to other platforms?")
-            .setAuthor(jane)
-            .setParentId(johnReply.getId());
+            PostCommentDTO johnReply = new PostCommentDTO()
+                .setId(TimeSortedIdentifierGenerator.generate())
+                .setContent("Interesting topic, but I would like to see more examples")
+                .setAuthor(john);
+            PostCommentDTO janeReply = new PostCommentDTO()
+                .setId(TimeSortedIdentifierGenerator.generate())
+                .setContent("Can you apply this pattern to other platforms?")
+                .setAuthor(jane)
+                .setParentId(johnReply.getId());
 
-        forumService.createPostComment(postId, johnReply);
-        forumService.createPostComment(postId, janeReply);
+            forumService.createPostComment(postId, johnReply);
+            forumService.createPostComment(postId, janeReply);
 
-        TagDTO spring = new TagDTO().setId(TimeSortedIdentifierGenerator.generate()).setName("Spring");
-        TagDTO jpa = new TagDTO().setId(TimeSortedIdentifierGenerator.generate()).setName("JPA");
-        TagDTO hibernate = new TagDTO().setId(TimeSortedIdentifierGenerator.generate()).setName("Hibernate");
-        TagDTO mapstruct = new TagDTO().setId(TimeSortedIdentifierGenerator.generate()).setName("MapStruct");
+            TagDTO spring = new TagDTO().setId(TimeSortedIdentifierGenerator.generate()).setName("Spring");
+            TagDTO jpa = new TagDTO().setId(TimeSortedIdentifierGenerator.generate()).setName("JPA");
+            TagDTO hibernate = new TagDTO().setId(TimeSortedIdentifierGenerator.generate()).setName("Hibernate");
+            TagDTO mapstruct = new TagDTO().setId(TimeSortedIdentifierGenerator.generate()).setName("MapStruct");
 
-        forumService.createTag(postId, spring);
-        forumService.createTag(postId, jpa);
-        forumService.createTag(postId, hibernate);
-        forumService.createTag(postId, mapstruct);
+            forumService.createTag(postId, spring);
+            forumService.createTag(postId, jpa);
+            forumService.createTag(postId, hibernate);
+            forumService.createTag(postId, mapstruct);
+            return post.getId();
+        });
     }
 
     @Test
@@ -182,18 +189,17 @@ public class JooqDTOManualSyncTest extends AbstractSpringTest {
     }
 
     @Test
-    public void testJsonPatchMultiOpsDtoSync() {
+    public void testDiffMergeync() {
         LOGGER.info("Sync DTOs and jOOQ state via a single JSON Patch");
 
-        // --- build the desired post state in memory ---
         PostDTO originalPost = forumService.loadPostDTO(postId);
-        PostDTO desiredPost  = forumService.loadPostDTO(postId);   // independent copy
+        PostDTO modifiedPost = JsonUtil.clone(originalPost);
 
-        desiredPost.setTitle("Single-Op DTO Sync Pattern").upvote();
+        modifiedPost.setTitle("Single-Op DTO Sync Pattern").upvote();
 
-        List<PostCommentDTO> replies = desiredPost.getReplies();
+        List<PostCommentDTO> replies = modifiedPost.getReplies();
         replies.removeIf(comment -> comment.getParentId() != null);
-        replies.forEach(PostCommentDTO::upvote);  // upvote all remaining
+        replies.forEach(PostCommentDTO::upvote);
 
         PostCommentDTO newReply = new PostCommentDTO()
             .setId(TimeSortedIdentifierGenerator.generate())
@@ -202,68 +208,42 @@ public class JooqDTOManualSyncTest extends AbstractSpringTest {
             .setParentId(replies.getFirst().getId());
         replies.add(newReply);
 
-        TagDTO jpaTag = desiredPost.getTags().stream()
+        TagDTO jpaTag = modifiedPost.getTags().stream()
             .filter(t -> t.getName().equals("JPA"))
             .findFirst()
             .orElseThrow();
-        desiredPost.getTags().remove(jpaTag);
-        desiredPost.getTags().add(
+        modifiedPost.getTags().remove(jpaTag);
+        modifiedPost.getTags().add(
             new TagDTO()
                 .setId(TimeSortedIdentifierGenerator.generate())
                 .setName("Jakarta Persistence")
         );
 
-        // --- generate the JSON Patch that transforms original → desired ---
-        JsonPatch patch = JsonDiff.asJsonPatch(
-            patchMapper.valueToTree(originalPost),
-            patchMapper.valueToTree(desiredPost)
-        );
-        LOGGER.info("Generated JSON Patch: {}", patch);
+        forumService.diffMerge(originalPost, modifiedPost);
 
-        // --- apply all changes in one @Transactional call ---
-        forumService.syncPost(originalPost, patch);
-
-        // --- verify ---
         PostDTO updatedPostDTO = forumService.loadPostDTO(postId);
-        assertEquals(desiredPost, updatedPostDTO);
+        assertEquals(modifiedPost, updatedPostDTO);
     }
 
-    /**
-     * Mirrors {@code testRemoveParentPostComment}: removing the parent comment
-     * via a JSON Patch causes the child to be cascade-deleted as well.
-     */
     @Test
-    public void testJsonPatchRemoveParentPostComment() {
+    public void testDiffMergeRemoveParentPostComment() {
         LOGGER.info("Remove a parent PostCommentDTO via JSON Patch and verify children are also removed");
 
         PostDTO originalPost = forumService.loadPostDTO(postId);
-        PostDTO desiredPost  = forumService.loadPostDTO(postId);
+        PostDTO modifiedPost = JsonUtil.clone(originalPost);
 
-        List<PostCommentDTO> replies = desiredPost.getReplies();
+        List<PostCommentDTO> replies = modifiedPost.getReplies();
         assertEquals(2, replies.size());
 
-        PostCommentDTO parentCommentDTO = replies.stream()
-            .filter(comment -> comment.getParentId() == null)
+        PostCommentDTO parent = replies.stream()
+            .filter(c -> c.getParentId() == null)
             .findFirst()
             .orElseThrow();
-        replies.stream()
-            .filter(child -> parentCommentDTO.getId().equals(child.getParentId()))
-            .findAny()
-            .orElseThrow();
+        replies.remove(parent);
 
-        // desired state: no replies
-        replies.clear();
-
-        JsonPatch patch = JsonDiff.asJsonPatch(
-            patchMapper.valueToTree(originalPost),
-            patchMapper.valueToTree(desiredPost)
-        );
-        LOGGER.info("Generated JSON Patch: {}", patch);
-
-        forumService.syncPost(originalPost, patch);
+        forumService.diffMerge(originalPost, modifiedPost);
 
         PostDTO updatedPostDTO = forumService.loadPostDTO(postId);
         assertTrue(updatedPostDTO.getReplies().isEmpty());
     }
 }
-

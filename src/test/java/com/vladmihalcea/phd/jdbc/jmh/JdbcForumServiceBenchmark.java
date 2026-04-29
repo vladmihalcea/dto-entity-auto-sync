@@ -1,12 +1,10 @@
 package com.vladmihalcea.phd.jdbc.jmh;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.fge.jsonpatch.JsonPatch;
-import com.github.fge.jsonpatch.diff.JsonDiff;
 import com.vladmihalcea.phd.common.dto.PostCommentDTO;
 import com.vladmihalcea.phd.common.dto.PostDTO;
 import com.vladmihalcea.phd.common.dto.TagDTO;
 import com.vladmihalcea.phd.common.dto.UserContext;
+import com.vladmihalcea.phd.common.util.JsonUtil;
 import com.vladmihalcea.phd.common.util.TimeSortedIdentifierGenerator;
 import com.vladmihalcea.phd.jdbc.config.JdbcDTOManualSyncConfiguration;
 import com.vladmihalcea.phd.jdbc.service.ForumService;
@@ -26,7 +24,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
  * {@link ForumService} for the two main test scenarios defined in
  * {@code JdbcDTOManualSyncTest}:
  * <ul>
- *   <li>{@link #benchmarkSingleOpDtoSync()} — mirrors {@code testMultiOpsDtoSync}</li>
+ *   <li>{@link #benchmarkMultiOpsDtoSync()} ()} — mirrors {@code testMultiOpsDtoSync}</li>
  *   <li>{@link #benchmarkRemoveParentPostComment()} — mirrors {@code testRemoveParentPostComment}</li>
  * </ul>
  *
@@ -43,10 +41,12 @@ public class JdbcForumServiceBenchmark {
 
     private ConfigurableApplicationContext context;
     private ForumService forumService;
-    private final ObjectMapper patchMapper = new ObjectMapper();
     private JdbcForumBenchmarkSetup benchmarkSetup;
 
     private Long postId;
+
+    private PostDTO postDTO;
+    private PostDTO modifiedPostDTO;
 
     // -------------------------------------------------------------------------
     // Lifecycle
@@ -72,27 +72,29 @@ public class JdbcForumServiceBenchmark {
         }
     }
 
-    /** Recreates the standard fixture before every benchmark invocation. */
+    /**
+     * Recreates the standard fixture before every benchmark invocation.
+     */
     @Setup(Level.Invocation)
     public void resetData() {
         benchmarkSetup.deleteAll();
         postId = benchmarkSetup.createTestData();
+        postDTO = forumService.loadPostDTO(postId);
+        modifiedPostDTO = JsonUtil.clone(postDTO);
     }
 
     // -------------------------------------------------------------------------
     // Benchmarks
     // -------------------------------------------------------------------------
 
-    /**
-     * Mirrors {@code JdbcDTOManualSyncTest#testMultiOpsDtoSync}:
-     * loads the post DTO, modifies title / votes, removes a comment, upvotes
-     * remaining comments, adds a new reply, swaps one tag.
-     */
     @Benchmark
-    public void benchmarkSingleOpDtoSync() {
-        PostDTO postDTO = forumService.loadPostDTO(postId);
+    public void benchmarkLoadDto() {
+        forumService.loadPostDTO(postId);
+    }
 
-        postDTO.setTitle("Single-Op DTO Sync Pattern").upvote();
+    @Benchmark
+    public void benchmarkMultiOpsDtoSync() {
+        postDTO.setTitle("Multi-Ops DTO Sync Pattern").upvote();
         forumService.updatePost(postDTO);
 
         List<PostCommentDTO> replies = postDTO.getReplies();
@@ -127,15 +129,8 @@ public class JdbcForumServiceBenchmark {
         forumService.createTag(postId, jakarta);
     }
 
-    /**
-     * Mirrors {@code JdbcDTOManualSyncTest#testRemoveParentPostComment}:
-     * loads the post DTO, removes the root comment (which cascades to its
-     * children) and verifies the post has no remaining replies.
-     */
     @Benchmark
     public void benchmarkRemoveParentPostComment() {
-        PostDTO postDTO = forumService.loadPostDTO(postId);
-
         List<PostCommentDTO> replies = postDTO.getReplies();
         PostCommentDTO parent = replies.stream()
             .filter(c -> c.getParentId() == null)
@@ -145,14 +140,10 @@ public class JdbcForumServiceBenchmark {
     }
 
     @Benchmark
-    public void benchmarkJsonPatchSync() {
-        //TODO: CHANGE!!!
-        PostDTO originalPost = forumService.loadPostDTO(postId);
-        PostDTO desiredPost  = forumService.loadPostDTO(postId);   // independent copy
+    public void benchmarkDiffMergeSync() {
+        modifiedPostDTO.setTitle("Diff Merge DTO Sync Pattern").upvote();
 
-        desiredPost.setTitle("Single-Op DTO Sync Pattern").upvote();
-
-        List<PostCommentDTO> replies = desiredPost.getReplies();
+        List<PostCommentDTO> replies = modifiedPostDTO.getReplies();
         replies.removeIf(comment -> comment.getParentId() != null);
         replies.forEach(PostCommentDTO::upvote);
 
@@ -163,56 +154,35 @@ public class JdbcForumServiceBenchmark {
             .setParentId(replies.getFirst().getId());
         replies.add(newReply);
 
-        TagDTO jpaTag = desiredPost.getTags().stream()
+        TagDTO jpaTag = modifiedPostDTO.getTags().stream()
             .filter(t -> t.getName().equals("JPA"))
             .findFirst()
             .orElseThrow();
-        desiredPost.getTags().remove(jpaTag);
-        desiredPost.getTags().add(
+        modifiedPostDTO.getTags().remove(jpaTag);
+        modifiedPostDTO.getTags().add(
             new TagDTO()
                 .setId(TimeSortedIdentifierGenerator.generate())
                 .setName("Jakarta Persistence")
         );
 
-        JsonPatch patch = JsonDiff.asJsonPatch(
-            patchMapper.valueToTree(originalPost),
-            patchMapper.valueToTree(desiredPost)
-        );
+        forumService.diffMerge(postDTO, modifiedPostDTO);
 
-        forumService.syncPost(originalPost, patch);
+        PostDTO updatedPostDTO = forumService.loadPostDTO(postId);
+        assertEquals(modifiedPostDTO, updatedPostDTO);
     }
 
-    /**
-     * Mirrors {@code JdbcDTOManualSyncTest#testRemoveParentPostComment}:
-     * loads the post DTO, removes the root comment (which cascades to its
-     * children) and verifies the post has no remaining replies.
-     */
     @Benchmark
-    public void benchmarkJsonPatchRemoveParentPostComment() {
-        PostDTO originalPost = forumService.loadPostDTO(postId);
-        PostDTO desiredPost  = forumService.loadPostDTO(postId);
-
-        List<PostCommentDTO> replies = desiredPost.getReplies();
+    public void benchmarkDiffMergeRemoveParentPostComment() {
+        List<PostCommentDTO> replies = modifiedPostDTO.getReplies();
         assertEquals(2, replies.size());
 
-        PostCommentDTO parentCommentDTO = replies.stream()
-            .filter(comment -> comment.getParentId() == null)
+        PostCommentDTO parent = replies.stream()
+            .filter(c -> c.getParentId() == null)
             .findFirst()
             .orElseThrow();
-        replies.stream()
-            .filter(child -> parentCommentDTO.getId().equals(child.getParentId()))
-            .findAny()
-            .orElseThrow();
+        replies.remove(parent);
 
-        // desired state: no replies
-        replies.clear();
-
-        JsonPatch patch = JsonDiff.asJsonPatch(
-            patchMapper.valueToTree(originalPost),
-            patchMapper.valueToTree(desiredPost)
-        );
-
-        forumService.syncPost(originalPost, patch);
+        forumService.diffMerge(postDTO, modifiedPostDTO);
     }
 }
 

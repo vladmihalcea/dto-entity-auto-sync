@@ -1,6 +1,8 @@
 package com.vladmihalcea.phd.jooq.jmh;
 
 import com.vladmihalcea.phd.common.dto.*;
+import com.vladmihalcea.phd.common.util.TimeSortedIdentifierGenerator;
+import com.vladmihalcea.phd.jooq.dao.PostDAO;
 import com.vladmihalcea.phd.jooq.dao.UserDAO;
 import com.vladmihalcea.phd.jooq.service.ForumService;
 import org.jooq.DSLContext;
@@ -30,12 +32,8 @@ import java.util.concurrent.atomic.AtomicLong;
 @Component
 public class JooqForumBenchmarkSetup {
 
-    private static final AtomicLong ID_COUNTER =
-        new AtomicLong(System.currentTimeMillis() * 1_000);
-
-    private static long nextId() {
-        return ID_COUNTER.getAndIncrement();
-    }
+    @Autowired
+    private PostDAO postDAO;
 
     @Autowired
     private ForumService forumService;
@@ -56,65 +54,70 @@ public class JooqForumBenchmarkSetup {
      * @return the id of the persisted post
      */
     public Long createTestData() {
-        UserDTO vlad = new UserDTO().setId(nextId())
-            .setEmail("vlad@acme.com")
-            .setFirstName("Vlad")
-            .setLastName("Mihalcea");
-        UserDTO john = new UserDTO().setId(nextId())
-            .setEmail("john@acme.com")
-            .setFirstName("John")
-            .setLastName("Doe");
-        UserDTO jane = new UserDTO().setId(nextId())
-            .setEmail("jane@acme.com")
-            .setFirstName("Jane")
-            .setLastName("Doe");
+        return transactionTemplate.<Long>execute(transactionStatus -> {
+            UserDTO vlad = new UserDTO()
+                .setId(TimeSortedIdentifierGenerator.generate())
+                .setEmail("vlad@acme.com")
+                .setFirstName("Vlad")
+                .setLastName("Mihalcea");
+            UserDTO john = new UserDTO()
+                .setId(TimeSortedIdentifierGenerator.generate())
+                .setEmail("john@acme.com")
+                .setFirstName("John")
+                .setLastName("Doe");
+            UserDTO jane = new UserDTO()
+                .setId(TimeSortedIdentifierGenerator.generate())
+                .setEmail("jane@acme.com")
+                .setFirstName("Jane")
+                .setLastName("Doe");
 
-        transactionTemplate.execute(status -> {
-            userDAO.insert(vlad);
-            userDAO.insert(john);
-            userDAO.insert(jane);
-            return null;
-        });
+            transactionTemplate.execute(status -> {
+                userDAO.insert(vlad);
+                userDAO.insert(john);
+                userDAO.insert(jane);
+                return null;
+            });
 
-        UserContext.setCurrentUser(vlad);
+            UserContext.setCurrentUser(vlad);
 
-        PostDTO post = new PostDTO()
-            .setId(nextId())
-            .setTitle("DTO to Entity Auto-Sync")
-            .setContent("""
+            PostDTO post = new PostDTO()
+                .setId(TimeSortedIdentifierGenerator.generate())
+                .setTitle("DTO to Entity Auto-Sync")
+                .setContent("""
                     Spring and Hibernate can help you do the aut-sync
                     between DTOs and JPA entities
                     """)
-            .setAuthor(vlad)
-            .setReplies(List.of())
-            .setTags(new LinkedHashSet<>());
-        forumService.createPost(post);
+                .setAuthor(vlad)
+                .setReplies(List.of())
+                .setTags(new LinkedHashSet<>());
 
-        // Child gets the LOWER id so ORDER BY id puts it first;
-        // removeFirst() in the benchmark will then remove the child, leaving
-        // the parent as a valid FK target for the new reply.
-        long janeReplyId = nextId();
-        long johnReplyId = nextId();
+            postDAO.insert(post);
+            Long postId = post.getId();
 
-        PostCommentDTO johnReply = new PostCommentDTO()
-            .setId(johnReplyId)
-            .setContent("Interesting topic, but I would like to see more examples")
-            .setAuthor(john);
-        PostCommentDTO janeReply = new PostCommentDTO()
-            .setId(janeReplyId)
-            .setContent("Can you apply this pattern to other platforms?")
-            .setAuthor(jane)
-            .setParentId(johnReplyId);
+            PostCommentDTO johnReply = new PostCommentDTO()
+                .setId(TimeSortedIdentifierGenerator.generate())
+                .setContent("Interesting topic, but I would like to see more examples")
+                .setAuthor(john);
+            PostCommentDTO janeReply = new PostCommentDTO()
+                .setId(TimeSortedIdentifierGenerator.generate())
+                .setContent("Can you apply this pattern to other platforms?")
+                .setAuthor(jane)
+                .setParentId(johnReply.getId());
 
-        forumService.createPostComment(post.getId(), johnReply);
-        forumService.createPostComment(post.getId(), janeReply);
+            forumService.createPostComment(postId, johnReply);
+            forumService.createPostComment(postId, janeReply);
 
-        forumService.createTag(post.getId(), new TagDTO().setId(nextId()).setName("Spring"));
-        forumService.createTag(post.getId(), new TagDTO().setId(nextId()).setName("JPA"));
-        forumService.createTag(post.getId(), new TagDTO().setId(nextId()).setName("Hibernate"));
-        forumService.createTag(post.getId(), new TagDTO().setId(nextId()).setName("MapStruct"));
+            TagDTO spring = new TagDTO().setId(TimeSortedIdentifierGenerator.generate()).setName("Spring");
+            TagDTO jpa = new TagDTO().setId(TimeSortedIdentifierGenerator.generate()).setName("JPA");
+            TagDTO hibernate = new TagDTO().setId(TimeSortedIdentifierGenerator.generate()).setName("Hibernate");
+            TagDTO mapstruct = new TagDTO().setId(TimeSortedIdentifierGenerator.generate()).setName("MapStruct");
 
-        return post.getId();
+            forumService.createTag(postId, spring);
+            forumService.createTag(postId, jpa);
+            forumService.createTag(postId, hibernate);
+            forumService.createTag(postId, mapstruct);
+            return post.getId();
+        });
     }
 
     /** Deletes all rows in dependency order inside a single committed transaction. */
@@ -129,4 +132,3 @@ public class JooqForumBenchmarkSetup {
         });
     }
 }
-

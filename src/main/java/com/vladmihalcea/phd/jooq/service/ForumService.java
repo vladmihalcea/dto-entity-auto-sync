@@ -27,7 +27,9 @@ import java.util.stream.Collectors;
 @Transactional
 public class ForumService {
 
-    /** Jackson 2 ObjectMapper used exclusively for JSON-Patch serialization. */
+    /**
+     * Jackson 2 ObjectMapper used exclusively for JSON-Patch serialization.
+     */
     private static final ObjectMapper PATCH_MAPPER = new ObjectMapper();
 
     private final PostDAO postDAO;
@@ -49,16 +51,8 @@ public class ForumService {
         return post;
     }
 
-    public void createPost(PostDTO post) {
-        postDAO.insert(post);
-    }
-
     public void updatePost(PostDTO post) {
         postDAO.update(post);
-    }
-
-    public void deletePost(Long postId) {
-        postDAO.delete(postId);
     }
 
     public PostCommentDTO createPostComment(Long postId, PostCommentDTO comment) {
@@ -85,99 +79,57 @@ public class ForumService {
         postDAO.unlinkTag(postId, tag.getId());
     }
 
-    // -------------------------------------------------------------------------
-    // JSON-Patch sync
-    // -------------------------------------------------------------------------
-
-    /**
-     * Applies an RFC-6902 {@link JsonPatch} to {@code originalPost} to derive
-     * the desired {@link PostDTO} state, then syncs all differences to the
-     * database in a single transaction using jOOQ operations.
-     *
-     * <p>Sync logic:
-     * <ol>
-     *   <li>Post scalar fields ({@code title}, {@code content}, {@code votes})
-     *       — one {@code UPDATE posts} if any differ.</li>
-     *   <li>Comments — removed entries trigger a recursive child-delete + delete;
-     *       added entries are inserted; modified entries are updated.</li>
-     *   <li>Tags — removed entries are unlinked; added entries are
-     *       upserted and linked.</li>
-     * </ol>
-     *
-     * @param originalPost snapshot of the current post state (used as the
-     *                     base for the patch and for diffing)
-     * @param patch        RFC-6902 patch describing the desired changes
-     * @return the patched {@link PostDTO} reflecting the new state
-     */
     @Transactional
-    public PostDTO syncPost(PostDTO originalPost, JsonPatch patch) {
-        // 1. Apply the JSON Patch to derive the desired state
-        PostDTO patchedPost;
-        try {
-            JsonNode originalNode = PATCH_MAPPER.valueToTree(originalPost);
-            JsonNode patchedNode  = patch.apply(originalNode);
-            patchedPost = PATCH_MAPPER.treeToValue(patchedNode, PostDTO.class);
-        } catch (JsonPatchException | IOException e) {
-            throw new RuntimeException("Failed to apply JSON patch to post " + originalPost.getId(), e);
+    public void diffMerge(PostDTO originalPost, PostDTO modifiedPost) {
+        if (!Objects.equals(originalPost.getTitle(), modifiedPost.getTitle()) ||
+            !Objects.equals(originalPost.getContent(), modifiedPost.getContent()) ||
+            originalPost.getVotes() != modifiedPost.getVotes()) {
+            postDAO.update(modifiedPost);
         }
 
-        // 2. Sync post-level scalar fields
-        if (!Objects.equals(originalPost.getTitle(),   patchedPost.getTitle())   ||
-            !Objects.equals(originalPost.getContent(), patchedPost.getContent()) ||
-            originalPost.getVotes() != patchedPost.getVotes()) {
-            postDAO.update(patchedPost);
-        }
-
-        // 3. Sync comments
         Map<Long, PostCommentDTO> originalComments = originalPost.getReplies().stream()
             .collect(Collectors.toMap(PostCommentDTO::getId, c -> c));
-        Map<Long, PostCommentDTO> patchedComments  = patchedPost.getReplies().stream()
+        Map<Long, PostCommentDTO> modifiedComments = modifiedPost.getReplies().stream()
             .collect(Collectors.toMap(PostCommentDTO::getId, c -> c));
 
-        // Deletions — in original but absent from patched
         for (Map.Entry<Long, PostCommentDTO> entry : originalComments.entrySet()) {
-            if (!patchedComments.containsKey(entry.getKey())) {
+            if (!modifiedComments.containsKey(entry.getKey())) {
                 postCommentDAO.deleteChildrenOf(entry.getKey());
                 postCommentDAO.delete(entry.getKey());
             }
         }
 
         // Insertions and updates
-        for (Map.Entry<Long, PostCommentDTO> entry : patchedComments.entrySet()) {
-            Long           id       = entry.getKey();
-            PostCommentDTO patched  = entry.getValue();
+        for (Map.Entry<Long, PostCommentDTO> entry : modifiedComments.entrySet()) {
+            Long id = entry.getKey();
             PostCommentDTO original = originalComments.get(id);
+            PostCommentDTO modified = entry.getValue();
             if (original == null) {
-                postCommentDAO.insert(originalPost.getId(), patched);
-            } else if (!Objects.equals(original.getContent(), patched.getContent()) ||
-                       original.getVotes() != patched.getVotes()                    ||
-                       !Objects.equals(original.getParentId(), patched.getParentId())) {
-                postCommentDAO.update(patched);
+                postCommentDAO.insert(originalPost.getId(), modified);
+            } else if (!Objects.equals(original.getContent(), modified.getContent()) ||
+                       original.getVotes() != modified.getVotes() ||
+                       !Objects.equals(original.getParentId(), modified.getParentId())) {
+                postCommentDAO.update(modified);
             }
         }
 
-        // 4. Sync tags
         Map<Long, TagDTO> originalTags = originalPost.getTags().stream()
             .collect(Collectors.toMap(TagDTO::getId, t -> t));
-        Map<Long, TagDTO> patchedTags  = patchedPost.getTags().stream()
+        Map<Long, TagDTO> modifiedTags = modifiedPost.getTags().stream()
             .collect(Collectors.toMap(TagDTO::getId, t -> t));
 
-        // Removals — in original but absent from patched
         for (Long id : originalTags.keySet()) {
-            if (!patchedTags.containsKey(id)) {
+            if (!modifiedTags.containsKey(id)) {
                 postDAO.unlinkTag(originalPost.getId(), id);
             }
         }
 
-        // Additions — in patched but absent from original
-        for (Map.Entry<Long, TagDTO> entry : patchedTags.entrySet()) {
+        for (Map.Entry<Long, TagDTO> entry : modifiedTags.entrySet()) {
             if (!originalTags.containsKey(entry.getKey())) {
                 TagDTO upserted = tagDAO.upsert(entry.getValue());
                 postDAO.linkTag(originalPost.getId(), upserted.getId());
             }
         }
-
-        return patchedPost;
     }
 }
 

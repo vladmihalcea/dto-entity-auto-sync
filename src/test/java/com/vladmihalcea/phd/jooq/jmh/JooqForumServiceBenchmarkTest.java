@@ -26,9 +26,18 @@ public class JooqForumServiceBenchmarkTest {
     private static final double MAX_AVG_EXECUTION_TIME_MS = 50.0;
 
     @Test
+    public void testLoadDtoExecutionTime() throws RunnerException {
+        Collection<RunResult> results = runBenchmark(
+            "benchmarkLoadDto"
+        );
+
+        assertMaxAverageTime(results, MAX_AVG_EXECUTION_TIME_MS);
+    }
+
+    @Test
     public void testMultiOpsDtoSyncExecutionTime() throws RunnerException {
         Collection<RunResult> results = runBenchmark(
-            "benchmarkSingleOpDtoSync"
+            "benchmarkMultiOpsDtoSync"
         );
 
         assertMaxAverageTime(results, MAX_AVG_EXECUTION_TIME_MS);
@@ -44,18 +53,18 @@ public class JooqForumServiceBenchmarkTest {
     }
 
     @Test
-    public void testJsonPatchSyncExecutionTime() throws RunnerException {
+    public void testDiffMergeSyncExecutionTime() throws RunnerException {
         Collection<RunResult> results = runBenchmark(
-            "benchmarkJsonPatchSync"
+            "benchmarkDiffMergeSync"
         );
 
         assertMaxAverageTime(results, MAX_AVG_EXECUTION_TIME_MS);
     }
 
     @Test
-    public void testJsonPatchRemoveParentPostCommentExecutionTime() throws RunnerException {
+    public void testDiffMergeRemoveParentPostCommentExecutionTime() throws RunnerException {
         Collection<RunResult> results = runBenchmark(
-            "benchmarkJsonPatchRemoveParentPostComment"
+            "benchmarkDiffMergeRemoveParentPostComment"
         );
 
         assertMaxAverageTime(results, MAX_AVG_EXECUTION_TIME_MS);
