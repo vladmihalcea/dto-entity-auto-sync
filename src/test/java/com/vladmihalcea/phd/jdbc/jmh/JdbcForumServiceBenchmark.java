@@ -146,6 +146,7 @@ public class JdbcForumServiceBenchmark {
 
     @Benchmark
     public void benchmarkJsonPatchSync() {
+        //TODO: CHANGE!!!
         PostDTO originalPost = forumService.loadPostDTO(postId);
         PostDTO desiredPost  = forumService.loadPostDTO(postId);   // independent copy
 

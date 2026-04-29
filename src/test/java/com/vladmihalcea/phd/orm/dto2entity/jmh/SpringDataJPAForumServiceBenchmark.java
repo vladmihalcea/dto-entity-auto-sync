@@ -43,6 +43,8 @@ public class SpringDataJPAForumServiceBenchmark {
 
     private Long postId;
 
+    private PostDTO postDTO;
+
     // -------------------------------------------------------------------------
     // Lifecycle
     // -------------------------------------------------------------------------
@@ -72,11 +74,17 @@ public class SpringDataJPAForumServiceBenchmark {
     public void resetData() {
         benchmarkSetup.deleteAll();
         postId = benchmarkSetup.createTestData();
+        postDTO = forumService.loadPostDTO(postId);
     }
 
     // -------------------------------------------------------------------------
     // Benchmarks
     // -------------------------------------------------------------------------
+
+    @Benchmark
+    public void benchmarkLoadDto() {
+        forumService.loadPostDTO(postId);
+    }
 
     /**
      * Mirrors {@code SpringDataJPADTO2EntityTest#testDtoToEntitySync}:
@@ -85,8 +93,6 @@ public class SpringDataJPAForumServiceBenchmark {
      */
     @Benchmark
     public void benchmarkDtoToEntitySync() {
-        PostDTO postDTO = forumService.loadPostDTO(postId);
-
         postDTO.setTitle("DTO to Entity Auto-Sync Pattern").upvote();
 
         List<PostCommentDTO> replies = postDTO.getReplies();
@@ -120,8 +126,6 @@ public class SpringDataJPAForumServiceBenchmark {
      */
     @Benchmark
     public void benchmarkRemoveParentPostComment() {
-        PostDTO postDTO = forumService.loadPostDTO(postId);
-
         List<PostCommentDTO> replies = postDTO.getReplies();
         PostCommentDTO parent = replies.stream()
             .filter(c -> c.getParentId() == null)

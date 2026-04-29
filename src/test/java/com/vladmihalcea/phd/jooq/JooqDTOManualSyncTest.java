@@ -1,5 +1,8 @@
 package com.vladmihalcea.phd.jooq;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.fge.jsonpatch.JsonPatch;
+import com.github.fge.jsonpatch.diff.JsonDiff;
 import com.vladmihalcea.phd.common.dto.*;
 import com.vladmihalcea.phd.common.util.AbstractSpringTest;
 import com.vladmihalcea.phd.common.util.TimeSortedIdentifierGenerator;
@@ -25,6 +28,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = JooqDTOManualSyncConfiguration.class)
 public class JooqDTOManualSyncTest extends AbstractSpringTest {
+
+    private final ObjectMapper patchMapper = new ObjectMapper();
 
     @Autowired
     private ForumService forumService;
@@ -171,6 +176,91 @@ public class JooqDTOManualSyncTest extends AbstractSpringTest {
             .orElseThrow();
 
         forumService.removePostComment(parentCommentDTO.getId());
+
+        PostDTO updatedPostDTO = forumService.loadPostDTO(postId);
+        assertTrue(updatedPostDTO.getReplies().isEmpty());
+    }
+
+    @Test
+    public void testJsonPatchMultiOpsDtoSync() {
+        LOGGER.info("Sync DTOs and jOOQ state via a single JSON Patch");
+
+        // --- build the desired post state in memory ---
+        PostDTO originalPost = forumService.loadPostDTO(postId);
+        PostDTO desiredPost  = forumService.loadPostDTO(postId);   // independent copy
+
+        desiredPost.setTitle("Single-Op DTO Sync Pattern").upvote();
+
+        List<PostCommentDTO> replies = desiredPost.getReplies();
+        replies.removeIf(comment -> comment.getParentId() != null);
+        replies.forEach(PostCommentDTO::upvote);  // upvote all remaining
+
+        PostCommentDTO newReply = new PostCommentDTO()
+            .setId(TimeSortedIdentifierGenerator.generate())
+            .setContent("Does it work with jOOQ?")
+            .setAuthor(UserContext.getCurrentUser())
+            .setParentId(replies.getFirst().getId());
+        replies.add(newReply);
+
+        TagDTO jpaTag = desiredPost.getTags().stream()
+            .filter(t -> t.getName().equals("JPA"))
+            .findFirst()
+            .orElseThrow();
+        desiredPost.getTags().remove(jpaTag);
+        desiredPost.getTags().add(
+            new TagDTO()
+                .setId(TimeSortedIdentifierGenerator.generate())
+                .setName("Jakarta Persistence")
+        );
+
+        // --- generate the JSON Patch that transforms original → desired ---
+        JsonPatch patch = JsonDiff.asJsonPatch(
+            patchMapper.valueToTree(originalPost),
+            patchMapper.valueToTree(desiredPost)
+        );
+        LOGGER.info("Generated JSON Patch: {}", patch);
+
+        // --- apply all changes in one @Transactional call ---
+        forumService.syncPost(originalPost, patch);
+
+        // --- verify ---
+        PostDTO updatedPostDTO = forumService.loadPostDTO(postId);
+        assertEquals(desiredPost, updatedPostDTO);
+    }
+
+    /**
+     * Mirrors {@code testRemoveParentPostComment}: removing the parent comment
+     * via a JSON Patch causes the child to be cascade-deleted as well.
+     */
+    @Test
+    public void testJsonPatchRemoveParentPostComment() {
+        LOGGER.info("Remove a parent PostCommentDTO via JSON Patch and verify children are also removed");
+
+        PostDTO originalPost = forumService.loadPostDTO(postId);
+        PostDTO desiredPost  = forumService.loadPostDTO(postId);
+
+        List<PostCommentDTO> replies = desiredPost.getReplies();
+        assertEquals(2, replies.size());
+
+        PostCommentDTO parentCommentDTO = replies.stream()
+            .filter(comment -> comment.getParentId() == null)
+            .findFirst()
+            .orElseThrow();
+        replies.stream()
+            .filter(child -> parentCommentDTO.getId().equals(child.getParentId()))
+            .findAny()
+            .orElseThrow();
+
+        // desired state: no replies
+        replies.clear();
+
+        JsonPatch patch = JsonDiff.asJsonPatch(
+            patchMapper.valueToTree(originalPost),
+            patchMapper.valueToTree(desiredPost)
+        );
+        LOGGER.info("Generated JSON Patch: {}", patch);
+
+        forumService.syncPost(originalPost, patch);
 
         PostDTO updatedPostDTO = forumService.loadPostDTO(postId);
         assertTrue(updatedPostDTO.getReplies().isEmpty());

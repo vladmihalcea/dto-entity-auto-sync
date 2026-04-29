@@ -23,7 +23,16 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 public class SpringDataJPAForumServiceBenchmarkTest {
 
     /** Maximum acceptable average execution time per benchmark method (ms). */
-    private static final double MAX_AVG_EXECUTION_TIME_MS = 500.0;
+    private static final double MAX_AVG_EXECUTION_TIME_MS = 50.0;
+
+    @Test
+    public void testLoadDtoExecutionTime() throws RunnerException {
+        Collection<RunResult> results = runBenchmark(
+            "benchmarkLoadDto"
+        );
+
+        assertMaxAverageTime(results, MAX_AVG_EXECUTION_TIME_MS);
+    }
 
     @Test
     public void testDtoToEntitySyncExecutionTime() throws RunnerException {
