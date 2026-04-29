@@ -1,4 +1,4 @@
-package com.vladmihalcea.phd.jooq.json_patch_sync;
+package com.vladmihalcea.phd.jooq;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonpatch.JsonPatch;

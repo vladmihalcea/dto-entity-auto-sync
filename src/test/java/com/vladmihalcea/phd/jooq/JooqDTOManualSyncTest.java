@@ -1,4 +1,4 @@
-package com.vladmihalcea.phd.jooq.multi_ops_sync;
+package com.vladmihalcea.phd.jooq;
 
 import com.vladmihalcea.phd.common.dto.*;
 import com.vladmihalcea.phd.common.util.AbstractSpringTest;

@@ -101,7 +101,7 @@ public class SpringDataJPADTO2EntityConfiguration {
 
     protected Properties properties() {
         Properties properties = new Properties();
-        properties.setProperty("hibernate.hbm2ddl.auto", "create-drop");
+        properties.setProperty("hibernate.hbm2ddl.auto", "update");
         additionalProperties(properties);
         return properties;
     }

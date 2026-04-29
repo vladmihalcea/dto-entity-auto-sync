@@ -7,15 +7,12 @@ import io.hypersistence.tsid.TSID;
  */
 public class TimeSortedIdentifierGenerator {
 
-    public static final int NODE_BITS = 8;
+    private static final TSID.Factory THREAD_LOCAL_TSID_FACTORY = TSID.Factory
+        .builder()
+        .withRandomFunction(TSID.Factory.THREAD_LOCAL_RANDOM_FUNCTION)
+        .build();
 
     public static long generate() {
-        return TSID.Factory.builder()
-            .withRandomFunction(TSID.Factory.THREAD_LOCAL_RANDOM_FUNCTION)
-            .withNodeBits(NODE_BITS)
-            .withNode((int) (Thread.currentThread().threadId() % 2 ^ NODE_BITS))
-            .build()
-            .generate()
-            .toLong();
+        return THREAD_LOCAL_TSID_FACTORY.generate().toLong();
     }
 }
