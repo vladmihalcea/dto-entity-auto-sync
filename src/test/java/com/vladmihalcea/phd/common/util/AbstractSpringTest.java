@@ -6,8 +6,6 @@ import com.vladmihalcea.phd.orm.dto2entity.domain.Tag;
 import com.vladmihalcea.phd.orm.dto2entity.domain.User;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaDelete;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
@@ -49,13 +47,11 @@ public abstract class AbstractSpringTest {
     }
 
     protected void deleteAll() {
-        CriteriaBuilder builder = entityManager.getCriteriaBuilder();
-
-        for(Class entityClass : entities()) {
-            CriteriaDelete criteria = builder.createCriteriaDelete(entityClass);
-            criteria.from(entityClass);
-            entityManager.createQuery(criteria).executeUpdate();
-        }
+        entityManager.createNativeQuery("DELETE FROM post_tag").executeUpdate();
+        entityManager.createNativeQuery("DELETE FROM post_comments").executeUpdate();
+        entityManager.createNativeQuery("DELETE FROM posts").executeUpdate();
+        entityManager.createNativeQuery("DELETE FROM tags").executeUpdate();
+        entityManager.createNativeQuery("DELETE FROM users").executeUpdate();
     }
 
     protected void afterInit() {
