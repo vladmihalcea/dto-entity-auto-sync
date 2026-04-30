@@ -2,6 +2,7 @@ package com.vladmihalcea.phd.jpa;
 
 import com.vladmihalcea.phd.app.ForumApplication;
 import com.vladmihalcea.phd.common.config.SpringWebConfiguration;
+import com.vladmihalcea.phd.common.controller.RestCaller;
 import com.vladmihalcea.phd.common.dto.PostCommentDto;
 import com.vladmihalcea.phd.common.dto.PostDto;
 import com.vladmihalcea.phd.common.dto.TagDto;
@@ -13,7 +14,7 @@ import com.vladmihalcea.phd.jpa.domain.Post;
 import com.vladmihalcea.phd.jpa.domain.PostComment;
 import com.vladmihalcea.phd.jpa.domain.Tag;
 import com.vladmihalcea.phd.jpa.domain.User;
-import com.vladmihalcea.phd.jpa.dto.mapper.UserMapper;
+import com.vladmihalcea.phd.jpa.mapper.UserMapper;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.Test;
@@ -41,9 +42,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 )
 public class JpaRestTest extends AbstractSpringTest {
 
-    @LocalServerPort
-    private int port;
-
     @Autowired
     private UserMapper userMapper;
 
@@ -53,9 +51,16 @@ public class JpaRestTest extends AbstractSpringTest {
     @Autowired
     private TransactionTemplate transactionTemplate;
 
-    private final RestTemplate restTemplate = new RestTemplate();
+    private final RestCaller restCaller;
 
     private Long postId;
+
+    public JpaRestTest(@LocalServerPort int port) {
+        this.restCaller = new RestCaller(
+            port,
+            new RestTemplate()
+        );
+    }
 
     @Override
     public void afterInit() {
@@ -109,34 +114,12 @@ public class JpaRestTest extends AbstractSpringTest {
         });
     }
 
-    private String baseUrl() {
-        return "http://localhost:" + port;
-    }
-
-    private PostDto loadPostDTO(Long postId) {
-        return restTemplate.getForObject(
-            baseUrl() + "/post?postId={postId}",
-            PostDto.class,
-            postId
-        );
-    }
-
-    private void updatePost(PostDto postDTO) {
-        restTemplate.postForObject(
-            baseUrl() + "/post",
-            postDTO,
-            Void.class
-        );
-    }
-
     @Test
-    public void testDtoToEntitySync() {
+    public void testDiffMergeSync() {
         LOGGER.info("Sync DTOs and JPA entity state");
-        PostDto postDTO = loadPostDTO(postId);
+        PostDto postDTO = restCaller.loadPostDTO(postId);
 
-        postDTO
-            .setTitle("DTO to Entity Auto-Sync Pattern")
-            .upvote();
+        postDTO.setTitle("DTO to Entity Auto-Sync Pattern").upvote();
 
         List<PostCommentDto> replies = postDTO.getReplies();
         replies.removeIf(comment -> comment.getParentId() != null);
@@ -161,18 +144,17 @@ public class JpaRestTest extends AbstractSpringTest {
         );
 
         LOGGER.info("Update JPA entity state from PostDTO");
-        updatePost(postDTO);
+        restCaller.updatePost(postDTO);
 
         LOGGER.info("Reload PostDTO to check the modifications");
-        PostDto updatedPostDTO = loadPostDTO(postId);
-
+        PostDto updatedPostDTO = restCaller.loadPostDTO(postId);
         assertEquals(postDTO, updatedPostDTO);
     }
 
     @Test
     public void testRemoveParentPostComment() {
         LOGGER.info("Remove a parent PostCommentDTO and see whether the children are also removed");
-        PostDto postDTO = loadPostDTO(postId);
+        PostDto postDTO = restCaller.loadPostDTO(postId);
 
         List<PostCommentDto> replies = postDTO.getReplies();
         assertEquals(2, replies.size());
@@ -186,9 +168,9 @@ public class JpaRestTest extends AbstractSpringTest {
             .orElseThrow();
         replies.remove(parentCommentDTO);
 
-        updatePost(postDTO);
+        restCaller.updatePost(postDTO);
 
-        PostDto updatedPostDTO = loadPostDTO(postId);
+        PostDto updatedPostDTO = restCaller.loadPostDTO(postId);
         assertTrue(updatedPostDTO.getReplies().isEmpty());
     }
 }

@@ -1,6 +1,7 @@
 package com.vladmihalcea.phd.jdbc.jmh;
 
 import com.vladmihalcea.phd.app.ForumApplication;
+import com.vladmihalcea.phd.common.config.SpringRestConfiguration;
 import com.vladmihalcea.phd.common.config.SpringWebConfiguration;
 import com.vladmihalcea.phd.common.controller.RestCaller;
 import com.vladmihalcea.phd.common.dto.PostCommentDto;
@@ -50,7 +51,7 @@ public class JdbcBenchmark {
     public void startContext() {
         SpringApplication app = new SpringApplication(
             JdbcConfiguration.class,
-            SpringWebConfiguration.class,
+            SpringRestConfiguration.class,
             ForumApplication.class
         );
         app.setWebApplicationType(WebApplicationType.SERVLET);

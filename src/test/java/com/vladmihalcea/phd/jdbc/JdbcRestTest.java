@@ -1,7 +1,7 @@
 package com.vladmihalcea.phd.jdbc;
 
 import com.vladmihalcea.phd.app.ForumApplication;
-import com.vladmihalcea.phd.common.config.SpringWebConfiguration;
+import com.vladmihalcea.phd.common.config.SpringRestConfiguration;
 import com.vladmihalcea.phd.common.controller.RestCaller;
 import com.vladmihalcea.phd.common.dto.*;
 import com.vladmihalcea.phd.common.service.ForumService;
@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest(
     classes = {
         JdbcConfiguration.class,
-        SpringWebConfiguration.class,
+        SpringRestConfiguration.class,
         ForumApplication.class
     },
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT

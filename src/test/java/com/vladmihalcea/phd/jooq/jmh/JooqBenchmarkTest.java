@@ -12,4 +12,3 @@ public class JooqBenchmarkTest extends AbstractBenchmarkTest {
         return JooqBenchmark.class;
     }
 }
-

@@ -21,7 +21,7 @@ public class ForumRestController {
         return forumService.loadPostDTO(postId);
     }
 
-    @PostMapping("/post")
+    @PutMapping("/post")
     public void updatePost(@RequestBody PostDto postDTO) {
         forumService.updatePost(postDTO);
     }

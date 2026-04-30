@@ -1,6 +1,7 @@
 package com.vladmihalcea.phd.jooq;
 
 import com.vladmihalcea.phd.app.ForumApplication;
+import com.vladmihalcea.phd.common.config.SpringRestConfiguration;
 import com.vladmihalcea.phd.common.config.SpringWebConfiguration;
 import com.vladmihalcea.phd.common.controller.RestCaller;
 import com.vladmihalcea.phd.common.dto.*;
@@ -31,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest(
     classes = {
         JooqConfiguration.class,
-        SpringWebConfiguration.class,
+        SpringRestConfiguration.class,
         ForumApplication.class
     },
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT

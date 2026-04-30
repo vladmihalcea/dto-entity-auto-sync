@@ -1,4 +1,4 @@
-package com.vladmihalcea.phd.jpa.dto.mapper;
+package com.vladmihalcea.phd.jpa.mapper;
 
 import com.vladmihalcea.phd.common.dto.PostDto;
 import com.vladmihalcea.phd.jpa.domain.Post;

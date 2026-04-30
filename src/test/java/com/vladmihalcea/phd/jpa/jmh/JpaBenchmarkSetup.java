@@ -1,11 +1,11 @@
-package com.vladmihalcea.phd.jpa.jmh.rest;
+package com.vladmihalcea.phd.jpa.jmh;
 
 import com.vladmihalcea.phd.common.dto.UserContext;
 import com.vladmihalcea.phd.jpa.domain.Post;
 import com.vladmihalcea.phd.jpa.domain.PostComment;
 import com.vladmihalcea.phd.jpa.domain.Tag;
 import com.vladmihalcea.phd.jpa.domain.User;
-import com.vladmihalcea.phd.jpa.dto.mapper.UserMapper;
+import com.vladmihalcea.phd.jpa.mapper.UserMapper;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,12 +31,6 @@ public class JpaBenchmarkSetup {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
-    /**
-     * Creates the standard forum fixture (3 users, 1 post, 2 comments, 4 tags)
-     * and stores the current user in {@link UserContext}.
-     *
-     * @return the id of the persisted post
-     */
     public Long createTestData() {
         return transactionTemplate.<Long>execute(transactionStatus -> {
             User vlad = new User()
@@ -102,10 +96,3 @@ public class JpaBenchmarkSetup {
         });
     }
 }
-
-
-
-
-
-
-

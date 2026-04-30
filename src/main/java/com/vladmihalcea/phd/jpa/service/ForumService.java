@@ -2,7 +2,7 @@ package com.vladmihalcea.phd.jpa.service;
 
 import com.vladmihalcea.phd.common.dto.PostDto;
 import com.vladmihalcea.phd.jpa.domain.Post;
-import com.vladmihalcea.phd.jpa.dto.mapper.PostMapper;
+import com.vladmihalcea.phd.jpa.mapper.PostMapper;
 import com.vladmihalcea.phd.jpa.repository.PostRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;

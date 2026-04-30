@@ -1,4 +1,4 @@
-package com.vladmihalcea.phd.jpa.dto.mapper;
+package com.vladmihalcea.phd.jpa.mapper;
 
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.metamodel.Attribute;

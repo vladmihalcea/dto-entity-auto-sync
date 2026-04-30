@@ -11,7 +11,7 @@ import com.vladmihalcea.phd.jpa.domain.Post;
 import com.vladmihalcea.phd.jpa.domain.PostComment;
 import com.vladmihalcea.phd.jpa.domain.Tag;
 import com.vladmihalcea.phd.jpa.domain.User;
-import com.vladmihalcea.phd.jpa.dto.mapper.UserMapper;
+import com.vladmihalcea.phd.jpa.mapper.UserMapper;
 import com.vladmihalcea.phd.jpa.service.ForumService;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;

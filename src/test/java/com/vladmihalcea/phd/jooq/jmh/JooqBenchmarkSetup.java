@@ -34,12 +34,6 @@ public class JooqBenchmarkSetup {
     @Autowired
     private DSLContext ctx;
 
-    /**
-     * Creates the standard forum fixture (3 users, 1 post, 2 comments, 4 tags)
-     * and stores the current user in {@link UserContext}.
-     *
-     * @return the id of the persisted post
-     */
     public Long createTestData() {
         return transactionTemplate.<Long>execute(transactionStatus -> {
             UserDto vlad = new UserDto()
@@ -108,7 +102,9 @@ public class JooqBenchmarkSetup {
         });
     }
 
-    /** Deletes all rows in dependency order inside a single committed transaction. */
+    /**
+     * Deletes all rows in dependency order inside a single committed transaction.
+     */
     public void deleteAll() {
         transactionTemplate.execute(status -> {
             ctx.execute("DELETE FROM post_tag");

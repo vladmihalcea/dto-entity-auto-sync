@@ -1,7 +1,7 @@
 package com.vladmihalcea.phd.jooq.jmh;
 
 import com.vladmihalcea.phd.app.ForumApplication;
-import com.vladmihalcea.phd.common.config.SpringWebConfiguration;
+import com.vladmihalcea.phd.common.config.SpringRestConfiguration;
 import com.vladmihalcea.phd.common.controller.RestCaller;
 import com.vladmihalcea.phd.common.dto.PostCommentDto;
 import com.vladmihalcea.phd.common.dto.PostDto;
@@ -50,7 +50,7 @@ public class JooqBenchmark {
     public void startContext() {
         SpringApplication app = new SpringApplication(
             JooqConfiguration.class,
-            SpringWebConfiguration.class,
+            SpringRestConfiguration.class,
             ForumApplication.class
         );
         app.setWebApplicationType(WebApplicationType.SERVLET);
