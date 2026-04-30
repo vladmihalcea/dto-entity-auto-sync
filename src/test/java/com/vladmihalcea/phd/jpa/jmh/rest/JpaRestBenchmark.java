@@ -1,5 +1,6 @@
 package com.vladmihalcea.phd.jpa.jmh.rest;
 
+import com.vladmihalcea.phd.app.ForumApplication;
 import com.vladmihalcea.phd.common.config.SpringWebConfiguration;
 import com.vladmihalcea.phd.common.dto.PostCommentDto;
 import com.vladmihalcea.phd.common.dto.PostDto;
@@ -52,7 +53,8 @@ public class JpaRestBenchmark {
     public void startContext() {
         SpringApplication app = new SpringApplication(
             JpaConfiguration.class,
-            SpringWebConfiguration.class
+            SpringWebConfiguration.class,
+            ForumApplication.class
         );
         app.setWebApplicationType(WebApplicationType.SERVLET);
         app.setDefaultProperties(Map.of("server.port", "0"));

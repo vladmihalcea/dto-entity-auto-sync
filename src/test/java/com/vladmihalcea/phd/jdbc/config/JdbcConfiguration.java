@@ -4,6 +4,7 @@ import com.vladmihalcea.phd.common.config.SpringDataSourceTransactionManagerConf
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -14,6 +15,7 @@ import javax.sql.DataSource;
  */
 @Configuration
 @EnableTransactionManagement
+@EnableAspectJAutoProxy
 @ComponentScan(basePackages = {
     "com.vladmihalcea.phd.jdbc",
     "com.vladmihalcea.phd.common.service"

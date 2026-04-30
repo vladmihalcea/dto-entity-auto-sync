@@ -1,5 +1,6 @@
 package com.vladmihalcea.phd.jpa;
 
+import com.vladmihalcea.phd.app.ForumApplication;
 import com.vladmihalcea.phd.common.config.SpringWebConfiguration;
 import com.vladmihalcea.phd.common.dto.PostCommentDto;
 import com.vladmihalcea.phd.common.dto.PostDto;
@@ -33,7 +34,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest(
     classes = {
         JpaConfiguration.class,
-        SpringWebConfiguration.class
+        SpringWebConfiguration.class,
+        ForumApplication.class
     },
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
@@ -190,6 +192,3 @@ public class JpaRestTest extends AbstractSpringTest {
         assertTrue(updatedPostDTO.getReplies().isEmpty());
     }
 }
-
-
-

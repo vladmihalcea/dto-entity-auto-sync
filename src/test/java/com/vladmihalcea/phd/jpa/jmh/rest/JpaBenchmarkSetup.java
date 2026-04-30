@@ -1,40 +1,29 @@
 package com.vladmihalcea.phd.jpa.jmh.rest;
 
-import com.vladmihalcea.phd.common.dao.PostDao;
-import com.vladmihalcea.phd.common.dao.UserDao;
-import com.vladmihalcea.phd.common.dto.*;
-import com.vladmihalcea.phd.common.service.ForumService;
-import com.vladmihalcea.phd.common.util.TimeSortedIdentifierGenerator;
+import com.vladmihalcea.phd.common.dto.UserContext;
+import com.vladmihalcea.phd.jpa.domain.Post;
+import com.vladmihalcea.phd.jpa.domain.PostComment;
+import com.vladmihalcea.phd.jpa.domain.Tag;
+import com.vladmihalcea.phd.jpa.domain.User;
+import com.vladmihalcea.phd.jpa.dto.mapper.UserMapper;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
+import jakarta.persistence.PersistenceContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.LinkedHashSet;
-import java.util.List;
-
 /**
- * Spring-managed helper used by JMH benchmarks to create and clean up the
- * standard forum dataset. Uses {@link EntityManagerFactory} directly
- * (resource-local transactions) so that each call gets a fully independent
- * {@link EntityManager} with no first-level cache bleed-over between
- * benchmark invocations.
- *
  * @author Vlad Mihalcea
  */
 @Component
 public class JpaBenchmarkSetup {
 
-    @Autowired
-    private PostDao postDAO;
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Autowired
-    private ForumService forumService;
-
-    @Autowired
-    private UserDao userDAO;
+    private UserMapper userMapper;
 
     @Autowired
     private TransactionTemplate transactionTemplate;
@@ -50,73 +39,58 @@ public class JpaBenchmarkSetup {
      */
     public Long createTestData() {
         return transactionTemplate.<Long>execute(transactionStatus -> {
-            UserDto vlad = new UserDto()
-                .setId(TimeSortedIdentifierGenerator.generate())
+            User vlad = new User()
                 .setEmail("vlad@acme.com")
                 .setFirstName("Vlad")
                 .setLastName("Mihalcea");
-            UserDto john = new UserDto()
-                .setId(TimeSortedIdentifierGenerator.generate())
+            User john = new User()
                 .setEmail("john@acme.com")
                 .setFirstName("John")
                 .setLastName("Doe");
-            UserDto jane = new UserDto()
-                .setId(TimeSortedIdentifierGenerator.generate())
+            User jane = new User()
                 .setEmail("jane@acme.com")
                 .setFirstName("Jane")
                 .setLastName("Doe");
+            entityManager.persist(vlad);
+            entityManager.persist(john);
+            entityManager.persist(jane);
 
-            transactionTemplate.execute(status -> {
-                userDAO.insert(vlad);
-                userDAO.insert(john);
-                userDAO.insert(jane);
-                return null;
-            });
+            UserContext.setCurrentUser(
+                userMapper.toDTO(vlad)
+            );
 
-            UserContext.setCurrentUser(vlad);
+            PostComment parentPostComment = new PostComment()
+                .setContent("Interesting topic, but I would like to see more examples")
+                .setAuthor(john);
 
-            PostDto post = new PostDto()
-                .setId(TimeSortedIdentifierGenerator.generate())
+            PostComment childPostComment = new PostComment()
+                .setContent("Can you apply this pattern to other platforms?")
+                .setAuthor(jane)
+                .setParent(parentPostComment);
+
+            Post post = new Post()
                 .setTitle("DTO to Entity Auto-Sync")
                 .setContent("""
                     Spring and Hibernate can help you do the aut-sync
                     between DTOs and JPA entities
                     """)
                 .setAuthor(vlad)
-                .setReplies(List.of())
-                .setTags(new LinkedHashSet<>());
+                .addComment(parentPostComment)
+                .addComment(childPostComment)
+                .addTag(new Tag().setName("Spring"))
+                .addTag(new Tag().setName("JPA"))
+                .addTag(new Tag().setName("Hibernate"))
+                .addTag(new Tag().setName("MapStruct"));
 
-            postDAO.insert(post);
-            Long postId = post.getId();
-
-            PostCommentDto johnReply = new PostCommentDto()
-                .setId(TimeSortedIdentifierGenerator.generate())
-                .setContent("Interesting topic, but I would like to see more examples")
-                .setAuthor(john);
-            PostCommentDto janeReply = new PostCommentDto()
-                .setId(TimeSortedIdentifierGenerator.generate())
-                .setContent("Can you apply this pattern to other platforms?")
-                .setAuthor(jane)
-                .setParentId(johnReply.getId());
-
-            forumService.createPostComment(postId, johnReply);
-            forumService.createPostComment(postId, janeReply);
-
-            TagDto spring = new TagDto().setId(TimeSortedIdentifierGenerator.generate()).setName("Spring");
-            TagDto jpa = new TagDto().setId(TimeSortedIdentifierGenerator.generate()).setName("JPA");
-            TagDto hibernate = new TagDto().setId(TimeSortedIdentifierGenerator.generate()).setName("Hibernate");
-            TagDto mapstruct = new TagDto().setId(TimeSortedIdentifierGenerator.generate()).setName("MapStruct");
-
-            forumService.createTag(postId, spring);
-            forumService.createTag(postId, jpa);
-            forumService.createTag(postId, hibernate);
-            forumService.createTag(postId, mapstruct);
+            entityManager.persist(post);
 
             return post.getId();
         });
     }
 
-    /** Deletes all rows in dependency order inside a single committed transaction. */
+    /**
+     * Deletes all rows in dependency order inside a single committed transaction.
+     */
     public void deleteAll() {
         transactionTemplate.execute(status -> {
             jdbcTemplate.execute("DELETE FROM post_tag");

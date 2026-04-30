@@ -86,11 +86,6 @@ public class JpaBenchmark {
         forumService.loadPostDTO(postId);
     }
 
-    /**
-     * Mirrors {@code SpringDataJPADTO2EntityTest#testDtoToEntitySync}:
-     * loads the post DTO, modifies title / votes / comments / tags, persists
-     * the changes and reloads to verify the round-trip.
-     */
     @Benchmark
     public void benchmarkDtoToEntitySync() {
         postDTO.setTitle("DTO to Entity Auto-Sync Pattern").upvote();

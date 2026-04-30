@@ -194,7 +194,7 @@ public class JdbcTest extends AbstractSpringTest {
     }
 
     @Test
-    public void testDiffMergeSync() throws IOException {
+    public void testDiffMergeSync() {
         LOGGER.info("Sync DTOs and JDBC state via a single JSON Patch");
 
         PostDto originalPost = forumService.loadPostDTO(postId);

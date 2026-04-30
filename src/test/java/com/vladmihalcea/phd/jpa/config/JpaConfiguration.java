@@ -35,7 +35,7 @@ import java.util.Properties;
 @EnableAspectJAutoProxy
 @ComponentScan(
     basePackages = {
-        "com.vladmihalcea.phd.jpa.dto2entity"
+        "com.vladmihalcea.phd.jpa"
     }
 )
 @EnableJpaRepositories(

@@ -1,5 +1,8 @@
 package com.vladmihalcea.phd.jdbc.jmh;
 
+import com.vladmihalcea.phd.app.ForumApplication;
+import com.vladmihalcea.phd.common.config.SpringWebConfiguration;
+import com.vladmihalcea.phd.common.controller.RestCaller;
 import com.vladmihalcea.phd.common.dto.PostCommentDto;
 import com.vladmihalcea.phd.common.dto.PostDto;
 import com.vladmihalcea.phd.common.dto.TagDto;
@@ -12,6 +15,8 @@ import org.openjdk.jmh.annotations.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.env.Environment;
+import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.Map;
@@ -35,6 +40,8 @@ public class JdbcBenchmark {
     private PostDto postDTO;
     private PostDto modifiedPostDTO;
 
+    private RestCaller restCaller;
+
     // -------------------------------------------------------------------------
     // Lifecycle
     // -------------------------------------------------------------------------
@@ -42,14 +49,23 @@ public class JdbcBenchmark {
     @Setup(Level.Trial)
     public void startContext() {
         SpringApplication app = new SpringApplication(
-            JdbcConfiguration.class
+            JdbcConfiguration.class,
+            SpringWebConfiguration.class,
+            ForumApplication.class
         );
-        app.setWebApplicationType(WebApplicationType.NONE);
-        app.setDefaultProperties(Map.of("spring.main.web-application-type", "none"));
+        app.setWebApplicationType(WebApplicationType.SERVLET);
+        app.setDefaultProperties(Map.of("server.port", "0"));
         context = app.run();
 
         forumService = context.getBean(ForumService.class);
         benchmarkSetup = context.getBean(JdbcBenchmarkSetup.class);
+
+        int port = context.getBean(Environment.class)
+            .getRequiredProperty("local.server.port", Integer.class);
+
+        restCaller = new RestCaller(
+            port, new RestTemplate()
+        );
     }
 
     @TearDown(Level.Trial)
@@ -122,6 +138,43 @@ public class JdbcBenchmark {
     }
 
     @Benchmark
+    public void benchmarkMultiOpsSyncUsingRest() {
+        postDTO.setTitle("Multi-Ops DTO Sync Pattern").upvote();
+        restCaller.updatePost(postDTO);
+
+        List<PostCommentDto> replies = postDTO.getReplies();
+        PostCommentDto removed = replies.stream().filter(comment -> comment.getParentId() != null).findFirst().orElseThrow();
+        replies.remove(removed);
+        restCaller.removePostComment(removed.getId());
+
+        for (PostCommentDto r : replies) {
+            r.upvote();
+            restCaller.updatePostComment(r);
+        }
+
+        PostCommentDto newReply = new PostCommentDto()
+            .setId(TimeSortedIdentifierGenerator.generate())
+            .setContent("Does it work with jOOQ?")
+            .setAuthor(UserContext.getCurrentUser())
+            .setParentId(replies.getFirst().getId());
+        replies.add(newReply);
+        restCaller.createPostComment(postId, newReply);
+
+        TagDto jpaTag = postDTO.getTags().stream()
+            .filter(t -> t.getName().equals("JPA"))
+            .findFirst()
+            .orElseThrow();
+        postDTO.getTags().remove(jpaTag);
+        restCaller.removeTag(postId, jpaTag);
+
+        TagDto jakarta = new TagDto()
+            .setId(TimeSortedIdentifierGenerator.generate())
+            .setName("Jakarta Persistence");
+        postDTO.getTags().add(jakarta);
+        restCaller.createTag(postId, jakarta);
+    }
+
+    @Benchmark
     public void benchmarkDiffMergeSync() {
         modifiedPostDTO.setTitle("Diff Merge DTO Sync Pattern").upvote();
 
@@ -148,6 +201,35 @@ public class JdbcBenchmark {
         );
 
         forumService.diffMerge(postDTO, modifiedPostDTO);
+    }
+
+    @Benchmark
+    public void benchmarkDiffMergeSyncUsingRest() {
+        modifiedPostDTO.setTitle("Diff Merge DTO Sync Pattern").upvote();
+
+        List<PostCommentDto> replies = modifiedPostDTO.getReplies();
+        replies.removeIf(comment -> comment.getParentId() != null);
+        replies.forEach(PostCommentDto::upvote);
+
+        PostCommentDto newReply = new PostCommentDto()
+            .setId(TimeSortedIdentifierGenerator.generate())
+            .setContent("Does it work with jOOQ?")
+            .setAuthor(UserContext.getCurrentUser())
+            .setParentId(replies.getFirst().getId());
+        replies.add(newReply);
+
+        TagDto jpaTag = modifiedPostDTO.getTags().stream()
+            .filter(t -> t.getName().equals("JPA"))
+            .findFirst()
+            .orElseThrow();
+        modifiedPostDTO.getTags().remove(jpaTag);
+        modifiedPostDTO.getTags().add(
+            new TagDto()
+                .setId(TimeSortedIdentifierGenerator.generate())
+                .setName("Jakarta Persistence")
+        );
+
+        restCaller.diffMerge(postDTO, modifiedPostDTO);
     }
 }
 

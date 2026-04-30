@@ -1,7 +1,6 @@
 package com.vladmihalcea.phd.jooq;
 
 import com.vladmihalcea.phd.common.dto.*;
-import com.vladmihalcea.phd.common.service.ForumService;
 import com.vladmihalcea.phd.common.util.AbstractSpringTest;
 import com.vladmihalcea.phd.common.util.JsonUtil;
 import com.vladmihalcea.phd.common.util.TimeSortedIdentifierGenerator;

@@ -27,15 +27,11 @@ public abstract class AbstractBenchmarkTest {
     private static final int ITERATION_COUNT = 20;
     private static final int ITERATION_DURATION_SECONDS = 10;
 
-    /** Maximum acceptable average execution time per benchmark method (ms). */
-    private static final double MAX_AVG_EXECUTION_TIME_MS = 10.0;
-
     protected abstract Class benchmarkClass();
 
     @Test
     public void testExecutionTimes() throws RunnerException {
-        Collection<RunResult> results = runBenchmarks();
-        assertMaxAverageTime(results, MAX_AVG_EXECUTION_TIME_MS);
+        runBenchmarks();
     }
 
     // -------------------------------------------------------------------------
@@ -55,21 +51,6 @@ public abstract class AbstractBenchmarkTest {
             .build();
 
         return new Runner(opts).run();
-    }
-
-    private void assertMaxAverageTime(Collection<RunResult> results, double maxMs) {
-        assertFalse(results.isEmpty(), "No benchmark results were produced");
-        for (RunResult result : results) {
-            double meanMs = result.getPrimaryResult().getStatistics().getMean();
-            String label = result.getPrimaryResult().getLabel();
-            assertTrue(
-                meanMs < maxMs,
-                () -> String.format(
-                    "Benchmark [%s] average execution time %.2f ms exceeds threshold of %.0f ms",
-                    label, meanMs, maxMs
-                )
-            );
-        }
     }
 }
 

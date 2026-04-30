@@ -12,7 +12,6 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * @author Vlad Mihalcea

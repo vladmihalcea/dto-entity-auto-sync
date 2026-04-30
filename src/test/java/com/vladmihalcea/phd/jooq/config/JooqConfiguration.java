@@ -8,6 +8,7 @@ import org.jooq.impl.DefaultDSLContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.jdbc.datasource.TransactionAwareDataSourceProxy;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -16,8 +17,9 @@ import javax.sql.DataSource;
 /**
  * @author Vlad Mihalcea
  */
-@Configuration
+@Configuration("customJooqConfiguration")
 @EnableTransactionManagement
+@EnableAspectJAutoProxy
 @ComponentScan(basePackages = {
     "com.vladmihalcea.phd.jooq",
     "com.vladmihalcea.phd.common.service"
