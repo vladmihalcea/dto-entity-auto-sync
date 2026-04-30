@@ -60,8 +60,8 @@ MapStruct generates sources during compilation under `target/generated-sources/a
 # Run all tests
 mvn clean test
 
-# Run only the main DTO-to-entity integration test
-mvn -Dtest=SpringDataJPADTO2EntityTest test
+# Run only the JPA integration test
+mvn -Dtest=JpaTest test
 ```
 
 ### What the tests verify

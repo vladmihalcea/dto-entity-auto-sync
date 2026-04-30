@@ -6,13 +6,13 @@ package com.vladmihalcea.phd.common.dto;
  */
 public class UserContext {
 
-    private static final ThreadLocal<UserDTO> userRequestHolder = new ThreadLocal<>();
+    private static final ThreadLocal<UserDto> userRequestHolder = new ThreadLocal<>();
 
-    public static UserDTO getCurrentUser() {
+    public static UserDto getCurrentUser() {
         return userRequestHolder.get();
     }
 
-    public static void setCurrentUser(UserDTO userDTO) {
+    public static void setCurrentUser(UserDto userDTO) {
         userRequestHolder.set(userDTO);
     }
 
