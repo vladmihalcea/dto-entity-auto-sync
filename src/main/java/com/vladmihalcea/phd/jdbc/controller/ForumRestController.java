@@ -1,7 +1,7 @@
-package com.vladmihalcea.phd.jpa.dto2entity.controller;
+package com.vladmihalcea.phd.jdbc.controller;
 
 import com.vladmihalcea.phd.common.dto.PostDto;
-import com.vladmihalcea.phd.jpa.dto2entity.service.ForumService;
+import com.vladmihalcea.phd.common.service.ForumService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

@@ -1,6 +1,6 @@
-package com.vladmihalcea.phd.jpa.dto2entity.repository;
+package com.vladmihalcea.phd.jpa.repository;
 
-import com.vladmihalcea.phd.jpa.dto2entity.domain.Post;
+import com.vladmihalcea.phd.jpa.domain.Post;
 import jakarta.persistence.QueryHint;
 import org.hibernate.jpa.AvailableHints;
 import org.springframework.data.jpa.repository.JpaRepository;

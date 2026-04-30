@@ -7,7 +7,7 @@ import com.vladmihalcea.phd.common.dto.UserContext;
 import com.vladmihalcea.phd.common.util.TimeSortedIdentifierGenerator;
 import com.vladmihalcea.phd.jpa.config.JpaConfiguration;
 import com.vladmihalcea.phd.jpa.jmh.rest.JpaBenchmarkSetup;
-import com.vladmihalcea.phd.jpa.dto2entity.service.ForumService;
+import com.vladmihalcea.phd.jpa.service.ForumService;
 import org.openjdk.jmh.annotations.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;

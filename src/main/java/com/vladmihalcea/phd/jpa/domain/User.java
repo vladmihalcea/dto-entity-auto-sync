@@ -1,4 +1,4 @@
-package com.vladmihalcea.phd.jpa.dto2entity.domain;
+package com.vladmihalcea.phd.jpa.domain;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

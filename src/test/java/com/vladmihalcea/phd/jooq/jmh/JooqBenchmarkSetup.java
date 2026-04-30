@@ -15,18 +15,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * Spring-managed helper used by jOOQ JMH benchmarks to create and clean up
- * the standard forum dataset between benchmark invocations.
- *
- * <p>Uses a monotonic {@link AtomicLong} counter for entity IDs to avoid the
- * TSID same-millisecond collision window that occurs when a new factory is
- * built for each {@code TimeSortedIdentifierGenerator.generate()} call.
- *
- * <p>The child comment is given a lower ID than the parent so that
- * {@code ORDER BY id} in the DAO places the child first — matching the
- * ordering the benchmark logic relies on ({@code replies.removeFirst()} must
- * remove the child, not the parent).
- *
  * @author Vlad Mihalcea
  */
 @Component
@@ -116,6 +104,7 @@ public class JooqBenchmarkSetup {
             forumService.createTag(postId, jpa);
             forumService.createTag(postId, hibernate);
             forumService.createTag(postId, mapstruct);
+
             return post.getId();
         });
     }

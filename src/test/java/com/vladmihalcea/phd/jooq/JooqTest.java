@@ -8,6 +8,7 @@ import com.vladmihalcea.phd.common.util.TimeSortedIdentifierGenerator;
 import com.vladmihalcea.phd.jooq.config.JooqConfiguration;
 import com.vladmihalcea.phd.jooq.dao.PostDaoImpl;
 import com.vladmihalcea.phd.jooq.dao.UserDaoImpl;
+import com.vladmihalcea.phd.jooq.service.JooqForumService;
 import org.jooq.DSLContext;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -33,7 +34,7 @@ public class JooqTest extends AbstractSpringTest {
     protected final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    private ForumService forumService;
+    private JooqForumService forumService;
 
     @Autowired
     private PostDaoImpl postDAO;
@@ -124,6 +125,15 @@ public class JooqTest extends AbstractSpringTest {
     }
 
     @Test
+    public void testLoadDtoUsingMultiset() {
+        LOGGER.info("Load PostDTO using findById and MULTISET");
+        PostDto defaultPostDTO = forumService.loadPostDTO(postId);
+        PostDto multiSetPostDTO = forumService.loadPostDTOUsingMultiset(postId);
+
+        assertEquals(defaultPostDTO, multiSetPostDTO);
+    }
+
+    @Test
     public void testMultiOpsDtoSync() {
         LOGGER.info("Sync DTOs and jOOQ state");
         PostDto postDTO = forumService.loadPostDTO(postId);
@@ -189,7 +199,7 @@ public class JooqTest extends AbstractSpringTest {
     }
 
     @Test
-    public void testDiffMergeync() {
+    public void testDiffMergeSync() {
         LOGGER.info("Sync DTOs and jOOQ state via a single JSON Patch");
 
         PostDto originalPost = forumService.loadPostDTO(postId);

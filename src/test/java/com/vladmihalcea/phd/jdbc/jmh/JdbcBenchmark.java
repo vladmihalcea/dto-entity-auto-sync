@@ -17,24 +17,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 /**
  * JMH benchmark that measures the execution time of the JDBC
- * {@link ForumService} for the two main test scenarios defined in
- * {@code JdbcDTOManualSyncTest}:
- * <ul>
- *   <li>{@link #benchmarkMultiOpsDtoSync()} ()} — mirrors {@code testMultiOpsDtoSync}</li>
- *   <li>{@link #benchmarkRemoveParentPostComment()} — mirrors {@code testRemoveParentPostComment}</li>
- * </ul>
- *
- * <p>The Spring context (JDBC + TestContainers, no web server) is started once
- * per trial and the test dataset is rebuilt before every invocation so each
- * call always starts from the same known state.
- *
  * @author Vlad Mihalcea
  */
-@BenchmarkMode(Mode.SampleTime)
+@BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @State(Scope.Benchmark)
 public class JdbcBenchmark {
@@ -93,7 +80,12 @@ public class JdbcBenchmark {
     }
 
     @Benchmark
-    public void benchmarkMultiOpsDtoSync() {
+    public void benchmarkLoadDtoUsingMultiset() {
+        forumService.loadPostDTO(postId);
+    }
+
+    @Benchmark
+    public void benchmarkMultiOpsSync() {
         postDTO.setTitle("Multi-Ops DTO Sync Pattern").upvote();
         forumService.updatePost(postDTO);
 
@@ -130,16 +122,6 @@ public class JdbcBenchmark {
     }
 
     @Benchmark
-    public void benchmarkRemoveParentPostComment() {
-        List<PostCommentDto> replies = postDTO.getReplies();
-        PostCommentDto parent = replies.stream()
-            .filter(c -> c.getParentId() == null)
-            .findFirst()
-            .orElseThrow();
-        forumService.removePostComment(parent.getId());
-    }
-
-    @Benchmark
     public void benchmarkDiffMergeSync() {
         modifiedPostDTO.setTitle("Diff Merge DTO Sync Pattern").upvote();
 
@@ -164,23 +146,6 @@ public class JdbcBenchmark {
                 .setId(TimeSortedIdentifierGenerator.generate())
                 .setName("Jakarta Persistence")
         );
-
-        forumService.diffMerge(postDTO, modifiedPostDTO);
-
-        PostDto updatedPostDTO = forumService.loadPostDTO(postId);
-        assertEquals(modifiedPostDTO, updatedPostDTO);
-    }
-
-    @Benchmark
-    public void benchmarkDiffMergeRemoveParentPostComment() {
-        List<PostCommentDto> replies = modifiedPostDTO.getReplies();
-        assertEquals(2, replies.size());
-
-        PostCommentDto parent = replies.stream()
-            .filter(c -> c.getParentId() == null)
-            .findFirst()
-            .orElseThrow();
-        replies.remove(parent);
 
         forumService.diffMerge(postDTO, modifiedPostDTO);
     }

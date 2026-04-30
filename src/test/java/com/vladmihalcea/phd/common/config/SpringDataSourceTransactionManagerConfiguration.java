@@ -2,7 +2,7 @@ package com.vladmihalcea.phd.common.config;
 
 import com.vladmihalcea.phd.common.util.database.DataSourceProvider;
 import com.vladmihalcea.phd.common.util.database.Database;
-import com.vladmihalcea.phd.jpa.dto2entity.domain.Post;
+import com.vladmihalcea.phd.jpa.domain.Post;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import io.hypersistence.utils.logging.InlineQueryLogEntryCreator;

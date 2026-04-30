@@ -1,7 +1,7 @@
-package com.vladmihalcea.phd.jpa.dto2entity.dto.mapper;
+package com.vladmihalcea.phd.jpa.dto.mapper;
 
 import com.vladmihalcea.phd.common.dto.TagDto;
-import com.vladmihalcea.phd.jpa.dto2entity.domain.Tag;
+import com.vladmihalcea.phd.jpa.domain.Tag;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingConstants;
 

@@ -1,4 +1,4 @@
-package com.vladmihalcea.phd.jpa.dto2entity;
+package com.vladmihalcea.phd.jpa;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

@@ -2,7 +2,7 @@ package com.vladmihalcea.phd.jpa.config;
 
 import com.vladmihalcea.phd.common.util.database.DataSourceProvider;
 import com.vladmihalcea.phd.common.util.database.Database;
-import com.vladmihalcea.phd.jpa.dto2entity.domain.Post;
+import com.vladmihalcea.phd.jpa.domain.Post;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import jakarta.persistence.EntityManagerFactory;
@@ -39,7 +39,7 @@ import java.util.Properties;
     }
 )
 @EnableJpaRepositories(
-    basePackages = "com.vladmihalcea.phd.jpa.dto2entity.repository"
+    basePackages = "com.vladmihalcea.phd.jpa.repository"
 )
 public class JpaConfiguration {
 

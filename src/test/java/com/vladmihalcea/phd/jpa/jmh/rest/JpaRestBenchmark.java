@@ -105,11 +105,6 @@ public class JpaRestBenchmark {
     // Benchmarks
     // -------------------------------------------------------------------------
 
-    /**
-     * Mirrors {@code SpringDataJPADTO2EntityRestTest#testDtoToEntitySync}:
-     * loads the post DTO, modifies title / votes / comments / tags, persists
-     * the changes and reloads to verify round-trip correctness.
-     */
     @Benchmark
     public PostDto benchmarkDtoToEntitySync() {
         PostDto postDTO = loadPostDTO();

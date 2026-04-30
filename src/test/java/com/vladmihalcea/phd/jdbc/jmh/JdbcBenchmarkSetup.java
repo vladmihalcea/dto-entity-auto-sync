@@ -15,13 +15,6 @@ import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- * Spring-managed helper used by JDBC JMH benchmarks to create and clean up
- * the standard forum dataset between benchmark invocations.
- *
- * <p>Uses a monotonic {@link AtomicLong} counter for entity IDs to avoid the
- * TSID same-millisecond collision window that occurs when a new factory is
- * built for each {@code TimeSortedIdentifierGenerator.generate()} call.
- *
  * @author Vlad Mihalcea
  */
 @Component

@@ -1,9 +1,9 @@
 package com.vladmihalcea.phd.common.util;
 
-import com.vladmihalcea.phd.jpa.dto2entity.domain.Post;
-import com.vladmihalcea.phd.jpa.dto2entity.domain.PostComment;
-import com.vladmihalcea.phd.jpa.dto2entity.domain.Tag;
-import com.vladmihalcea.phd.jpa.dto2entity.domain.User;
+import com.vladmihalcea.phd.jpa.domain.Post;
+import com.vladmihalcea.phd.jpa.domain.PostComment;
+import com.vladmihalcea.phd.jpa.domain.Tag;
+import com.vladmihalcea.phd.jpa.domain.User;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.junit.jupiter.api.BeforeEach;

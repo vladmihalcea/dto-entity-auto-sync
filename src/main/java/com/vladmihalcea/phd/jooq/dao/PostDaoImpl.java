@@ -1,12 +1,23 @@
 package com.vladmihalcea.phd.jooq.dao;
 
 import com.vladmihalcea.phd.common.dao.PostDao;
+import com.vladmihalcea.phd.common.dto.PostCommentDto;
 import com.vladmihalcea.phd.common.dto.PostDto;
+import com.vladmihalcea.phd.common.dto.TagDto;
 import com.vladmihalcea.phd.common.dto.UserDto;
 import org.jooq.DSLContext;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.LinkedHashSet;
+import java.util.List;
 
 import static com.vladmihalcea.phd.jooq.schema.Tables.*;
+import static org.jooq.impl.DSL.*;
+import static org.jooq.impl.DSL.field;
+import static org.jooq.impl.DSL.multiset;
+import static org.jooq.impl.DSL.name;
+import static org.jooq.impl.DSL.select;
 
 /**
  * @author Vlad Mihalcea
@@ -40,6 +51,83 @@ public class PostDaoImpl implements PostDao {
                     .setContent(r.get(POSTS_CONTENT))
                     .setVotes(r.get(POSTS_VOTES))
                     .setAuthor(author);
+            });
+    }
+
+    public PostDto findByIdUsingMultiset(Long postId) {
+        return ctx.select(
+                POSTS_ID,
+                POSTS_TITLE,
+                POSTS_CONTENT,
+                POSTS_VOTES,
+                USERS_ID.as("author_id"),
+                USERS_EMAIL,
+                USERS_FIRST_NAME,
+                USERS_LAST_NAME,
+                multiset(
+                    select(
+                        PC_ID,
+                        PC_CONTENT,
+                        PC_VOTES,
+                        PC_PARENT_ID,
+                        field(name("cu", "id"), Long.class).as("comment_author_id"),
+                        field(name("cu", "email"), String.class).as("comment_author_email"),
+                        field(name("cu", "first_name"), String.class).as("comment_author_first_name"),
+                        field(name("cu", "last_name"), String.class).as("comment_author_last_name")
+                    )
+                        .from(POST_COMMENTS)
+                        .join(USERS.as("cu")).on(
+                            field(name("cu", "id"), Long.class).eq(PC_AUTHOR_ID)
+                        )
+                        .where(PC_POST_ID.eq(POSTS_ID))
+                        .orderBy(PC_ID)
+                ).convertFrom(r -> r.map(cr -> {
+                    UserDto commentAuthor = new UserDto()
+                        .setId(cr.get("comment_author_id", Long.class))
+                        .setEmail(cr.get("comment_author_email", String.class))
+                        .setFirstName(cr.get("comment_author_first_name", String.class))
+                        .setLastName(cr.get("comment_author_last_name", String.class));
+                    return new PostCommentDto()
+                        .setId(cr.get(PC_ID))
+                        .setContent(cr.get(PC_CONTENT))
+                        .setVotes(cr.get(PC_VOTES))
+                        .setParentId(cr.get(PC_PARENT_ID))
+                        .setAuthor(commentAuthor);
+                })).as("comments"),
+                multiset(
+                    select(TAGS_ID, TAGS_NAME)
+                        .from(TAGS)
+                        .join(POST_TAG).on(PT_POST_ID.eq(TAGS_ID))
+                        .where(PT_TAG_ID.eq(POSTS_ID))
+                        .orderBy(TAGS_ID)
+                ).convertFrom(r -> r.map(tr -> new TagDto()
+                    .setId(tr.get(TAGS_ID))
+                    .setName(tr.get(TAGS_NAME))
+                )).as("tags")
+            )
+            .from(POSTS)
+            .join(USERS).on(USERS_ID.eq(POSTS_AUTHOR_ID))
+            .where(POSTS_ID.eq(postId))
+            .fetchOne(r -> {
+                UserDto author = new UserDto()
+                    .setId(r.get("author_id", Long.class))
+                    .setEmail(r.get(USERS_EMAIL))
+                    .setFirstName(r.get(USERS_FIRST_NAME))
+                    .setLastName(r.get(USERS_LAST_NAME));
+
+                List<PostCommentDto> replies = r.value9();
+                List<TagDto> tagList = r.value10();
+
+                LinkedHashSet<TagDto> tags = new LinkedHashSet<>(tagList);
+
+                return new PostDto()
+                    .setId(r.get(POSTS_ID))
+                    .setTitle(r.get(POSTS_TITLE))
+                    .setContent(r.get(POSTS_CONTENT))
+                    .setVotes(r.get(POSTS_VOTES))
+                    .setAuthor(author)
+                    .setReplies(replies)
+                    .setTags(tags);
             });
     }
 

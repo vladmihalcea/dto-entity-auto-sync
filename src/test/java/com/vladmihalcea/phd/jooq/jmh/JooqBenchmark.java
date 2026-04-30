@@ -4,10 +4,10 @@ import com.vladmihalcea.phd.common.dto.PostCommentDto;
 import com.vladmihalcea.phd.common.dto.PostDto;
 import com.vladmihalcea.phd.common.dto.TagDto;
 import com.vladmihalcea.phd.common.dto.UserContext;
-import com.vladmihalcea.phd.common.service.ForumService;
 import com.vladmihalcea.phd.common.util.JsonUtil;
 import com.vladmihalcea.phd.common.util.TimeSortedIdentifierGenerator;
 import com.vladmihalcea.phd.jooq.config.JooqConfiguration;
+import com.vladmihalcea.phd.jooq.service.JooqForumService;
 import org.openjdk.jmh.annotations.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
@@ -17,30 +17,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-
 /**
  * JMH benchmark that measures the execution time of the jOOQ
- * {@link ForumService} for the two main test scenarios defined in
- * {@code JooqDTOManualSyncTest}:
- * <ul>
- *   <li>{@link #benchmarkSingleOpDtoSync()} — mirrors {@code testMultiOpsDtoSync}</li>
- *   <li>{@link #benchmarkRemoveParentPostComment()} — mirrors {@code testRemoveParentPostComment}</li>
- * </ul>
- *
- * <p>The Spring context (jOOQ + TestContainers, no web server) is started once
- * per trial and the test dataset is rebuilt before every invocation so each
- * call always starts from the same known state.
- *
  * @author Vlad Mihalcea
  */
-@BenchmarkMode(Mode.SampleTime)
+@BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @State(Scope.Benchmark)
 public class JooqBenchmark {
 
     private ConfigurableApplicationContext context;
-    private ForumService forumService;
+    private JooqForumService forumService;
     private JooqBenchmarkSetup benchmarkSetup;
 
     private Long postId;
@@ -61,7 +48,7 @@ public class JooqBenchmark {
         app.setDefaultProperties(Map.of("spring.main.web-application-type", "none"));
         context = app.run();
 
-        forumService = context.getBean(ForumService.class);
+        forumService = context.getBean(JooqForumService.class);
         benchmarkSetup = context.getBean(JooqBenchmarkSetup.class);
     }
 
@@ -93,7 +80,12 @@ public class JooqBenchmark {
     }
 
     @Benchmark
-    public void benchmarkMultiOpsDtoSync() {
+    public void benchmarkLoadDtoUsingMultiset() {
+        forumService.loadPostDTO(postId);
+    }
+
+    @Benchmark
+    public void benchmarkMultiOpsSync() {
         postDTO.setTitle("Multi-Ops DTO Sync Pattern").upvote();
         forumService.updatePost(postDTO);
 
@@ -130,16 +122,6 @@ public class JooqBenchmark {
     }
 
     @Benchmark
-    public void benchmarkRemoveParentPostComment() {
-        List<PostCommentDto> replies = postDTO.getReplies();
-        PostCommentDto parent = replies.stream()
-            .filter(c -> c.getParentId() == null)
-            .findFirst()
-            .orElseThrow();
-        forumService.removePostComment(parent.getId());
-    }
-
-    @Benchmark
     public void benchmarkDiffMergeSync() {
         modifiedPostDTO.setTitle("Diff Merge DTO Sync Pattern").upvote();
 
@@ -164,23 +146,6 @@ public class JooqBenchmark {
                 .setId(TimeSortedIdentifierGenerator.generate())
                 .setName("Jakarta Persistence")
         );
-
-        forumService.diffMerge(postDTO, modifiedPostDTO);
-
-        PostDto updatedPostDTO = forumService.loadPostDTO(postId);
-        assertEquals(modifiedPostDTO, updatedPostDTO);
-    }
-
-    @Benchmark
-    public void benchmarkDiffMergeRemoveParentPostComment() {
-        List<PostCommentDto> replies = modifiedPostDTO.getReplies();
-        assertEquals(2, replies.size());
-
-        PostCommentDto parent = replies.stream()
-            .filter(c -> c.getParentId() == null)
-            .findFirst()
-            .orElseThrow();
-        replies.remove(parent);
 
         forumService.diffMerge(postDTO, modifiedPostDTO);
     }

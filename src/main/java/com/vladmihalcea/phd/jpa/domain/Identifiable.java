@@ -1,4 +1,4 @@
-package com.vladmihalcea.phd.jpa.dto2entity.domain;
+package com.vladmihalcea.phd.jpa.domain;
 
 import com.vladmihalcea.phd.common.util.TimeSortedIdentifierGenerator;
 import jakarta.persistence.Id;

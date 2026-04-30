@@ -1,7 +1,7 @@
-package com.vladmihalcea.phd.jpa.dto2entity.dto.mapper;
+package com.vladmihalcea.phd.jpa.dto.mapper;
 
 import com.vladmihalcea.phd.common.dto.PostCommentDto;
-import com.vladmihalcea.phd.jpa.dto2entity.domain.PostComment;
+import com.vladmihalcea.phd.jpa.domain.PostComment;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.mapstruct.Mapper;

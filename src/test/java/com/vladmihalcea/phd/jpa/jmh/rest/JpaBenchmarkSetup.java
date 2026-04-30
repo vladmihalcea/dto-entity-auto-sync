@@ -1,20 +1,19 @@
 package com.vladmihalcea.phd.jpa.jmh.rest;
 
-import com.vladmihalcea.phd.common.dto.UserContext;
-import com.vladmihalcea.phd.jpa.dto2entity.domain.Post;
-import com.vladmihalcea.phd.jpa.dto2entity.domain.PostComment;
-import com.vladmihalcea.phd.jpa.dto2entity.domain.Tag;
-import com.vladmihalcea.phd.jpa.dto2entity.domain.User;
-import com.vladmihalcea.phd.jpa.dto2entity.dto.mapper.UserMapper;
+import com.vladmihalcea.phd.common.dao.PostDao;
+import com.vladmihalcea.phd.common.dao.UserDao;
+import com.vladmihalcea.phd.common.dto.*;
+import com.vladmihalcea.phd.common.service.ForumService;
+import com.vladmihalcea.phd.common.util.TimeSortedIdentifierGenerator;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaDelete;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.orm.jpa.EntityManagerFactoryInfo;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.support.TransactionTemplate;
 
-import java.util.concurrent.atomic.AtomicLong;
+import java.util.LinkedHashSet;
+import java.util.List;
 
 /**
  * Spring-managed helper used by JMH benchmarks to create and clean up the
@@ -29,117 +28,104 @@ import java.util.concurrent.atomic.AtomicLong;
 public class JpaBenchmarkSetup {
 
     @Autowired
-    private EntityManagerFactory emf;
+    private PostDao postDAO;
 
     @Autowired
-    private UserMapper userMapper;
+    private ForumService forumService;
 
-    /**
-     * Monotonic counter used to assign entity IDs so that rapid consecutive
-     * invocations never hit the TSID same-millisecond collision window.
-     */
-    private static final AtomicLong ID_COUNTER =
-        new AtomicLong(System.currentTimeMillis() * 1_000);
+    @Autowired
+    private UserDao userDAO;
 
-    private static long nextId() {
-        return ID_COUNTER.getAndIncrement();
-    }
+    @Autowired
+    private TransactionTemplate transactionTemplate;
 
-    /**
-     * Returns the native (non-Spring-proxied) {@link EntityManagerFactory} so
-     * that {@code createEntityManager()} gives a truly fresh Hibernate session
-     * with an empty first-level cache on every invocation.
-     */
-    private EntityManagerFactory nativeEmf() {
-        return ((EntityManagerFactoryInfo) emf).getNativeEntityManagerFactory();
-    }
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     /**
      * Creates the standard forum fixture (3 users, 1 post, 2 comments, 4 tags)
      * and stores the current user in {@link UserContext}.
      *
-     * @return the id of the persisted {@link Post}
+     * @return the id of the persisted post
      */
     public Long createTestData() {
-        EntityManager em = nativeEmf().createEntityManager();
-        try {
-            em.getTransaction().begin();
-
-            User vlad = new User().setId(nextId())
+        return transactionTemplate.<Long>execute(transactionStatus -> {
+            UserDto vlad = new UserDto()
+                .setId(TimeSortedIdentifierGenerator.generate())
                 .setEmail("vlad@acme.com")
                 .setFirstName("Vlad")
                 .setLastName("Mihalcea");
-            User john = new User().setId(nextId())
+            UserDto john = new UserDto()
+                .setId(TimeSortedIdentifierGenerator.generate())
                 .setEmail("john@acme.com")
                 .setFirstName("John")
                 .setLastName("Doe");
-            User jane = new User().setId(nextId())
+            UserDto jane = new UserDto()
+                .setId(TimeSortedIdentifierGenerator.generate())
                 .setEmail("jane@acme.com")
                 .setFirstName("Jane")
                 .setLastName("Doe");
-            em.persist(vlad);
-            em.persist(john);
-            em.persist(jane);
 
-            UserContext.setCurrentUser(userMapper.toDTO(vlad));
+            transactionTemplate.execute(status -> {
+                userDAO.insert(vlad);
+                userDAO.insert(john);
+                userDAO.insert(jane);
+                return null;
+            });
 
-            PostComment parentComment = new PostComment().setId(nextId())
-                .setContent("Interesting topic, but I would like to see more examples")
-                .setAuthor(john);
+            UserContext.setCurrentUser(vlad);
 
-            PostComment childComment = new PostComment().setId(nextId())
-                .setContent("Can you apply this pattern to other platforms?")
-                .setAuthor(jane)
-                .setParent(parentComment);
-
-            Post post = new Post().setId(nextId())
+            PostDto post = new PostDto()
+                .setId(TimeSortedIdentifierGenerator.generate())
                 .setTitle("DTO to Entity Auto-Sync")
                 .setContent("""
-                        Spring and Hibernate can help you do the aut-sync
-                        between DTOs and JPA entities
-                        """)
+                    Spring and Hibernate can help you do the aut-sync
+                    between DTOs and JPA entities
+                    """)
                 .setAuthor(vlad)
-                .addComment(parentComment)
-                .addComment(childComment)
-                .addTag(new Tag().setId(nextId()).setName("Spring"))
-                .addTag(new Tag().setId(nextId()).setName("JPA"))
-                .addTag(new Tag().setId(nextId()).setName("Hibernate"))
-                .addTag(new Tag().setId(nextId()).setName("MapStruct"));
+                .setReplies(List.of())
+                .setTags(new LinkedHashSet<>());
 
-            em.persist(post);
-            em.getTransaction().commit();
+            postDAO.insert(post);
+            Long postId = post.getId();
+
+            PostCommentDto johnReply = new PostCommentDto()
+                .setId(TimeSortedIdentifierGenerator.generate())
+                .setContent("Interesting topic, but I would like to see more examples")
+                .setAuthor(john);
+            PostCommentDto janeReply = new PostCommentDto()
+                .setId(TimeSortedIdentifierGenerator.generate())
+                .setContent("Can you apply this pattern to other platforms?")
+                .setAuthor(jane)
+                .setParentId(johnReply.getId());
+
+            forumService.createPostComment(postId, johnReply);
+            forumService.createPostComment(postId, janeReply);
+
+            TagDto spring = new TagDto().setId(TimeSortedIdentifierGenerator.generate()).setName("Spring");
+            TagDto jpa = new TagDto().setId(TimeSortedIdentifierGenerator.generate()).setName("JPA");
+            TagDto hibernate = new TagDto().setId(TimeSortedIdentifierGenerator.generate()).setName("Hibernate");
+            TagDto mapstruct = new TagDto().setId(TimeSortedIdentifierGenerator.generate()).setName("MapStruct");
+
+            forumService.createTag(postId, spring);
+            forumService.createTag(postId, jpa);
+            forumService.createTag(postId, hibernate);
+            forumService.createTag(postId, mapstruct);
+
             return post.getId();
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            throw e;
-        } finally {
-            em.close();
-        }
+        });
     }
 
-    /** Deletes all entities in the correct order to respect FK constraints. */
-    @SuppressWarnings({"rawtypes", "unchecked"})
+    /** Deletes all rows in dependency order inside a single committed transaction. */
     public void deleteAll() {
-        EntityManager em = nativeEmf().createEntityManager();
-        try {
-            em.getTransaction().begin();
-            CriteriaBuilder cb = em.getCriteriaBuilder();
-            for (Class entity : new Class[]{ PostComment.class, Post.class, Tag.class, User.class }) {
-                CriteriaDelete delete = cb.createCriteriaDelete(entity);
-                delete.from(entity);
-                em.createQuery(delete).executeUpdate();
-            }
-            em.getTransaction().commit();
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            throw e;
-        } finally {
-            em.close();
-        }
+        transactionTemplate.execute(status -> {
+            jdbcTemplate.execute("DELETE FROM post_tag");
+            jdbcTemplate.execute("DELETE FROM post_comments");
+            jdbcTemplate.execute("DELETE FROM posts");
+            jdbcTemplate.execute("DELETE FROM tags");
+            jdbcTemplate.execute("DELETE FROM users");
+            return null;
+        });
     }
 }
 
