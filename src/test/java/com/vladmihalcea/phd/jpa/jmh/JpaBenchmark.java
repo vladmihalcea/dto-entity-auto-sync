@@ -93,6 +93,11 @@ public class JpaBenchmark {
     }
 
     @Benchmark
+    public void benchmarkLoadDtoUsingMultiset() {
+        forumService.loadPostDTOUsingMultiset(postId);
+    }
+
+    @Benchmark
     public void benchmarkDiffMergeSync() {
         postDTO.setTitle("DTO to Entity Auto-Sync Pattern").upvote();
 

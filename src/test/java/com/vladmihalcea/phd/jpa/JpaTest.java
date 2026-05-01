@@ -144,6 +144,15 @@ public class JpaTest extends AbstractSpringTest {
     }
 
     @Test
+    public void testLoadPostDTOUsingMultiset() {
+        LOGGER.info("Load PostDTO using loadPostEntityWithAllAssociations and MULTISET");
+        PostDto defaultPostDTO = forumService.loadPostDTO(postId);
+        PostDto multiSetPostDTO = forumService.loadPostDTOUsingMultiset(postId);
+
+        assertEquals(defaultPostDTO, multiSetPostDTO);
+    }
+
+    @Test
     public void testRemoveParentPostComment() {
         LOGGER.info("Remove a parent PostCommentDTO and see whether the children are also removed");
         PostDto postDTO = forumService.loadPostDTO(postId);

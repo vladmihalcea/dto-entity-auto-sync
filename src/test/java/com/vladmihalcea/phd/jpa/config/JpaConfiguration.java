@@ -1,8 +1,18 @@
 package com.vladmihalcea.phd.jpa.config;
 
+import com.blazebit.persistence.Criteria;
+import com.blazebit.persistence.CriteriaBuilderFactory;
+import com.blazebit.persistence.spi.CriteriaBuilderConfiguration;
+import com.blazebit.persistence.view.EntityViewManager;
+import com.blazebit.persistence.view.EntityViews;
+import com.blazebit.persistence.view.spi.EntityViewConfiguration;
 import com.vladmihalcea.phd.common.util.database.DataSourceProvider;
 import com.vladmihalcea.phd.common.util.database.Database;
 import com.vladmihalcea.phd.jpa.domain.Post;
+import com.vladmihalcea.phd.jpa.view.PostCommentView;
+import com.vladmihalcea.phd.jpa.view.PostWithCommentsAndTagsView;
+import com.vladmihalcea.phd.jpa.view.TagView;
+import com.vladmihalcea.phd.jpa.view.UserView;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import jakarta.persistence.EntityManagerFactory;
@@ -115,6 +125,29 @@ public class JpaConfiguration {
     protected void additionalProperties(Properties properties) {
         properties.setProperty(AvailableSettings.STATEMENT_BATCH_SIZE, "10");
         properties.setProperty(AvailableSettings.ORDER_INSERTS, "true");
+    }
+
+    @Bean
+    public CriteriaBuilderFactory criteriaBuilderFactory(EntityManagerFactory emf) {
+        CriteriaBuilderConfiguration config = Criteria.getDefault();
+        return config.createCriteriaBuilderFactory(emf);
+    }
+
+    @Bean
+    public EntityViewConfiguration entityViewConfiguration() {
+        EntityViewConfiguration cfg = EntityViews.createDefaultConfiguration();
+        cfg.addEntityView(UserView.class);
+        cfg.addEntityView(TagView.class);
+        cfg.addEntityView(PostCommentView.class);
+        cfg.addEntityView(PostWithCommentsAndTagsView.class);
+        return cfg;
+    }
+
+    @Bean
+    public EntityViewManager entityViewManager(
+            CriteriaBuilderFactory cbf,
+            EntityViewConfiguration entityViewConfiguration) {
+        return entityViewConfiguration.createEntityViewManager(cbf);
     }
 
     protected String[] packagesToScan() {
