@@ -1,7 +1,6 @@
 package com.vladmihalcea.phd.jooq;
 
 import com.vladmihalcea.phd.app.ForumApplication;
-import com.vladmihalcea.phd.common.config.SpringRestConfiguration;
 import com.vladmihalcea.phd.common.config.SpringWebConfiguration;
 import com.vladmihalcea.phd.common.controller.RestCaller;
 import com.vladmihalcea.phd.common.dto.*;
@@ -20,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.web.client.RestTemplate;
+import tools.jackson.databind.JsonNode;
 
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -32,7 +32,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest(
     classes = {
         JooqConfiguration.class,
-        SpringRestConfiguration.class,
+        SpringWebConfiguration.class,
         ForumApplication.class
     },
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
@@ -139,6 +139,15 @@ public class JooqRestTest extends AbstractSpringTest {
             forumService.createTag(postId, mapstruct);
             return post.getId();
         });
+    }
+
+    @Test
+    public void testLoadPostJsonUsingMultiset() {
+        LOGGER.info("Load a Post as a JSON document using jOOQ's MULTISET");
+        JsonNode postJsonNode = restCaller.loadPostJsonNode(postId);
+        String postJsonString = restCaller.loadPostJsonString(postId);
+        JsonNode postJsonStringToNode = JsonUtil.JSON_MAPPER.readTree(postJsonString);
+        assertEquals(postJsonNode, postJsonStringToNode);
     }
 
     @Test

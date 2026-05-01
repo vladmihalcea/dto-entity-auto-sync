@@ -2,6 +2,7 @@ package com.vladmihalcea.phd.jooq.jmh;
 
 import com.vladmihalcea.phd.app.ForumApplication;
 import com.vladmihalcea.phd.common.config.SpringRestConfiguration;
+import com.vladmihalcea.phd.common.config.SpringWebConfiguration;
 import com.vladmihalcea.phd.common.controller.RestCaller;
 import com.vladmihalcea.phd.common.dto.PostCommentDto;
 import com.vladmihalcea.phd.common.dto.PostDto;
@@ -50,7 +51,7 @@ public class JooqBenchmark {
     public void startContext() {
         SpringApplication app = new SpringApplication(
             JooqConfiguration.class,
-            SpringRestConfiguration.class,
+            SpringWebConfiguration.class,
             ForumApplication.class
         );
         app.setWebApplicationType(WebApplicationType.SERVLET);
@@ -98,6 +99,26 @@ public class JooqBenchmark {
     @Benchmark
     public void benchmarkLoadDtoUsingMultiset() {
         forumService.loadPostDTO(postId);
+    }
+
+    @Benchmark
+    public void benchmarkLoadJsonNodeUsingMultiset() {
+        forumService.loadPostJsonNodeUsingMultiset(postId);
+    }
+
+    @Benchmark
+    public void benchmarkLoadDtoUsingRest() {
+        restCaller.loadPostDTO(postId);
+    }
+
+    @Benchmark
+    public void benchmarkLoadJsonNodeUsingMultisetAndRest() {
+        restCaller.loadPostJsonNode(postId);
+    }
+
+    @Benchmark
+    public void benchmarkLoadJsonStringUsingMultisetAndRest() {
+        restCaller.loadPostJsonString(postId);
     }
 
     @Benchmark

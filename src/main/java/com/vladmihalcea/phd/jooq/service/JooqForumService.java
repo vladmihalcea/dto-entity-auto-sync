@@ -9,6 +9,7 @@ import com.vladmihalcea.phd.jooq.dao.PostDaoImpl;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tools.jackson.databind.JsonNode;
 
 /**
  * @author Vlad Mihalcea
@@ -28,6 +29,16 @@ public class JooqForumService extends ForumService {
     @Transactional(readOnly = true)
     public PostDto loadPostDTOUsingMultiset(Long postId) {
         return postDAO.findByIdUsingMultiset(postId);
+    }
+
+    @Transactional(readOnly = true)
+    public JsonNode loadPostJsonNodeUsingMultiset(Long postId) {
+        return postDAO.findByIdAsJsonNodeUsingMultiset(postId);
+    }
+
+    @Transactional(readOnly = true)
+    public String loadPostJsonStringUsingMultiset(Long postId) {
+        return postDAO.findByIdAsJsonStringUsingMultiset(postId);
     }
 }
 

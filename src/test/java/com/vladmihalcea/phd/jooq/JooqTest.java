@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import tools.jackson.databind.JsonNode;
 
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -128,8 +129,14 @@ public class JooqTest extends AbstractSpringTest {
         LOGGER.info("Load PostDTO using findById and MULTISET");
         PostDto defaultPostDTO = forumService.loadPostDTO(postId);
         PostDto multiSetPostDTO = forumService.loadPostDTOUsingMultiset(postId);
+        JsonNode multiSetPostJsonNode = forumService.loadPostJsonNodeUsingMultiset(postId);
+        PostDto multiSetJsonNodeToPostDTO = JsonUtil.JSON_MAPPER.convertValue(multiSetPostJsonNode, PostDto.class);
+        String multiSetPostJsonString = forumService.loadPostJsonStringUsingMultiset(postId);
+        PostDto multiSetJsonStringToPostDTO = JsonUtil.JSON_MAPPER.readValue(multiSetPostJsonString, PostDto.class);
 
         assertEquals(defaultPostDTO, multiSetPostDTO);
+        assertEquals(multiSetPostDTO, multiSetJsonNodeToPostDTO);
+        assertEquals(multiSetJsonNodeToPostDTO, multiSetJsonStringToPostDTO);
     }
 
     @Test

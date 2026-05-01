@@ -4,6 +4,7 @@ import com.vladmihalcea.phd.common.dto.PostCommentDto;
 import com.vladmihalcea.phd.common.dto.PostDto;
 import com.vladmihalcea.phd.common.dto.TagDto;
 import org.springframework.web.client.RestTemplate;
+import tools.jackson.databind.JsonNode;
 
 /**
  * @author Vlad Mihalcea
@@ -26,6 +27,22 @@ public class RestCaller {
         return restTemplate.getForObject(
             baseUrl() + "/post?postId={postId}",
             PostDto.class,
+            postId
+        );
+    }
+
+    public JsonNode loadPostJsonNode(Long postId) {
+        return restTemplate.getForObject(
+            baseUrl() + "/postJsonNode?postId={postId}",
+            JsonNode.class,
+            postId
+        );
+    }
+
+    public String loadPostJsonString(Long postId) {
+        return restTemplate.getForObject(
+            baseUrl() + "/postJsonString?postId={postId}",
+            String.class,
             postId
         );
     }
