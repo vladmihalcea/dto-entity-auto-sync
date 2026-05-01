@@ -102,6 +102,26 @@ public class JdbcBenchmark {
     }
 
     @Benchmark
+    public void benchmarkLoadJsonNodeUsingMultiset() {
+        forumService.loadPostJsonNodeUsingMultiset(postId);
+    }
+
+    @Benchmark
+    public void benchmarkLoadDtoUsingRest() {
+        restCaller.loadPostDTO(postId);
+    }
+
+    @Benchmark
+    public void benchmarkLoadJsonNodeUsingMultisetAndRest() {
+        restCaller.loadPostJsonNode(postId);
+    }
+
+    @Benchmark
+    public void benchmarkLoadJsonStringUsingMultisetAndRest() {
+        restCaller.loadPostJsonString(postId);
+    }
+
+    @Benchmark
     public void benchmarkMultiOpsSync() {
         postDTO.setTitle("Multi-Ops DTO Sync Pattern").upvote();
         forumService.updatePost(postDTO);

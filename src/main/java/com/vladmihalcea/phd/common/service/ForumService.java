@@ -9,6 +9,7 @@ import com.vladmihalcea.phd.common.dto.PostDto;
 import com.vladmihalcea.phd.common.dto.TagDto;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import tools.jackson.databind.JsonNode;
 
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -39,6 +40,21 @@ public class ForumService {
         post.setReplies(replies);
         post.setTags(new LinkedHashSet<>(tagDAO.findByPostId(postId)));
         return post;
+    }
+
+    @Transactional(readOnly = true)
+    public PostDto loadPostDTOUsingMultiset(Long postId) {
+        return postDAO.findByIdUsingMultiset(postId);
+    }
+
+    @Transactional(readOnly = true)
+    public JsonNode loadPostJsonNodeUsingMultiset(Long postId) {
+        return postDAO.findByIdAsJsonNodeUsingMultiset(postId);
+    }
+
+    @Transactional(readOnly = true)
+    public String loadPostJsonStringUsingMultiset(Long postId) {
+        return postDAO.findByIdAsJsonStringUsingMultiset(postId);
     }
 
     public void updatePost(PostDto post) {

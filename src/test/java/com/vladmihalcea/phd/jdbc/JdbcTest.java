@@ -17,6 +17,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.support.TransactionTemplate;
+import tools.jackson.databind.JsonNode;
 
 import java.io.IOException;
 import java.util.LinkedHashSet;
@@ -126,6 +127,21 @@ public class JdbcTest extends AbstractSpringTest {
             forumService.createTag(postId, mapstruct);
             return post.getId();
         });
+    }
+
+    @Test
+    public void testLoadDtoUsingMultiset() {
+        LOGGER.info("Load PostDTO using findById and MULTISET");
+        PostDto defaultPostDTO = forumService.loadPostDTO(postId);
+        PostDto multiSetPostDTO = forumService.loadPostDTOUsingMultiset(postId);
+        JsonNode multiSetPostJsonNode = forumService.loadPostJsonNodeUsingMultiset(postId);
+        PostDto multiSetJsonNodeToPostDTO = JsonUtil.JSON_MAPPER.convertValue(multiSetPostJsonNode, PostDto.class);
+        String multiSetPostJsonString = forumService.loadPostJsonStringUsingMultiset(postId);
+        PostDto multiSetJsonStringToPostDTO = JsonUtil.JSON_MAPPER.readValue(multiSetPostJsonString, PostDto.class);
+
+        assertEquals(defaultPostDTO, multiSetPostDTO);
+        assertEquals(multiSetPostDTO, multiSetJsonNodeToPostDTO);
+        assertEquals(multiSetJsonNodeToPostDTO, multiSetJsonStringToPostDTO);
     }
 
     @Test

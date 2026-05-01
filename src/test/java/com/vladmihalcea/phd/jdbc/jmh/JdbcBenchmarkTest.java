@@ -12,4 +12,3 @@ public class JdbcBenchmarkTest extends AbstractBenchmarkTest {
         return JdbcBenchmark.class;
     }
 }
-

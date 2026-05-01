@@ -8,10 +8,10 @@ import com.vladmihalcea.phd.common.dto.PostCommentDto;
 import com.vladmihalcea.phd.common.dto.PostDto;
 import com.vladmihalcea.phd.common.dto.TagDto;
 import com.vladmihalcea.phd.common.dto.UserContext;
+import com.vladmihalcea.phd.common.service.ForumService;
 import com.vladmihalcea.phd.common.util.JsonUtil;
 import com.vladmihalcea.phd.common.util.TimeSortedIdentifierGenerator;
 import com.vladmihalcea.phd.jooq.config.JooqConfiguration;
-import com.vladmihalcea.phd.jooq.service.JooqForumService;
 import org.openjdk.jmh.annotations.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
@@ -33,7 +33,7 @@ import java.util.concurrent.TimeUnit;
 public class JooqBenchmark {
 
     private ConfigurableApplicationContext context;
-    private JooqForumService forumService;
+    private ForumService forumService;
     private JooqBenchmarkSetup benchmarkSetup;
 
     private Long postId;
@@ -51,14 +51,14 @@ public class JooqBenchmark {
     public void startContext() {
         SpringApplication app = new SpringApplication(
             JooqConfiguration.class,
-            SpringWebConfiguration.class,
+            SpringRestConfiguration.class,
             ForumApplication.class
         );
         app.setWebApplicationType(WebApplicationType.SERVLET);
         app.setDefaultProperties(Map.of("server.port", "0"));
         context = app.run();
 
-        forumService = context.getBean(JooqForumService.class);
+        forumService = context.getBean(ForumService.class);
         benchmarkSetup = context.getBean(JooqBenchmarkSetup.class);
 
         int port = context.getBean(Environment.class)

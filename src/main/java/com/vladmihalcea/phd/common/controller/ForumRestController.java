@@ -6,6 +6,7 @@ import com.vladmihalcea.phd.common.dto.TagDto;
 import com.vladmihalcea.phd.common.service.ForumService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import tools.jackson.databind.JsonNode;
 
 /**
  *
@@ -21,6 +22,18 @@ public class ForumRestController {
     public PostDto findById(
         @RequestParam("postId") Long postId) {
         return forumService.loadPostDTO(postId);
+    }
+
+    @GetMapping("/postJsonNode")
+    public JsonNode findJsonNodeByIdUsingMultiset(
+        @RequestParam("postId") Long postId) {
+        return forumService.loadPostJsonNodeUsingMultiset(postId);
+    }
+
+    @GetMapping("/postJsonString")
+    public String findJsonStringByIdUsingMultiset(
+        @RequestParam("postId") Long postId) {
+        return forumService.loadPostJsonStringUsingMultiset(postId);
     }
 
     @PutMapping("/post")

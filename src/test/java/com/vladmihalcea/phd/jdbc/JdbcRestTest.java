@@ -20,6 +20,7 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.client.RestTemplate;
+import tools.jackson.databind.JsonNode;
 
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -142,6 +143,15 @@ public class JdbcRestTest extends AbstractSpringTest {
             forumService.createTag(postId, mapstruct);
             return post.getId();
         });
+    }
+
+    @Test
+    public void testLoadPostJsonUsingMultiset() {
+        LOGGER.info("Load a Post as a JSON document using jOOQ's MULTISET");
+        JsonNode postJsonNode = restCaller.loadPostJsonNode(postId);
+        String postJsonString = restCaller.loadPostJsonString(postId);
+        JsonNode postJsonStringToNode = JsonUtil.JSON_MAPPER.readTree(postJsonString);
+        assertEquals(postJsonNode, postJsonStringToNode);
     }
 
     @Test

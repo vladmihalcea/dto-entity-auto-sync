@@ -1,13 +1,13 @@
 package com.vladmihalcea.phd.jooq;
 
 import com.vladmihalcea.phd.common.dto.*;
+import com.vladmihalcea.phd.common.service.ForumService;
 import com.vladmihalcea.phd.common.util.AbstractSpringTest;
 import com.vladmihalcea.phd.common.util.JsonUtil;
 import com.vladmihalcea.phd.common.util.TimeSortedIdentifierGenerator;
 import com.vladmihalcea.phd.jooq.config.JooqConfiguration;
 import com.vladmihalcea.phd.jooq.dao.PostDaoImpl;
 import com.vladmihalcea.phd.jooq.dao.UserDaoImpl;
-import com.vladmihalcea.phd.jooq.service.JooqForumService;
 import org.jooq.DSLContext;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -34,7 +34,7 @@ public class JooqTest extends AbstractSpringTest {
     protected final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    private JooqForumService forumService;
+    private ForumService forumService;
 
     @Autowired
     private PostDaoImpl postDAO;
