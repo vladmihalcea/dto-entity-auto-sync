@@ -12,7 +12,6 @@ import org.jooq.JSONB;
 import org.springframework.stereotype.Repository;
 import tools.jackson.databind.JsonNode;
 
-import java.io.IOException;
 import java.util.LinkedHashSet;
 import java.util.List;
 
@@ -101,7 +100,7 @@ public class PostDaoImpl implements PostDao {
                 multiset(
                     select(TAGS_ID, TAGS_NAME)
                         .from(TAGS)
-                        .join(POST_TAG).on(PT_POST_ID.eq(TAGS_ID))
+                        .join(POST_TAGS).on(PT_POST_ID.eq(TAGS_ID))
                         .where(PT_TAG_ID.eq(POSTS_ID))
                         .orderBy(TAGS_ID)
                 ).convertFrom(r -> r.map(tr -> new TagDto()
@@ -178,7 +177,7 @@ public class PostDaoImpl implements PostDao {
                 field("'[]'::jsonb", JSONB.class)
             ))
                 .from(TAGS)
-                .join(POST_TAG).on(PT_POST_ID.eq(TAGS_ID))
+                .join(POST_TAGS).on(PT_POST_ID.eq(TAGS_ID))
                 .where(PT_TAG_ID.eq(POSTS_ID))
         );
 
@@ -235,14 +234,14 @@ public class PostDaoImpl implements PostDao {
      * tag_id column references posts.id.
      */
     public void linkTag(Long postId, Long tagId) {
-        ctx.insertInto(POST_TAG)
+        ctx.insertInto(POST_TAGS)
             .set(PT_POST_ID, tagId)
             .set(PT_TAG_ID, postId)
             .execute();
     }
 
     public void unlinkTag(Long postId, Long tagId) {
-        ctx.deleteFrom(POST_TAG)
+        ctx.deleteFrom(POST_TAGS)
             .where(PT_POST_ID.eq(tagId).and(PT_TAG_ID.eq(postId)))
             .execute();
     }

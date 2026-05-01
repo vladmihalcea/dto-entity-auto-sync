@@ -54,7 +54,7 @@ public class JdbcTest extends AbstractSpringTest {
 
     @Override
     protected void deleteAll() {
-        jdbcTemplate.execute("DELETE FROM post_tag");
+        jdbcTemplate.execute("DELETE FROM post_tags");
         jdbcTemplate.execute("DELETE FROM post_comments");
         jdbcTemplate.execute("DELETE FROM posts");
         jdbcTemplate.execute("DELETE FROM tags");

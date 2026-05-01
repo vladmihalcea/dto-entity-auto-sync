@@ -21,6 +21,12 @@ public class ForumRestController {
         return forumService.loadPostDTO(postId);
     }
 
+    @GetMapping("/postMultiset")
+    public PostDto findByIdUsingMultiset(
+        @RequestParam("postId") Long postId) {
+        return forumService.loadPostDTOUsingMultiset(postId);
+    }
+
     @PutMapping("/post")
     public void updatePost(@RequestBody PostDto postDTO) {
         forumService.updatePost(postDTO);

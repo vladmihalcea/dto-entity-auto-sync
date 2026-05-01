@@ -70,8 +70,8 @@ public class PostDaoImpl implements PostDao {
         "   '[]'::jsonb " +
         "  ) " +
         "  from \"tags\" " +
-        "        join \"post_tag\" on \"post_tag\".\"post_id\" = \"tags\".\"id\" " +
-        "        where \"post_tag\".\"tag_id\" = \"posts\".\"id\" " +
+        "        join \"post_tags\" on \"post_tags\".\"post_id\" = \"tags\".\"id\" " +
+        "        where \"post_tags\".\"tag_id\" = \"posts\".\"id\" " +
         " ) " +
         ") " +
         "from \"posts\" " +
@@ -88,10 +88,10 @@ public class PostDaoImpl implements PostDao {
         "DELETE FROM posts WHERE id = ?";
 
     private static final String LINK_TAG =
-        "INSERT INTO post_tag (post_id, tag_id) VALUES (?, ?)";
+        "INSERT INTO post_tags (post_id, tag_id) VALUES (?, ?)";
 
     private static final String UNLINK_TAG =
-        "DELETE FROM post_tag WHERE post_id = ? AND tag_id = ?";
+        "DELETE FROM post_tags WHERE post_id = ? AND tag_id = ?";
 
     private final JdbcTemplate jdbcTemplate;
 

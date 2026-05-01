@@ -69,6 +69,7 @@ public class JpaConfiguration {
     public DataSource poolingDataSource() {
         HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setAutoCommit(false);
+        hikariConfig.setMinimumIdle(hikariConfig.getMaximumPoolSize());
         hikariConfig.setDataSource(dataSourceProvider().dataSource());
         return new HikariDataSource(hikariConfig);
     }

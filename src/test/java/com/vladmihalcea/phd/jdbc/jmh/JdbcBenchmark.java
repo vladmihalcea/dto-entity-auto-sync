@@ -2,13 +2,13 @@ package com.vladmihalcea.phd.jdbc.jmh;
 
 import com.vladmihalcea.phd.app.ForumApplication;
 import com.vladmihalcea.phd.common.config.SpringRestConfiguration;
-import com.vladmihalcea.phd.common.config.SpringWebConfiguration;
 import com.vladmihalcea.phd.common.controller.RestCaller;
 import com.vladmihalcea.phd.common.dto.PostCommentDto;
 import com.vladmihalcea.phd.common.dto.PostDto;
 import com.vladmihalcea.phd.common.dto.TagDto;
 import com.vladmihalcea.phd.common.dto.UserContext;
 import com.vladmihalcea.phd.common.service.ForumService;
+import com.vladmihalcea.phd.common.config.BenchmarkTestData;
 import com.vladmihalcea.phd.common.util.JsonUtil;
 import com.vladmihalcea.phd.common.util.TimeSortedIdentifierGenerator;
 import com.vladmihalcea.phd.jdbc.config.JdbcConfiguration;
@@ -22,6 +22,7 @@ import org.springframework.web.client.RestTemplate;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * JMH benchmark that measures the execution time of the JDBC
@@ -32,9 +33,11 @@ import java.util.concurrent.TimeUnit;
 @State(Scope.Benchmark)
 public class JdbcBenchmark {
 
+    private boolean dataSetChanged = true;
+
     private ConfigurableApplicationContext context;
     private ForumService forumService;
-    private JdbcBenchmarkSetup benchmarkSetup;
+    private BenchmarkTestData benchmarkSetup;
 
     private Long postId;
 
@@ -42,6 +45,8 @@ public class JdbcBenchmark {
     private PostDto modifiedPostDTO;
 
     private RestCaller restCaller;
+    private AtomicLong postIdGenerator = new AtomicLong();
+    private int POST_COUNT = 20_000;
 
     // -------------------------------------------------------------------------
     // Lifecycle
@@ -51,6 +56,7 @@ public class JdbcBenchmark {
     public void startContext() {
         SpringApplication app = new SpringApplication(
             JdbcConfiguration.class,
+            BenchmarkTestData.class,
             SpringRestConfiguration.class,
             ForumApplication.class
         );
@@ -59,7 +65,7 @@ public class JdbcBenchmark {
         context = app.run();
 
         forumService = context.getBean(ForumService.class);
-        benchmarkSetup = context.getBean(JdbcBenchmarkSetup.class);
+        benchmarkSetup = context.getBean(BenchmarkTestData.class);
 
         int port = context.getBean(Environment.class)
             .getRequiredProperty("local.server.port", Integer.class);
@@ -79,12 +85,27 @@ public class JdbcBenchmark {
     /**
      * Recreates the standard fixture before every benchmark invocation.
      */
+    @Setup(Level.Iteration)
+    public void onEachIteration() {
+        resetData();
+    }
+
     @Setup(Level.Invocation)
-    public void resetData() {
-        benchmarkSetup.deleteAll();
-        postId = benchmarkSetup.createTestData();
+    public void onEachInvocation() {
+        postId = (postIdGenerator.getAndIncrement() % POST_COUNT) + 1;
         postDTO = forumService.loadPostDTO(postId);
+        UserContext.setCurrentUser(postDTO.getAuthor());
         modifiedPostDTO = JsonUtil.clone(postDTO);
+    }
+
+    private void resetData() {
+        if (dataSetChanged) {
+            benchmarkSetup.deleteAll();
+
+            benchmarkSetup.createTestData();
+            dataSetChanged = false;
+            postIdGenerator.set(0);
+        }
     }
 
     // -------------------------------------------------------------------------
@@ -123,6 +144,8 @@ public class JdbcBenchmark {
 
     @Benchmark
     public void benchmarkMultiOpsSync() {
+        dataSetChanged = true;
+
         postDTO.setTitle("Multi-Ops DTO Sync Pattern").upvote();
         forumService.updatePost(postDTO);
 
@@ -145,21 +168,24 @@ public class JdbcBenchmark {
         forumService.createPostComment(postId, newReply);
 
         TagDto jpaTag = postDTO.getTags().stream()
-            .filter(t -> t.getName().equals("JPA"))
+            .filter(t -> t.getName().startsWith("JPA"))
             .findFirst()
             .orElseThrow();
         postDTO.getTags().remove(jpaTag);
         forumService.removeTag(postId, jpaTag);
 
+        Long tagId = TimeSortedIdentifierGenerator.generate();
         TagDto jakarta = new TagDto()
-            .setId(TimeSortedIdentifierGenerator.generate())
-            .setName("Jakarta Persistence");
+            .setId(tagId)
+            .setName("Jakarta Persistence " + tagId);
         postDTO.getTags().add(jakarta);
         forumService.createTag(postId, jakarta);
     }
 
     @Benchmark
     public void benchmarkMultiOpsSyncUsingRest() {
+        dataSetChanged = true;
+
         postDTO.setTitle("Multi-Ops DTO Sync Pattern").upvote();
         restCaller.updatePost(postDTO);
 
@@ -182,21 +208,24 @@ public class JdbcBenchmark {
         restCaller.createPostComment(postId, newReply);
 
         TagDto jpaTag = postDTO.getTags().stream()
-            .filter(t -> t.getName().equals("JPA"))
+            .filter(t -> t.getName().startsWith("JPA"))
             .findFirst()
             .orElseThrow();
         postDTO.getTags().remove(jpaTag);
         restCaller.removeTag(postId, jpaTag);
 
+        Long tagId = TimeSortedIdentifierGenerator.generate();
         TagDto jakarta = new TagDto()
-            .setId(TimeSortedIdentifierGenerator.generate())
-            .setName("Jakarta Persistence");
+            .setId(tagId)
+            .setName("Jakarta Persistence " + tagId);
         postDTO.getTags().add(jakarta);
         restCaller.createTag(postId, jakarta);
     }
 
     @Benchmark
     public void benchmarkDiffMergeSync() {
+        dataSetChanged = true;
+
         modifiedPostDTO.setTitle("Diff Merge DTO Sync Pattern").upvote();
 
         List<PostCommentDto> replies = modifiedPostDTO.getReplies();
@@ -211,14 +240,16 @@ public class JdbcBenchmark {
         replies.add(newReply);
 
         TagDto jpaTag = modifiedPostDTO.getTags().stream()
-            .filter(t -> t.getName().equals("JPA"))
+            .filter(t -> t.getName().startsWith("JPA"))
             .findFirst()
             .orElseThrow();
         modifiedPostDTO.getTags().remove(jpaTag);
+
+        Long tagId = TimeSortedIdentifierGenerator.generate();
         modifiedPostDTO.getTags().add(
             new TagDto()
-                .setId(TimeSortedIdentifierGenerator.generate())
-                .setName("Jakarta Persistence")
+                .setId(tagId)
+                .setName("Jakarta Persistence " + tagId)
         );
 
         forumService.diffMerge(postDTO, modifiedPostDTO);
@@ -226,6 +257,8 @@ public class JdbcBenchmark {
 
     @Benchmark
     public void benchmarkDiffMergeSyncUsingRest() {
+        dataSetChanged = true;
+
         modifiedPostDTO.setTitle("Diff Merge DTO Sync Pattern").upvote();
 
         List<PostCommentDto> replies = modifiedPostDTO.getReplies();
@@ -240,14 +273,15 @@ public class JdbcBenchmark {
         replies.add(newReply);
 
         TagDto jpaTag = modifiedPostDTO.getTags().stream()
-            .filter(t -> t.getName().equals("JPA"))
+            .filter(t -> t.getName().startsWith("JPA"))
             .findFirst()
             .orElseThrow();
         modifiedPostDTO.getTags().remove(jpaTag);
+        Long tagId = TimeSortedIdentifierGenerator.generate();
         modifiedPostDTO.getTags().add(
             new TagDto()
-                .setId(TimeSortedIdentifierGenerator.generate())
-                .setName("Jakarta Persistence")
+                .setId(tagId)
+                .setName("Jakarta Persistence " + tagId)
         );
 
         restCaller.diffMerge(postDTO, modifiedPostDTO);

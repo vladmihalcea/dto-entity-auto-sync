@@ -47,6 +47,14 @@ public class RestCaller {
         );
     }
 
+    public String loadPostDTOUsingMultiset(Long postId) {
+        return restTemplate.getForObject(
+            baseUrl() + "/postMultiset?postId={postId}",
+            String.class,
+            postId
+        );
+    }
+
     public void updatePost(PostDto postDTO) {
         restTemplate.put(
             baseUrl() + "/post",

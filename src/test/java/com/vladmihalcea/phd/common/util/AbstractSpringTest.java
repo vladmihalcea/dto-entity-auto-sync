@@ -47,7 +47,7 @@ public abstract class AbstractSpringTest {
     }
 
     protected void deleteAll() {
-        entityManager.createNativeQuery("DELETE FROM post_tag").executeUpdate();
+        entityManager.createNativeQuery("DELETE FROM post_tags").executeUpdate();
         entityManager.createNativeQuery("DELETE FROM post_comments").executeUpdate();
         entityManager.createNativeQuery("DELETE FROM posts").executeUpdate();
         entityManager.createNativeQuery("DELETE FROM tags").executeUpdate();

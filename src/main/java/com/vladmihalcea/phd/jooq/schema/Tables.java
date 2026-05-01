@@ -20,7 +20,7 @@ public final class Tables {
     public static final Table<Record> POST_COMMENTS = table(name("post_comments"));
     public static final Table<Record> TAGS          = table(name("tags"));
     public static final Table<Record> USERS         = table(name("users"));
-    public static final Table<Record> POST_TAG      = table(name("post_tag"));
+    public static final Table<Record> POST_TAGS = table(name("post_tags"));
 
     // -------------------------------------------------------------------------
     // posts fields
@@ -57,11 +57,11 @@ public final class Tables {
     public static final Field<String> USERS_LAST_NAME  = field(name("users", "last_name"),  String.class);
 
     // -------------------------------------------------------------------------
-    // post_tag fields
+    // post_tags fields
     // note: Tag owns the join table so post_id -> tags.id, tag_id -> posts.id
     // -------------------------------------------------------------------------
-    public static final Field<Long> PT_POST_ID = field(name("post_tag", "post_id"), Long.class);
-    public static final Field<Long> PT_TAG_ID  = field(name("post_tag", "tag_id"),  Long.class);
+    public static final Field<Long> PT_POST_ID = field(name("post_tags", "post_id"), Long.class);
+    public static final Field<Long> PT_TAG_ID  = field(name("post_tags", "tag_id"),  Long.class);
 
     private Tables() {}
 }

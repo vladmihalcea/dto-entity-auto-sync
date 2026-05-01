@@ -25,7 +25,7 @@ public abstract class AbstractBenchmarkTest {
     protected final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
     private static final int ITERATION_COUNT = 20;
-    private static final int ITERATION_DURATION_SECONDS = 10;
+    private static final int ITERATION_DURATION_SECONDS = 2;
 
     protected abstract Class benchmarkClass();
 

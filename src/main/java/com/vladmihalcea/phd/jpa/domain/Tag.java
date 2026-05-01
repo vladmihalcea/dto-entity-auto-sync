@@ -22,7 +22,7 @@ public class Tag extends Identifiable<Tag> {
     private String description;
 
     @ManyToMany
-    @JoinTable(name = "post_tag",
+    @JoinTable(name = "post_tags",
         joinColumns = @JoinColumn(name = "post_id"),
         inverseJoinColumns = @JoinColumn(name = "tag_id")
     )

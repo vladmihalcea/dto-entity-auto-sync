@@ -49,7 +49,7 @@ public class JooqTest extends AbstractSpringTest {
 
     @Override
     protected void deleteAll() {
-        ctx.execute("DELETE FROM post_tag");
+        ctx.execute("DELETE FROM post_tags");
         ctx.execute("DELETE FROM post_comments");
         ctx.execute("DELETE FROM posts");
         ctx.execute("DELETE FROM tags");
