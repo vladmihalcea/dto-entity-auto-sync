@@ -2,7 +2,7 @@
 # set output 'ReadMetrics.png'
 set boxwidth 0.9 absolute
 set style fill   solid 1.00 border lt -1
-set key fixed right top vertical Right noreverse noenhanced autotitle nobox
+set key outside right top vertical Right noreverse noenhanced autotitle nobox offset -1,0
 set style histogram clustered gap 1 title textcolor lt -1
 set datafile missing '-'
 set datafile separator ','
