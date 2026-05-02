@@ -1,9 +1,11 @@
 package com.vladmihalcea.phd.jpa.controller;
 
 import com.vladmihalcea.phd.common.dto.PostDto;
+import com.vladmihalcea.phd.common.util.JsonUtil;
 import com.vladmihalcea.phd.jpa.service.ForumService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import tools.jackson.databind.JsonNode;
 
 /**
  *
@@ -21,10 +23,10 @@ public class ForumRestController {
         return forumService.loadPostDTO(postId);
     }
 
-    @GetMapping("/postMultiset")
-    public PostDto findByIdUsingMultiset(
+    @GetMapping(path = "/postMultiset", produces = "application/json")
+    public @ResponseBody JsonNode findByIdUsingMultiset(
         @RequestParam("postId") Long postId) {
-        return forumService.loadPostDTOUsingMultiset(postId);
+        return JsonUtil.JSON_MAPPER.valueToTree(forumService.loadPostDTOUsingMultiset(postId));
     }
 
     @PutMapping("/post")

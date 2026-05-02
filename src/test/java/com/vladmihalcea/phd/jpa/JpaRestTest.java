@@ -8,6 +8,7 @@ import com.vladmihalcea.phd.common.dto.PostDto;
 import com.vladmihalcea.phd.common.dto.TagDto;
 import com.vladmihalcea.phd.common.dto.UserContext;
 import com.vladmihalcea.phd.common.util.AbstractSpringTest;
+import com.vladmihalcea.phd.common.util.JsonUtil;
 import com.vladmihalcea.phd.common.util.TimeSortedIdentifierGenerator;
 import com.vladmihalcea.phd.jpa.config.JpaConfiguration;
 import com.vladmihalcea.phd.jpa.domain.Post;
@@ -23,6 +24,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.client.RestTemplate;
+import tools.jackson.databind.JsonNode;
 
 import java.util.List;
 
@@ -112,6 +114,16 @@ public class JpaRestTest extends AbstractSpringTest {
 
             return post.getId();
         });
+    }
+
+    @Test
+    public void testLoadPostJsonUsingMultiset() {
+        LOGGER.info("Load a Post as a JSON document using jOOQ's MULTISET");
+        PostDto postDTO = restCaller.loadPostDTO(postId);
+        JsonNode postViewToNode = restCaller.loadPostDTOUsingMultiset(postId);
+        JsonNode postDTOToNode = JsonUtil.JSON_MAPPER.valueToTree(postDTO);
+
+        assertEquals(postDTOToNode, postViewToNode);
     }
 
     @Test

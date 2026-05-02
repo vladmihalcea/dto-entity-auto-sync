@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tools.jackson.databind.JsonNode;
 
-import java.util.LinkedHashSet;
 import java.util.List;
 
 /**
@@ -38,7 +37,7 @@ public class ForumService {
         PostDto post = postDAO.findById(postId);
         List<PostCommentDto> replies = postCommentDAO.findByPostId(postId);
         post.setReplies(replies);
-        post.setTags(new LinkedHashSet<>(tagDAO.findByPostId(postId)));
+        post.setTags(tagDAO.findByPostId(postId));
         return post;
     }
 

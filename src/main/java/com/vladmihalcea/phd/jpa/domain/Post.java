@@ -3,11 +3,10 @@ package com.vladmihalcea.phd.jpa.domain;
 import jakarta.persistence.*;
 import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.SortComparator;
+import org.hibernate.annotations.SortNatural;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Vlad Mihalcea
@@ -32,7 +31,7 @@ public class Post extends Identifiable<Post> {
     @ManyToMany(mappedBy = "posts", cascade = {
         CascadeType.PERSIST, CascadeType.MERGE, CascadeType.DETACH}
     )
-    private Set<Tag> tags = new HashSet<>();
+    private SortedSet<Tag> tags = new TreeSet<>();
 
     public Post() {
         super(Post.class);
@@ -102,7 +101,7 @@ public class Post extends Identifiable<Post> {
         return tags;
     }
 
-    public void setTags(Set<Tag> tags) {
+    public void setTags(SortedSet<Tag> tags) {
         this.tags = tags;
     }
 

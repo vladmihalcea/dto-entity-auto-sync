@@ -12,7 +12,6 @@ import org.jooq.JSONB;
 import org.springframework.stereotype.Repository;
 import tools.jackson.databind.JsonNode;
 
-import java.util.LinkedHashSet;
 import java.util.List;
 
 import static com.vladmihalcea.phd.jooq.schema.Tables.*;
@@ -119,9 +118,7 @@ public class PostDaoImpl implements PostDao {
                     .setLastName(r.get(USERS_LAST_NAME));
 
                 List<PostCommentDto> replies = r.value9();
-                List<TagDto> tagList = r.value10();
-
-                LinkedHashSet<TagDto> tags = new LinkedHashSet<>(tagList);
+                List<TagDto> tags = r.value10();
 
                 return new PostDto()
                     .setId(r.get(POSTS_ID))

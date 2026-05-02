@@ -4,10 +4,6 @@ import com.vladmihalcea.phd.common.dto.PostCommentDto;
 import com.vladmihalcea.phd.common.dto.PostDto;
 import com.vladmihalcea.phd.common.dto.TagDto;
 import com.vladmihalcea.phd.common.dto.UserDto;
-import com.vladmihalcea.phd.jpa.view.PostCommentView;
-import com.vladmihalcea.phd.jpa.view.PostWithCommentsAndTagsView;
-import com.vladmihalcea.phd.jpa.view.TagView;
-import com.vladmihalcea.phd.jpa.view.UserView;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
@@ -18,13 +14,12 @@ import org.mapstruct.MappingConstants;
 @Mapper(componentModel = MappingConstants.ComponentModel.SPRING)
 public interface PostViewMapper {
 
-    @Mapping(target = "replies", source = "comments")
-    PostDto toDTO(PostWithCommentsAndTagsView view);
+    PostDto toDTO(com.vladmihalcea.phd.jpa.view.PostDto view);
 
-    PostCommentDto toDTO(PostCommentView view);
+    PostCommentDto toDTO(com.vladmihalcea.phd.jpa.view.PostCommentDto view);
 
-    TagDto toDTO(TagView view);
+    TagDto toDTO(com.vladmihalcea.phd.jpa.view.TagDto view);
 
-    UserDto toDTO(UserView view);
+    UserDto toDTO(com.vladmihalcea.phd.jpa.view.UserDto view);
 }
 

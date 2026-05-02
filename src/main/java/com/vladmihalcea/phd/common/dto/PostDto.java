@@ -2,7 +2,6 @@ package com.vladmihalcea.phd.common.dto;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Set;
 
 /**
  * @author Vlad Mihalcea
@@ -21,7 +20,7 @@ public class PostDto {
 
     private List<PostCommentDto> replies;
 
-    private Set<TagDto> tags;
+    private List<TagDto> tags;
 
     public Long getId() {
         return id;
@@ -87,11 +86,11 @@ public class PostDto {
         return this;
     }
 
-    public Set<TagDto> getTags() {
+    public List<TagDto> getTags() {
         return tags;
     }
 
-    public PostDto setTags(Set<TagDto> tags) {
+    public PostDto setTags(List<TagDto> tags) {
         this.tags = tags;
         return this;
     }

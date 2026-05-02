@@ -22,7 +22,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.client.RestTemplate;
 import tools.jackson.databind.JsonNode;
 
-import java.util.LinkedHashSet;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -114,7 +114,7 @@ public class JdbcRestTest extends AbstractSpringTest {
                     """)
                 .setAuthor(vlad)
                 .setReplies(List.of())
-                .setTags(new LinkedHashSet<>());
+                .setTags(new ArrayList<>());
 
             postDAO.insert(post);
             postId = post.getId();

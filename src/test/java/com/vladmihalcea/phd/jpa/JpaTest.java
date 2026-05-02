@@ -5,12 +5,14 @@ import com.vladmihalcea.phd.common.dto.PostDto;
 import com.vladmihalcea.phd.common.dto.TagDto;
 import com.vladmihalcea.phd.common.dto.UserContext;
 import com.vladmihalcea.phd.common.util.AbstractSpringTest;
+import com.vladmihalcea.phd.common.util.JsonUtil;
 import com.vladmihalcea.phd.common.util.TimeSortedIdentifierGenerator;
 import com.vladmihalcea.phd.jpa.config.JpaConfiguration;
 import com.vladmihalcea.phd.jpa.domain.Post;
 import com.vladmihalcea.phd.jpa.domain.PostComment;
 import com.vladmihalcea.phd.jpa.domain.Tag;
 import com.vladmihalcea.phd.jpa.domain.User;
+import com.vladmihalcea.phd.jpa.mapper.PostViewMapper;
 import com.vladmihalcea.phd.jpa.mapper.UserMapper;
 import com.vladmihalcea.phd.jpa.service.ForumService;
 import jakarta.persistence.EntityManager;
@@ -21,6 +23,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.support.TransactionTemplate;
+import tools.jackson.databind.JsonNode;
 
 import java.util.List;
 
@@ -45,6 +48,9 @@ public class JpaTest extends AbstractSpringTest {
 
     @Autowired
     private TransactionTemplate transactionTemplate;
+
+    @Autowired
+    private PostViewMapper postViewMapper;
 
     private Long postId;
 
@@ -147,9 +153,11 @@ public class JpaTest extends AbstractSpringTest {
     public void testLoadPostDTOUsingMultiset() {
         LOGGER.info("Load PostDTO using loadPostEntityWithAllAssociations and MULTISET");
         PostDto defaultPostDTO = forumService.loadPostDTO(postId);
-        PostDto multiSetPostDTO = forumService.loadPostDTOUsingMultiset(postId);
+        com.vladmihalcea.phd.jpa.view.PostDto multiSetPostDTO = forumService.loadPostDTOUsingMultiset(postId);
 
-        assertEquals(defaultPostDTO, multiSetPostDTO);
+        PostDto postDTOFromView = postViewMapper.toDTO(multiSetPostDTO);
+
+        assertEquals(defaultPostDTO, postDTOFromView);
     }
 
     @Test

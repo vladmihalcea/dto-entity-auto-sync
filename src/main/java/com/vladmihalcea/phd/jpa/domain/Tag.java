@@ -14,7 +14,7 @@ import java.util.Set;
 @Entity
 @Table(name = "tags")
 @DynamicInsert @DynamicUpdate
-public class Tag extends Identifiable<Tag> {
+public class Tag extends Identifiable<Tag> implements Comparable<Tag> {
 
     @NaturalId
     private String name;
@@ -52,5 +52,10 @@ public class Tag extends Identifiable<Tag> {
     public Tag setDescription(String description) {
         this.description = description;
         return this;
+    }
+
+    @Override
+    public int compareTo(Tag o) {
+        return this.getId().compareTo(o.getId());
     }
 }

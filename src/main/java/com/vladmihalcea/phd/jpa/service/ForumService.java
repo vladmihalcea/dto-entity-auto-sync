@@ -7,9 +7,7 @@ import com.blazebit.persistence.view.EntityViewSetting;
 import com.vladmihalcea.phd.common.dto.PostDto;
 import com.vladmihalcea.phd.jpa.domain.Post;
 import com.vladmihalcea.phd.jpa.mapper.PostMapper;
-import com.vladmihalcea.phd.jpa.mapper.PostViewMapper;
 import com.vladmihalcea.phd.jpa.repository.PostRepository;
-import com.vladmihalcea.phd.jpa.view.PostWithCommentsAndTagsView;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import org.slf4j.Logger;
@@ -33,9 +31,6 @@ public class ForumService {
     private PostMapper postMapper;
 
     @Autowired
-    private PostViewMapper postViewMapper;
-
-    @Autowired
     private CriteriaBuilderFactory cbf;
 
     @Autowired
@@ -52,15 +47,13 @@ public class ForumService {
     }
 
     @Transactional(readOnly = true)
-    public PostDto loadPostDTOUsingMultiset(Long id) {
+    public com.vladmihalcea.phd.jpa.view.PostDto loadPostDTOUsingMultiset(Long id) {
         CriteriaBuilder<Post> cb = cbf.create(entityManager, Post.class)
             .where("id").eq(id);
 
-        PostWithCommentsAndTagsView view = evm
-            .applySetting(EntityViewSetting.create(PostWithCommentsAndTagsView.class), cb)
+        return evm
+            .applySetting(EntityViewSetting.create(com.vladmihalcea.phd.jpa.view.PostDto.class), cb)
             .getSingleResult();
-
-        return postViewMapper.toDTO(view);
     }
 
     private Post loadPostEntityWithAllAssociations(Long id) {

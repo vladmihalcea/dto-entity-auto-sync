@@ -18,7 +18,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import tools.jackson.databind.JsonNode;
 
-import java.util.LinkedHashSet;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -93,7 +93,7 @@ public class JooqTest extends AbstractSpringTest {
                     """)
                 .setAuthor(vlad)
                 .setReplies(List.of())
-                .setTags(new LinkedHashSet<>());
+                .setTags(new ArrayList<>());
 
             postDAO.insert(post);
             postId = post.getId();
