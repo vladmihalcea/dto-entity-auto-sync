@@ -33,8 +33,8 @@ public class TagDaoImpl implements TagDao {
     public List<TagDto> findByPostId(Long postId) {
         return ctx.select(TAGS_ID, TAGS_NAME, TAGS_DESCRIPTION)
             .from(TAGS)
-            .join(POST_TAGS).on(PT_POST_ID.eq(TAGS_ID))
-            .where(PT_TAG_ID.eq(postId))
+            .join(POST_TAGS).on(PT_TAG_ID.eq(TAGS_ID))
+            .where(PT_POST_ID.eq(postId))
             .orderBy(TAGS_ID)
             .fetch(r -> new TagDto()
                 .setId(r.get(TAGS_ID))

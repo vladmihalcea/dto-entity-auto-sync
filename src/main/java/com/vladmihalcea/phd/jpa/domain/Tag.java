@@ -23,8 +23,8 @@ public class Tag extends Identifiable<Tag> implements Comparable<Tag> {
 
     @ManyToMany
     @JoinTable(name = "post_tags",
-        joinColumns = @JoinColumn(name = "post_id"),
-        inverseJoinColumns = @JoinColumn(name = "tag_id")
+        joinColumns = @JoinColumn(name = "tag_id"),
+        inverseJoinColumns = @JoinColumn(name = "post_id")
     )
     private Set<Post> posts = new HashSet<>();
 

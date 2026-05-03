@@ -70,8 +70,8 @@ public class PostDaoImpl implements PostDao {
         "   '[]'::jsonb " +
         "  ) " +
         "  from \"tags\" " +
-        "        join \"post_tags\" on \"post_tags\".\"post_id\" = \"tags\".\"id\" " +
-        "        where \"post_tags\".\"tag_id\" = \"posts\".\"id\" " +
+        "        join \"post_tags\" on \"post_tags\".\"tag_id\" = \"tags\".\"id\" " +
+        "        where \"post_tags\".\"post_id\" = \"posts\".\"id\" " +
         " ) " +
         ") " +
         "from \"posts\" " +
@@ -143,12 +143,12 @@ public class PostDaoImpl implements PostDao {
 
     @Override
     public void linkTag(Long postId, Long tagId) {
-        jdbcTemplate.update(LINK_TAG, tagId, postId);
+        jdbcTemplate.update(LINK_TAG, postId, tagId);
     }
 
     @Override
     public void unlinkTag(Long postId, Long tagId) {
-        jdbcTemplate.update(UNLINK_TAG, tagId, postId);
+        jdbcTemplate.update(UNLINK_TAG, postId, tagId);
     }
 
     public static class PostRowMapper implements RowMapper<PostDto> {

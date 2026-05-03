@@ -99,8 +99,8 @@ public class PostDaoImpl implements PostDao {
                 multiset(
                     select(TAGS_ID, TAGS_NAME)
                         .from(TAGS)
-                        .join(POST_TAGS).on(PT_POST_ID.eq(TAGS_ID))
-                        .where(PT_TAG_ID.eq(POSTS_ID))
+                        .join(POST_TAGS).on(PT_POST_ID.eq(POSTS_ID))
+                        .where(PT_TAG_ID.eq(TAGS_ID))
                         .orderBy(TAGS_ID)
                 ).convertFrom(r -> r.map(tr -> new TagDto()
                     .setId(tr.get(TAGS_ID))
@@ -174,8 +174,8 @@ public class PostDaoImpl implements PostDao {
                 field("'[]'::jsonb", JSONB.class)
             ))
                 .from(TAGS)
-                .join(POST_TAGS).on(PT_POST_ID.eq(TAGS_ID))
-                .where(PT_TAG_ID.eq(POSTS_ID))
+                .join(POST_TAGS).on(PT_POST_ID.eq(POSTS_ID))
+                .where(PT_TAG_ID.eq(TAGS_ID))
         );
 
         JSONB jsonb = ctx.select(
@@ -232,14 +232,14 @@ public class PostDaoImpl implements PostDao {
      */
     public void linkTag(Long postId, Long tagId) {
         ctx.insertInto(POST_TAGS)
-            .set(PT_POST_ID, tagId)
-            .set(PT_TAG_ID, postId)
+            .set(PT_POST_ID, postId)
+            .set(PT_TAG_ID, tagId)
             .execute();
     }
 
     public void unlinkTag(Long postId, Long tagId) {
         ctx.deleteFrom(POST_TAGS)
-            .where(PT_POST_ID.eq(tagId).and(PT_TAG_ID.eq(postId)))
+            .where(PT_POST_ID.eq(postId).and(PT_TAG_ID.eq(tagId)))
             .execute();
     }
 }

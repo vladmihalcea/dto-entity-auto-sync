@@ -22,7 +22,7 @@ public class TagDaoImpl implements TagDao {
 
     private static final String FIND_BY_POST_ID =
         "SELECT t.id, t.name, t.description FROM tags t " +
-        "JOIN post_tags pt ON pt.post_id = t.id WHERE pt.tag_id = ? ORDER BY t.id";
+        "JOIN post_tags pt ON pt.tag_id = t.id WHERE pt.post_id = ? ORDER BY t.id";
 
     private static final String INSERT =
         "INSERT INTO tags (id, name, description) VALUES (?, ?, ?)";

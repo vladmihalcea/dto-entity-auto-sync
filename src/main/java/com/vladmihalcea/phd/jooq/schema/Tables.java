@@ -20,7 +20,7 @@ public final class Tables {
     public static final Table<Record> POST_COMMENTS = table(name("post_comments"));
     public static final Table<Record> TAGS          = table(name("tags"));
     public static final Table<Record> USERS         = table(name("users"));
-    public static final Table<Record> POST_TAGS = table(name("post_tags"));
+    public static final Table<Record> POST_TAGS     = table(name("post_tags"));
 
     // -------------------------------------------------------------------------
     // posts fields
