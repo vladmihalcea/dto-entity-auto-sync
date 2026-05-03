@@ -3,7 +3,7 @@
 if "%1" == "" goto usage
 
 SET type=%1
-call build
+call mvn -P benchmark-tests clean process-test-resources
 mvn -P benchmark-tests -Dit.test=%type%BenchmarkTest integration-test
 goto:eof
 
