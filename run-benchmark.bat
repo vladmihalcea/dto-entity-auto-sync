@@ -8,5 +8,5 @@ mvn -P benchmark-tests -Dit.test=%type%BenchmarkTest integration-test
 goto:eof
 
 :usage
-echo Usage: %0 Jdbc^|jOOQ^|^Jpa|^JpaVariable
+echo Usage: %0 Jdbc^|jOOQ^|^Jpa|^JpaVariable|^JdbcVariable|^JooqVariable
 
