@@ -119,7 +119,7 @@ public class JdbcBenchmark {
 
     @Benchmark
     public void benchmarkLoadDtoUsingMultiset() {
-        forumService.loadPostDTO(postId);
+        forumService.loadPostDTOUsingMultiset(postId);
     }
 
     @Benchmark
