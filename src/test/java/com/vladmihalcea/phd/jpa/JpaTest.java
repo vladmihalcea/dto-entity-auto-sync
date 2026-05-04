@@ -89,7 +89,7 @@ public class JpaTest extends AbstractSpringTest {
             Post post = new Post()
                 .setTitle("DTO to Entity Auto-Sync")
                 .setContent("""
-                        Spring and Hibernate can help you do the aut-sync
+                        Spring and Hibernate can help you do the auto-sync
                         between DTOs and JPA entities
                         """)
                 .setAuthor(vlad)

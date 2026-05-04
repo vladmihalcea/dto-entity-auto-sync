@@ -18,7 +18,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import javax.sql.DataSource;
+import java.io.File;
 import java.net.URISyntaxException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -26,6 +28,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicLong;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Vlad Mihalcea
@@ -55,7 +59,7 @@ public class CreateDataSetTest extends AbstractSpringTest {
     );
 
     @Test
-    @Disabled("This test is used to create a data set for the benchmarks")
+    //@Disabled("This test is used to create a data set for the benchmarks")
     public void createDataSet() {
         LOGGER.info("Start data set creation");
 
@@ -85,6 +89,32 @@ public class CreateDataSetTest extends AbstractSpringTest {
             return null;
         });
 
+        List<Integer> collectionSizes = List.of(0, 1, 5, 25, 100);
+
+        for (int collectionSize : collectionSizes) {
+            transactionTemplate.<Long>execute(transactionStatus -> {
+                Post post = new Post()
+                    .setId(100_000L + collectionSize)
+                    .setTitle("DTO to Entity Auto-Sync")
+                    .setContent("""
+                            Spring and Hibernate can help you do the auto-sync
+                            between DTOs and JPA entities
+                            """)
+                    .setAuthor(vlad);
+
+                for (int i = 0; i < collectionSize; i++) {
+                    PostComment comment = new PostComment().setAuthor(vlad);
+                    Tag tag = new Tag();
+                    post.addComment(comment.setContent(String.format("Comment nr. %d", comment.getId())));
+                    post.addTag(tag.setName(String.format("Tag nr. %d", tag.getId())));
+                }
+
+                entityManager.persist(post);
+
+                return null;
+            });
+        }
+
         AtomicLong counter = new AtomicLong(0);
 
         List<Long> ids = new ArrayList<>();
@@ -97,7 +127,7 @@ public class CreateDataSetTest extends AbstractSpringTest {
                         .setId(counter.incrementAndGet())
                         .setTitle("DTO to Entity Auto-Sync")
                         .setContent("""
-                            Spring and Hibernate can help you do the aut-sync
+                            Spring and Hibernate can help you do the o-sync
                             between DTOs and JPA entities
                             """)
                         .setAuthor(vlad)
@@ -142,6 +172,8 @@ public class CreateDataSetTest extends AbstractSpringTest {
             });
         }
 
+        testExport();
+
         LOGGER.info("End data set creation");
     }
 
@@ -178,6 +210,47 @@ public class CreateDataSetTest extends AbstractSpringTest {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    @Test
+    @Disabled
+    public void testExport() {
+        File testResourcesFolder;
+
+        try {
+            testResourcesFolder = Paths.get(
+                Thread
+                    .currentThread()
+                    .getContextClassLoader()
+                    .getResource("data/posts.csv").toURI())
+                .getParent()
+                .resolve("../../../src/test/resources/data")
+                .normalize()
+                .toFile();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+
+        assertTrue(testResourcesFolder.exists(), "Test resources folder does not exist: " + testResourcesFolder);
+
+        String testResourcesFolderPath = testResourcesFolder.getAbsolutePath();
+
+        transactionTemplate.execute(status -> {
+            try {
+                for(String table : TABLES) {
+                    jdbcTemplate.execute(
+                        String.format(
+                            "COPY %s TO '%s' DELIMITER ',' CSV;",
+                            table,
+                            Paths.get(testResourcesFolderPath, String.format("%s.csv", table)).toAbsolutePath()
+                        )
+                    );
+                }
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            return null;
+        });
     }
 
     private void truncateAll() {
