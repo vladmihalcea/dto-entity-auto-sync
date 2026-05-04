@@ -1,5 +1,7 @@
 package com.vladmihalcea.phd.common.config;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,12 @@ public class BenchmarkTestData {
 
     protected final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
+    private static final int POST_COUNT = 20_005;
+    private static final int POST_COMMENT_COUNT = 40_131;
+    private static final int TAG_COUNT = 80_131;
+    private static final int POST_TAG_COUNT = 80_131;
+    private static final int USER_COUNT = 3;
+
     @Autowired
     private TransactionTemplate transactionTemplate;
 
@@ -30,6 +38,9 @@ public class BenchmarkTestData {
 
     @Autowired
     private DataSource dataSource;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     private static final List<String> TABLES = List.of(
         "users",
@@ -74,6 +85,20 @@ public class BenchmarkTestData {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public boolean isDataValid() {
+        int postCount = ((Number) entityManager.createQuery("select count(*) from Post").getSingleResult()).intValue();
+        int postCommentCount = ((Number) entityManager.createQuery("select count(*) from PostComment").getSingleResult()).intValue();
+        int tagCount = ((Number) entityManager.createQuery("select count(*) from Tag").getSingleResult()).intValue();
+        int userCount = ((Number) entityManager.createQuery("select count(*) from User").getSingleResult()).intValue();
+        int postTagsCount = ((Number) entityManager.createNativeQuery("select count(*) from post_tags").getSingleResult()).intValue();
+
+        return postCount == POST_COUNT &&
+               postCommentCount == POST_COMMENT_COUNT &&
+               tagCount == TAG_COUNT &&
+               userCount == USER_COUNT &&
+               postTagsCount == POST_TAG_COUNT;
     }
 
     /**
