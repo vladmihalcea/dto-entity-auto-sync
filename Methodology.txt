@@ -1,0 +1,484 @@
+================================================================================
+METHODOLOGY REPORT FOR acm_tosem_dto_auto_sync.tex
+Experiment Design & Code-Quality Metrics
+================================================================================
+
+
+1. EXPERIMENT DESIGN
+================================================================================
+
+1.1 Research Goals and Independent Variables
+--------------------------------------------------------------------------------
+The empirical evaluation answers four research questions. RQ1 and RQ2 are
+*dynamic* questions answered with JMH micro-benchmarks; RQ3 and RQ4 are
+*static* questions answered with the MetricsTree IntelliJ IDEA plugin
+(see Section 2). The two pairs are deliberately mirrored — performance
+and code quality, on the read path and on the write path — so that the
+trade-off between runtime cost and maintainability cost can be
+characterised on the same axes.
+
+    RQ1 (Read path — performance):
+                       How does the cost of materializing a complete
+                       aggregate-rooted DTO (Post + replies + tags + author)
+                       vary across three persistence strategies — JDBC, jOOQ
+                       and Spring Data JPA — and across three projection
+                       techniques (multiple-query fetch, MULTISET subqueries,
+                       JSON aggregation)?
+
+    RQ2 (Write path — performance):
+                       How does the proposed "Diff-Merge DTO Auto-Sync"
+                       pattern compare against an equivalent "Multi-Ops"
+                       hand-written write path, in terms of average end-to-end
+                       latency, when both paths perform the same set of
+                       semantic mutations on the aggregate (title update,
+                       comment add/remove/update, tag add/remove)?
+
+    RQ3 (Read path — code quality):
+                       Does the choice of read-path projection technique
+                       (multi-query fetch vs MULTISET vs JSON aggregation,
+                       across JDBC/jOOQ/JPA) translate into measurable
+                       static-quality differences on the service and mapping
+                       layers? Concretely:
+
+                       (a) How does the *informational mass* of the read-side
+                           service / repository / row-mapping code, captured
+                           by Halstead Volume (V), Difficulty (D) and Effort
+                           (E), change between the three projection
+                           techniques and the three stacks?
+
+                       (b) How does the *control-flow burden* of the read
+                           path — McCabe Cyclomatic Complexity, Cognitive
+                           Complexity, Maximum Nesting Depth and Number Of
+                           Loops on the methods that assemble the DTO —
+                           differ between hand-rolled JDBC row mappers,
+                           jOOQ MULTISET projections and JPA fetch-graph
+                           queries?
+
+                       (c) How does outbound coupling on the read-side
+                           service (Li-Henry MPC, Lanza-Marinescu ATFD,
+                           Chidamber-Kemerer CBO and RFC) compare across
+                           the three stacks, and what does that imply for
+                           the testability and replaceability of the
+                           read-path implementation?
+
+                       (d) Is the resulting Maintainability Index (MI) on
+                           the read-side classes consistent across the
+                           three stacks once the projection technique is
+                           held constant — i.e. is the latency advantage
+                           of MULTISET / JSON projections obtained at the
+                           cost of degraded MI, or is it MI-neutral?
+
+    RQ4 (Write path — code quality):
+                       Does the Diff-Merge DTO Auto-Sync pattern reduce
+                       the static complexity of the write path relative
+                       to the equivalent Multi-Ops flow, and does it do
+                       so without producing a "God Mapper" anti-pattern?
+                       Concretely:
+
+                       (a) On ForumService.updatePost (and its transitive
+                           callees), how does the Diff-Merge variant
+                           compare to the Multi-Ops variant in McCabe
+                           Cyclomatic Complexity, Cognitive Complexity,
+                           Halstead Effort and Lines of Code? The
+                           hypothesis is that all four metrics decrease
+                           significantly on the service layer.
+
+                       (b) The complexity removed from the service layer
+                           is, by construction, *redistributed* into
+                           EntityMerger and the MapStruct-generated
+                           mappers. We quantify that redistribution with
+                           Chidamber-Kemerer (WMC, RFC, CBO, LCOM),
+                           Li-Henry (SIZE2, MPC, DAC, NOM) and
+                           Lorenz-Kidd (NOA, NOO, NOAM, NOOM) on the
+                           mapper hierarchy. The hypothesis is that the
+                           *total* WMC summed across service + mapper +
+                           merger is lower under Diff-Merge, and that
+                           cohesion (LCOM, Bieman-Kang TCC) on the
+                           mapper classes remains within healthy bounds.
+
+                       (c) Lanza-Marinescu disharmony detection
+                           (Data Class on the DTOs, Feature Envy / God
+                           Class on the mapper) is applied to both
+                           variants. The pattern is considered safe if
+                           and only if (i) the DTOs are still flagged as
+                           Data Classes (i.e. WOC ≈ 0, NOPA high) and
+                           (ii) no mapper class crosses the God Class
+                           threshold (WMC + ATFD + TCC composite).
+
+                       (d) Across persistence stacks, is the magnitude
+                           of the Diff-Merge improvement stable (i.e. is
+                           the pattern's static-quality benefit
+                           portable), or does it depend on stack-specific
+                           features such as JPA dirty-checking versus
+                           jOOQ explicit DML?
+
+The four questions are deliberately interleaved: RQ1 and RQ3 jointly
+characterise the read-path trade-off space (latency vs maintainability),
+while RQ2 and RQ4 jointly characterise the write-path trade-off space.
+A finding is considered "strong" only when the dynamic and the static
+evidence agree in sign — e.g. a write-path optimisation that lowers
+latency *and* lowers Halstead Effort on the call site is preferred over
+one that improves only one of the two axes.
+
+The two independent variables manipulated by the experiment are therefore:
+
+    (a) the persistence-access stack — JDBC, jOOQ, JPA;
+    (b) the workload kind — read (six variants) or write (two variants:
+        Multi-Ops vs Diff-Merge).
+
+A third, orthogonal variable is the *aggregate fan-out* (number of comments
+and tags hanging off a single Post), explored in a dedicated set of
+"variable-collection" benchmarks at fan-out levels {0, 1, 5, 25, 100}.
+
+
+1.2 Benchmarking Tool
+--------------------------------------------------------------------------------
+All micro-benchmarks are written using OpenJDK JMH 1.37 (Java Microbenchmark
+Harness) — the de-facto standard for JVM micro-benchmarking. JMH is selected
+because it eliminates the most common pitfalls of hand-rolled JVM timing
+loops: Just-In-Time compilation warm-up bias, dead-code elimination of
+unused return values, on-stack replacement effects, and inter-iteration
+state contamination. Each benchmark method is annotated with:
+
+    @BenchmarkMode(Mode.AverageTime)
+    @OutputTimeUnit(TimeUnit.MILLISECONDS)
+    @State(Scope.Benchmark)
+
+Average-time mode reports the mean per-operation latency (ms/op), which is
+the metric of interest for transactional database workloads where a single
+operation is a complete service call on a single thread.
+
+
+1.3 Run Configuration
+--------------------------------------------------------------------------------
+The runner is centralized in AbstractBenchmarkTest, ensuring identical
+timing parameters across every persistence stack. The configuration is:
+
+    Warmup iterations:      15  (ITERATION_COUNT / 2)
+    Warmup time / iter:     3 s
+    Measurement iterations: 30
+    Measurement time/iter:  3 s
+    Forks:                  1
+    Threads:                1   (single-thread mode synchronises iterations)
+    shouldFailOnError:      true
+
+This yields 45 s of warm-up followed by 90 s of measurement per benchmark
+method, well above the JMH-recommended minimum and sufficient for the JIT
+to reach its steady-state code shape. With one fork the JVM is reused
+across the warm-up and measurement phases of the same benchmark but the
+process is fresh between distinct benchmark methods, isolating each
+measurement from the compilation history of its predecessors.
+
+JMH reports (min, avg, max), standard deviation and a 99.9 % confidence
+interval per benchmark; we report the average and the 99.9 % CI half-width
+as the dispersion indicator in all result tables.
+
+
+1.4 Hardware, JVM and Database Environment
+--------------------------------------------------------------------------------
+Runs are executed on a fixed workstation (Windows 10 Pro 22H2,
+OpenJDK Temurin 21.0.4+7-LTS, x86_64, default JVM options — i.e. the JIT
+ergonomics chosen by the HotSpot server compiler at start-up). The database
+backend is PostgreSQL provisioned through Testcontainers, ensuring that
+every run starts from a deterministically initialised container with the
+same PostgreSQL version, locale and configuration. PostgreSQL is selected
+because it is the only stack on which all three projection techniques
+(MULTISET subqueries, JSON aggregation, classic multi-statement loading)
+are simultaneously expressible in idiomatic SQL.
+
+
+1.5 Test Data and Fixture Lifecycle
+--------------------------------------------------------------------------------
+The dataset, materialised by BenchmarkTestData, is a forum-domain corpus:
+
+    20 005   posts
+    40 131   post comments
+    80 131   tags
+    80 131   post-tag association rows
+        3   users
+
+The dataset is loaded via PostgreSQL's bulk COPY command from CSV fixtures,
+which is two orders of magnitude faster than row-at-a-time inserts and
+keeps the cost of the warm-up phase predictable. Indexes on every foreign
+key (post_id, tag_id, parent_id, author_id) are created after the load so
+that the query planner sees the same access paths in every run, and a
+VACUUM ANALYZE is issued before benchmarks start so that statistics are
+fresh and visibility maps are clean.
+
+Two fixture-lifecycle modes are used, depending on whether the workload
+is destructive:
+
+    READ-ONLY benchmarks (load*) and the variable-collection benchmarks
+    use a Trial-scoped dataset created once at @Setup(Level.Trial) and
+    re-used for the entire benchmark run.
+
+    WRITE benchmarks (benchmarkDiffMergeSync, benchmarkMultiOpsSync, and
+    their *UsingRest variants) re-create the dataset before every
+    measurement iteration via @Setup(Level.Iteration), guarded by a
+    dataSetChanged flag that is flipped inside each invocation. This
+    guarantees that every iteration starts from byte-identical data and
+    that successive write iterations cannot drift due to accumulated
+    mutations.
+
+A round-robin post identifier generator (postIdGenerator modulo
+POST_COUNT = 20 000) cycles through the entire post population during
+@Setup(Level.Invocation), so no two consecutive invocations operate on
+the same row. This forces the buffer cache and the Hibernate / jOOQ
+SQL caches into a realistic working-set behaviour and prevents the
+benchmark from degenerating into a single hot-row micro-benchmark.
+
+
+1.6 Workloads Under Measurement
+--------------------------------------------------------------------------------
+Every persistence stack exposes the same matrix of read benchmarks:
+
+    benchmarkLoadDto                    -- N+1-free service-level fetch
+    benchmarkLoadDtoUsingMultiset       -- MULTISET subquery projection
+    benchmarkLoadDtoUsingRest           -- HTTP/REST round-trip
+    benchmarkLoadJsonNodeUsingMultiset            (jOOQ / JDBC only)
+    benchmarkLoadJsonNodeUsingMultisetAndRest
+    benchmarkLoadJsonStringUsingMultisetAndRest
+    benchmarkLoadDtoUsingBlazeAndRest             (JPA only — Blaze-Persistence)
+
+The write matrix contrasts two semantically equivalent service flows:
+
+    benchmarkMultiOpsSync           -- one explicit service call per mutation
+    benchmarkDiffMergeSync          -- a single updatePost() call that
+                                       relies on EntityMerger to diff DTO
+                                       vs entity collections and emit the
+                                       minimal set of INSERT/UPDATE/DELETE
+                                       statements
+
+Each write benchmark performs the *same* logical changes — title edit,
+upvote, removal of one nested comment, upvote of remaining comments,
+addition of one new comment, removal of one tag, addition of one new tag —
+so that the latency delta between the two flows isolates the cost of the
+diff-merge mechanism from the cost of the underlying database work.
+
+A REST variant (*UsingRest) of every benchmark exercises the same code
+path through an in-process Tomcat instance (server.port = 0), so the
+measured latency includes HTTP serialization, deserialization and
+controller dispatch. The non-REST variants invoke ForumService directly,
+isolating the persistence cost from the network/serialization cost.
+
+
+1.7 Variable-Collection Benchmarks
+--------------------------------------------------------------------------------
+JpaVariableBenchmark, JdbcVariableBenchmark and JooqVariableBenchmark
+target a curated subset of posts whose identifiers encode the size of
+their child collections (100_000 + N, where N ∈ {0, 1, 5, 25, 100}).
+This produces a five-point latency-vs-fan-out curve per stack and per
+projection technique, allowing the analysis to characterise how each
+strategy scales as the aggregate grows from empty (N = 0) through
+typical (N = 1, 5) into pathological (N = 100). All other JMH parameters
+are identical to the standard benchmarks, guaranteeing apples-to-apples
+comparison along the fan-out dimension.
+
+
+1.8 Result Capture, Aggregation and Visualisation
+--------------------------------------------------------------------------------
+JMH writes a structured log per benchmark class (metrics/*Benchmark.log)
+including environment metadata, per-iteration timings, the per-benchmark
+mean and the 99.9 % confidence interval. A post-processing step extracts
+the aggregate rows into CSV (e.g. metrics/diff-merge-sync-using-rest.csv,
+metrics/ReadMetrics.csv) which is then plotted with Gnuplot
+(*.gp templates) for the figures embedded in the article. Reporting in
+the paper uses ms/op for absolute latency and the 99.9 % CI half-width
+as the error indicator.
+
+
+1.9 Threats to Validity and Mitigations
+--------------------------------------------------------------------------------
+- JIT warm-up bias:        15 × 3 s of warm-up exceeds the typical
+                           HotSpot tier-4 compilation horizon.
+- Dead-code elimination:   benchmark methods either invoke an external
+                           service (whose return value can not be elided)
+                           or perform observable side effects (REST calls,
+                           database mutations).
+- Inter-iteration drift:   write benchmarks reset the dataset every
+                           iteration; read benchmarks are idempotent.
+- GC noise:                forks = 1 with a single-thread synchronous
+                           mode minimises GC contention; @State(Benchmark)
+                           amortises Spring context creation across
+                           iterations.
+- Database cache effects:  round-robin post selection and VACUUM ANALYZE
+                           after the bulk load standardise the cache
+                           state across stacks.
+- Network noise (REST):    the embedded Tomcat is bound to localhost
+                           with an ephemeral port (server.port = 0),
+                           eliminating real-network latency variance.
+
+
+
+2. CODE-QUALITY METRICS (MetricsTree IntelliJ IDEA Plugin)
+================================================================================
+
+The MetricsTree plugin (https://github.com/b333vv/metricstree) computes a
+broad family of static code-quality metrics from the source tree at four
+granularity levels: project, package, class and method. Below we identify
+which of those metric families are *load-bearing* for this paper — i.e.
+which ones produce evidence directly relevant to the central thesis that
+the proposed Diff-Merge DTO Auto-Sync pattern reduces *accidental
+complexity* of the write path without inflating its *cost in
+maintainability* — and which are merely descriptive.
+
+
+2.1 Metrics directly relevant to the thesis (RECOMMENDED)
+--------------------------------------------------------------------------------
+
+(a) Halstead complexity metrics  [class-, package- and project-level]
+    Volume (V), Difficulty (D), Effort (E), Length (N), Vocabulary (n),
+    estimated Errors (B).
+
+    Why relevant: Halstead measures are derived purely from the count of
+    distinct/total operators and operands and are language-agnostic. They
+    let us compare the "informational mass" of two semantically equivalent
+    write paths — the hand-written multi-call MultiOps flow versus the
+    single-call Diff-Merge flow — without the bias introduced by line
+    counts. A lower Volume and Effort on the Diff-Merge service path is
+    direct evidence that the pattern compresses the cognitive surface
+    of the call site.
+
+(b) Lorenz-Kidd metrics                    [class-level]
+    NOA  — Number Of Attributes
+    NOO  — Number Of Operations
+    NOAM — Number Of Added Methods (i.e. methods declared, not inherited)
+    NOOM — Number Of Overridden Methods
+
+    Why relevant: the DTO/Entity pair is the unit of pattern application.
+    Lorenz-Kidd quantifies the size of those units. NOA + NOAM measured
+    on PostMapper and EntityMerger demonstrates that the introduced
+    auto-sync infrastructure remains compact relative to the avoided
+    boilerplate (one mapper class subsumes an unbounded family of
+    add/remove/update service methods).
+
+(c) Li-Henry metrics                       [class-level]
+    SIZE2 — sum of attributes + methods
+    MPC   — Message Passing Coupling
+    DAC   — Data Abstraction Coupling
+    NOM   — Number Of Methods
+
+    Why relevant: MPC is the count of outbound method calls, and DAC
+    the count of ADT-typed attributes. These are precisely the metrics
+    that the Diff-Merge pattern is designed to reduce on the *service*
+    layer (fewer calls into the repository per business operation) at
+    the cost of a controlled increase on the *mapper* layer. Reporting
+    MPC for ForumService side-by-side under both styles is one of the
+    paper's headline comparisons.
+
+(d) Lanza-Marinescu metrics                [class-level]
+    ATFD          — Access To Foreign Data
+    NOPA          — Number Of Public Attributes
+    Accessor Methods (count)
+    WOC           — Weight Of a Class
+
+    Why relevant: Lanza & Marinescu's "object-oriented metrics in
+    practice" defines disharmony patterns (Data Class, God Class,
+    Feature Envy) on top of these metrics. Two of the patterns are
+    structurally relevant to this paper:
+       * Data Class detection on PostDto/PostCommentDto/TagDto —
+         confirms that the DTO layer remains a pure data carrier
+         (low WOC, high NOPA), which is the precondition under
+         which the auto-sync pattern is sound.
+       * Feature Envy / ATFD on the merge() methods — quantifies
+         the (deliberate) coupling between the mapper and the
+         entity, which is necessary for diffing.
+
+(e) Chidamber-Kemerer (CK) metrics         [class-level]
+    WMC, DIT, NOC, CBO, RFC, LCOM.
+
+    Why relevant: WMC and CBO on ForumService and on the Mapper hierarchy
+    quantify the redistribution of complexity that the pattern induces.
+    The expected (and falsifiable) prediction is: WMC(ForumService)
+    decreases, WMC(PostMapper) increases by a smaller amount, total WMC
+    decreases. LCOM on the mapper checks that the merged responsibilities
+    remain cohesive rather than degenerating into a utility class.
+
+(f) McCabe Cyclomatic Complexity (CC)      [method-level]
+    Plus the related metrics NOL (Number Of Loops), Maximum Nesting Depth,
+    Cognitive Complexity.
+
+    Why relevant: the central control-flow argument of the paper is that
+    the Diff-Merge pattern moves branchy, mutation-ordering logic out of
+    the service layer and into a single, generic, well-tested
+    EntityMerger.mergeCollection() routine. A side-by-side comparison of
+    cyclomatic and cognitive complexity for the two ForumService.update*
+    methods (multi-ops vs diff-merge) is one of the cleanest static
+    indicators of that claim.
+
+(g) Maintainability Index (MI)             [class-, package-, project-level]
+    MI = 171 − 5.2·ln(V) − 0.23·CC − 16.2·ln(LOC), normalised to 0..100.
+
+    Why relevant: MI is a single composite figure that combines Halstead
+    Volume, McCabe CC and LOC. It is therefore the natural top-level
+    summary number to report in an executive table, with the other
+    metrics serving as the decomposed evidence behind the score.
+
+
+2.2 Metrics included for descriptive completeness
+--------------------------------------------------------------------------------
+
+(h) Robert C. Martin package metrics       [package-level]
+    Ca (afferent coupling), Ce (efferent coupling), I = Ce/(Ca+Ce),
+    A (abstractness), D (normalised distance from main sequence).
+
+    Useful as a sanity check that the introduction of the EntityMerger
+    abstraction does not push any package off the main sequence.
+
+(i) MOOD metrics                           [project-level]
+    MHF, AHF, MIF, AIF, PF, CF.
+
+    Useful as a coarse fingerprint of the codebase's overall OO posture
+    but too aggregated to discriminate between the two patterns being
+    compared. Report once, in the descriptive overview of the case study.
+
+(j) QMOOD quality attributes               [project-level]
+    Reusability, Flexibility, Understandability, Functionality,
+    Extendibility, Effectiveness.
+
+    Reasonable for a single end-of-section "quality scorecard" summary
+    table. QMOOD weights are fixed by Bansiya & Davis, so the values are
+    comparable to other studies that use the same metric.
+
+(k) Bieman-Kang TCC                        [class-level]
+    Tight Class Cohesion. Useful as a secondary cohesion check on the
+    mapper classes alongside LCOM.
+
+(l) Lorenz-Kidd / Lee NCSS, Lines of Code  [all levels]
+    Pure size metrics. Report alongside MI as the size baseline.
+
+
+2.3 Metrics that should NOT be emphasised
+--------------------------------------------------------------------------------
+
+The MOOD inheritance/polymorphism factors (MIF, AIF, PF) and the
+Chidamber-Kemerer DIT/NOC will be near-flat for this codebase: the
+domain model uses a shallow inheritance tree (Identifiable<T> as a
+single mapped superclass) and no virtual dispatch hierarchies. Reporting
+them as headline evidence would be misleading. Mention them in the
+"threats to validity" / "what we did not measure" subsection.
+
+
+2.4 Suggested Reporting Layout for the Paper
+--------------------------------------------------------------------------------
+Table M1 — Project-level summary
+    Lines of Code, NCSS, Halstead V/D/E, MI, QMOOD scores.
+
+Table M2 — Pattern comparison at the class level
+    For ForumService and for PostMapper, in both pattern variants:
+    WMC, RFC, CBO, LCOM, MPC, DAC, ATFD, Halstead V, MI.
+
+Table M3 — Pattern comparison at the method level
+    For updatePost() in both variants:
+    LOC, McCabe CC, Cognitive Complexity, Max Nesting Depth, Halstead V.
+
+Figure M1 — Lanza-Marinescu disharmony detection result for the DTOs
+    (confirms Data Class signature is correctly preserved).
+
+Figure M2 — Robert C. Martin I/A scatter plot for all packages
+    (sanity check on architectural balance).
+
+
+================================================================================
+END OF REPORT
+================================================================================
