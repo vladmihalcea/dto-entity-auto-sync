@@ -4,7 +4,7 @@ import com.vladmihalcea.phd.app.ForumApplication;
 import com.vladmihalcea.phd.common.config.BenchmarkTestData;
 import com.vladmihalcea.phd.common.config.SpringRestConfiguration;
 import com.vladmihalcea.phd.common.controller.RestCaller;
-import com.vladmihalcea.phd.jdbc.config.JdbcConfiguration;
+import com.vladmihalcea.phd.jooq.config.JooqConfiguration;
 import org.openjdk.jmh.annotations.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
@@ -35,7 +35,7 @@ public class JooqVariableBenchmark {
     @Setup(Level.Trial)
     public void startContext() {
         SpringApplication app = new SpringApplication(
-            JdbcConfiguration.class,
+            JooqConfiguration.class,
             BenchmarkTestData.class,
             SpringRestConfiguration.class,
             ForumApplication.class
