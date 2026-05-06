@@ -59,12 +59,11 @@ public class SpringDataSourceTransactionManagerConfiguration {
         loggingListener.setQueryLogEntryCreator(new InlineQueryLogEntryCreator());
         listener.addListener(loggingListener);
         listener.addListener(new DataSourceQueryCountListener());
-        DataSource dataSource = ProxyDataSourceBuilder
+        return ProxyDataSourceBuilder
             .create(poolingDataSource())
             .name(DATA_SOURCE_PROXY_NAME)
             .listener(listener)
             .build();
-        return dataSource;
     }
 
     @Bean

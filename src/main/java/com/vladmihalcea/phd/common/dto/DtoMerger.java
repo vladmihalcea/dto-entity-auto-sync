@@ -71,8 +71,9 @@ public class DtoMerger {
 
         for (Map.Entry<Long, TagDto> entry : modifiedTags.entrySet()) {
             if (!originalTags.containsKey(entry.getKey())) {
-                TagDto upserted = tagDAO.upsert(entry.getValue());
-                postDAO.linkTag(originalPost.getId(), upserted.getId());
+                TagDto tag = entry.getValue();
+                tagDAO.upsert(tag);
+                postDAO.linkTag(originalPost.getId(), tag.getId());
             }
         }
     }

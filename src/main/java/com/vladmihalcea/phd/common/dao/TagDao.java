@@ -5,10 +5,7 @@ import com.vladmihalcea.phd.common.dto.TagDto;
 import java.util.List;
 
 /**
- * The {@link TagDao}
- *
  * @author Vlad Mihalcea
- * @since 1.x.y
  */
 public interface TagDao {
     TagDto findByName(String name);
@@ -19,5 +16,5 @@ public interface TagDao {
 
     void delete(Long id);
 
-    TagDto upsert(TagDto tag);
+    void upsert(TagDto tag);
 }

@@ -51,6 +51,7 @@ public class BenchmarkTestData {
     );
 
     public void createTestData() {
+        deleteAll();
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
         transactionTemplate.execute(status -> {
             try {

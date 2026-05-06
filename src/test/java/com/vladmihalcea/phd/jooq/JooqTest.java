@@ -235,6 +235,7 @@ public class JooqTest extends AbstractSpringTest {
                 .setName("Jakarta Persistence")
         );
 
+        LOGGER.info("Update PostDTO aggregate using Diff-Merge");
         forumService.diffMerge(originalPost, modifiedPost);
 
         PostDto updatedPostDTO = forumService.loadPostDTO(postId);

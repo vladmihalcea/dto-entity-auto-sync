@@ -75,9 +75,9 @@ public class ForumService {
     }
 
     public TagDto createTag(Long postId, TagDto tag) {
-        TagDto upserted = tagDAO.upsert(tag);
-        postDAO.linkTag(postId, upserted.getId());
-        return upserted;
+        tagDAO.upsert(tag);
+        postDAO.linkTag(postId, tag.getId());
+        return tag;
     }
 
     public void removeTag(Long postId, TagDto tag) {

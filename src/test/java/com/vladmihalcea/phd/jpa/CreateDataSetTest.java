@@ -59,7 +59,7 @@ public class CreateDataSetTest extends AbstractSpringTest {
     );
 
     @Test
-    //@Disabled("This test is used to create a data set for the benchmarks")
+    @Disabled("This test is used to create a data set for the benchmarks")
     public void createDataSet() {
         LOGGER.info("Start data set creation");
 
@@ -178,6 +178,7 @@ public class CreateDataSetTest extends AbstractSpringTest {
     }
 
     @Test
+    @Disabled
     public void testImport() {
         truncateAll();
         transactionTemplate.execute(status -> {

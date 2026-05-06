@@ -15,9 +15,11 @@ import com.vladmihalcea.phd.jpa.view.TagDto;
 import com.vladmihalcea.phd.jpa.view.UserDto;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import io.hypersistence.utils.logging.InlineQueryLogEntryCreator;
 import jakarta.persistence.EntityManagerFactory;
 import net.ttddyy.dsproxy.listener.ChainListener;
 import net.ttddyy.dsproxy.listener.DataSourceQueryCountListener;
+import net.ttddyy.dsproxy.listener.logging.SLF4JQueryLoggingListener;
 import net.ttddyy.dsproxy.support.ProxyDataSourceBuilder;
 import org.hibernate.cfg.AvailableSettings;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,6 +79,9 @@ public class JpaConfiguration {
     @Bean
     public DataSource dataSource() {
         ChainListener listener = new ChainListener();
+        SLF4JQueryLoggingListener loggingListener = new SLF4JQueryLoggingListener();
+        loggingListener.setQueryLogEntryCreator(new InlineQueryLogEntryCreator());
+        listener.addListener(loggingListener);
         listener.addListener(new DataSourceQueryCountListener());
         return ProxyDataSourceBuilder
             .create(poolingDataSource())

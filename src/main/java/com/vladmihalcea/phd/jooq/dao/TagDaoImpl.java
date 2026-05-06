@@ -53,15 +53,12 @@ public class TagDaoImpl implements TagDao {
      * Uses jOOQ {@code ON CONFLICT (name) DO UPDATE} so the returning clause
      * always provides the persisted id/name regardless of which branch was taken.
      */
-    public TagDto upsert(TagDto tag) {
-        return ctx.insertInto(TAGS)
+    public void upsert(TagDto tag) {
+        ctx.insertInto(TAGS)
             .set(TAGS_ID, tag.getId())
             .set(TAGS_NAME, tag.getName())
             .onConflictDoNothing()
-            .returning(TAGS_ID, TAGS_NAME)
-            .fetchOne(r -> new TagDto()
-                .setId(r.get(TAGS_ID))
-                .setName(r.get(TAGS_NAME)));
+            .execute();
     }
 
     public void delete(Long id) {

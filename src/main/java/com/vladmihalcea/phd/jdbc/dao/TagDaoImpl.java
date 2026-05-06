@@ -67,9 +67,8 @@ public class TagDaoImpl implements TagDao {
     }
 
     @Override
-    public TagDto upsert(TagDto tag) {
+    public void upsert(TagDto tag) {
         jdbcTemplate.update(UPSERT, tag.getId(), tag.getName(), null, tag.getName(), null);
-        return tag;
     }
 
     public static class TagRowMapper implements RowMapper<TagDto> {

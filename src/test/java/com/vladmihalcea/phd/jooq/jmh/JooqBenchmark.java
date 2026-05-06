@@ -100,8 +100,6 @@ public class JooqBenchmark {
 
     private void resetData() {
         if (dataSetChanged) {
-            benchmarkSetup.deleteAll();
-
             benchmarkSetup.createTestData();
             dataSetChanged = false;
             postIdGenerator.set(0);
