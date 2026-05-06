@@ -6,7 +6,7 @@
 # set output 'LoadPostWithVariableCommentsAndTags.png'
 
 set style fill solid 1.00 noborder
-set datafile separator "\t"
+set datafile separator ","
 
 set key outside right top vertical Left noreverse noenhanced autotitle nobox offset -1,0 font ",9"
 set rmargin 22
@@ -36,7 +36,7 @@ set xrange [-0.6:4.6]
 # jOOQ  shades: light green / dark green
 # JPA   shades: light red / dark red
 plot \
-  'LoadPostWithVariableCommentsAndTags.dat' every ::1 using ($0+o1):2 ti "JDBC-MQ-DTO"  lc rgb "#64B5F6", \
+  'LoadPostWithVariableCommentsAndTags.csv' every ::1 using ($0+o1):2 ti "JDBC-MQ-DTO"  lc rgb "#64B5F6", \
   ''                                        every ::1 using ($0+o2):3 ti "JDBC-MS-JSON" lc rgb "#1565C0", \
   ''                                        every ::1 using ($0+o3):4 ti "jOOQ-MQ-DTO"  lc rgb "#81C784", \
   ''                                        every ::1 using ($0+o4):5 ti "jOOQ-MS-JSON" lc rgb "#2E7D32", \

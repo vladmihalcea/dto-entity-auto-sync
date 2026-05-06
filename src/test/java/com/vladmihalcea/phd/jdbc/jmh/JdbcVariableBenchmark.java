@@ -81,13 +81,13 @@ public class JdbcVariableBenchmark {
     }
 
     @Benchmark
-    public void benchmarkLoadDtoUsingRest_1_collection_size() {
-        restCaller.loadPostDTO(100_001L);
+    public void benchmarkLoadDtoUsingRest_5_collection_size() {
+        restCaller.loadPostDTO(100_005L);
     }
 
     @Benchmark
-    public void benchmarkLoadDtoUsingRest_5_collection_size() {
-        restCaller.loadPostDTO(100_005L);
+    public void benchmarkLoadDtoUsingRest_10_collection_size() {
+        restCaller.loadPostDTO(100_010L);
     }
 
     @Benchmark
@@ -106,13 +106,13 @@ public class JdbcVariableBenchmark {
     }
 
     @Benchmark
-    public void benchmarkLoadJsonStringRest_1_collection_size() {
-        restCaller.loadPostJsonString(100_001L);
+    public void benchmarkLoadJsonStringRest_5_collection_size() {
+        restCaller.loadPostJsonString(100_005L);
     }
 
     @Benchmark
-    public void benchmarkLoadJsonStringRest_5_collection_size() {
-        restCaller.loadPostJsonString(100_005L);
+    public void benchmarkLoadJsonStringRest_10_collection_size() {
+        restCaller.loadPostJsonString(100_010L);
     }
 
     @Benchmark

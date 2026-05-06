@@ -46,13 +46,13 @@ public class JpaMultipleTest {
         assertEquals(0, postDTO_0.getReplies().size());
         assertEquals(0, postDTO_0.getTags().size());
 
-        PostDto postDTO_1 = forumService.loadPostDTO(100_001L);
-        assertEquals(1, postDTO_1.getReplies().size());
-        assertEquals(1, postDTO_1.getTags().size());
-
         PostDto postDTO_5 = forumService.loadPostDTO(100_005L);
         assertEquals(5, postDTO_5.getReplies().size());
         assertEquals(5, postDTO_5.getTags().size());
+
+        PostDto postDTO_10 = forumService.loadPostDTO(100_010L);
+        assertEquals(10, postDTO_10.getReplies().size());
+        assertEquals(10, postDTO_10.getTags().size());
 
         PostDto postDTO_25 = forumService.loadPostDTO(100_025L);
         assertEquals(25, postDTO_25.getReplies().size());
@@ -64,18 +64,18 @@ public class JpaMultipleTest {
     }
 
     @Test
-    public void testloadPostDTOUsingMultisetVariableCollections() {
+    public void testLoadPostDTOUsingMultisetVariableCollections() {
         com.vladmihalcea.phd.jpa.view.PostDto postDTO_0 = forumService.loadPostDTOUsingMultiset(100_000L);
         assertEquals(0, postDTO_0.getReplies().size());
         assertEquals(0, postDTO_0.getTags().size());
 
-        com.vladmihalcea.phd.jpa.view.PostDto postDTO_1 = forumService.loadPostDTOUsingMultiset(100_001L);
-        assertEquals(1, postDTO_1.getReplies().size());
-        assertEquals(1, postDTO_1.getTags().size());
-
         com.vladmihalcea.phd.jpa.view.PostDto postDTO_5 = forumService.loadPostDTOUsingMultiset(100_005L);
         assertEquals(5, postDTO_5.getReplies().size());
         assertEquals(5, postDTO_5.getTags().size());
+
+        com.vladmihalcea.phd.jpa.view.PostDto postDTO_10 = forumService.loadPostDTOUsingMultiset(100_010L);
+        assertEquals(10, postDTO_10.getReplies().size());
+        assertEquals(10, postDTO_10.getTags().size());
 
         com.vladmihalcea.phd.jpa.view.PostDto postDTO_25 = forumService.loadPostDTOUsingMultiset(100_025L);
         assertEquals(25, postDTO_25.getReplies().size());

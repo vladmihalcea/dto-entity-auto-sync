@@ -74,13 +74,13 @@ public class JpaVariableBenchmark {
     }
 
     @Benchmark
-    public void benchmarkLoadDtoUsingRest_1_collection_size() {
-        restCaller.loadPostDTO(100_001L);
+    public void benchmarkLoadDtoUsingRest_5_collection_size() {
+        restCaller.loadPostDTO(100_005L);
     }
 
     @Benchmark
-    public void benchmarkLoadDtoUsingRest_5_collection_size() {
-        restCaller.loadPostDTO(100_005L);
+    public void benchmarkLoadDtoUsingRest_10_collection_size() {
+        restCaller.loadPostDTO(100_010L);
     }
 
     @Benchmark
@@ -99,13 +99,13 @@ public class JpaVariableBenchmark {
     }
 
     @Benchmark
-    public void benchmarkLoadDtoUsingBlazeAndRest_1_collection_size() {
-        restCaller.loadPostDTOUsingMultiset(100_001L);
+    public void benchmarkLoadDtoUsingBlazeAndRest_5_collection_size() {
+        restCaller.loadPostDTOUsingMultiset(100_005L);
     }
 
     @Benchmark
-    public void benchmarkLoadDtoUsingBlazeAndRest_5_collection_size() {
-        restCaller.loadPostDTOUsingMultiset(100_005L);
+    public void benchmarkLoadDtoUsingBlazeAndRest_10_collection_size() {
+        restCaller.loadPostDTOUsingMultiset(100_010L);
     }
 
     @Benchmark

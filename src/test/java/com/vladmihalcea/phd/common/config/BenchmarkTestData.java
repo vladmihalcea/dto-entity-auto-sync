@@ -25,9 +25,9 @@ public class BenchmarkTestData {
     protected final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
     private static final int POST_COUNT = 20_005;
-    private static final int POST_COMMENT_COUNT = 40_131;
-    private static final int TAG_COUNT = 80_131;
-    private static final int POST_TAG_COUNT = 80_131;
+    private static final int POST_COMMENT_COUNT = 40_140;
+    private static final int TAG_COUNT = 80140;
+    private static final int POST_TAG_COUNT = 80140;
     private static final int USER_COUNT = 3;
 
     @Autowired

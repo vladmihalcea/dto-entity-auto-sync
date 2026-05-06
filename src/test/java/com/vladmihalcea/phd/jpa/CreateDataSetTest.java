@@ -89,7 +89,7 @@ public class CreateDataSetTest extends AbstractSpringTest {
             return null;
         });
 
-        List<Integer> collectionSizes = List.of(0, 1, 5, 25, 100);
+        List<Integer> collectionSizes = List.of(0, 5, 10, 25, 100);
 
         for (int collectionSize : collectionSizes) {
             transactionTemplate.<Long>execute(transactionStatus -> {
@@ -178,7 +178,6 @@ public class CreateDataSetTest extends AbstractSpringTest {
     }
 
     @Test
-    @Disabled
     public void testImport() {
         truncateAll();
         transactionTemplate.execute(status -> {
