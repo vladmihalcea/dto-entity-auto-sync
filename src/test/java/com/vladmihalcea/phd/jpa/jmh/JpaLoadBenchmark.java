@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @State(Scope.Benchmark)
-public class JpaVariableBenchmark {
+public class JpaLoadBenchmark {
 
     private ConfigurableApplicationContext context;
 

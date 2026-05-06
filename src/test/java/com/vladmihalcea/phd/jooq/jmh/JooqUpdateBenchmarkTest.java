@@ -1,14 +1,14 @@
-package com.vladmihalcea.phd.jpa.jmh;
+package com.vladmihalcea.phd.jooq.jmh;
 
 import com.vladmihalcea.phd.common.util.AbstractBenchmarkTest;
 
 /**
  * @author Vlad Mihalcea
  */
-public class JpaVariableBenchmarkTest extends AbstractBenchmarkTest {
+public class JooqUpdateBenchmarkTest extends AbstractBenchmarkTest {
 
     @Override
     protected Class benchmarkClass() {
-        return JpaVariableBenchmark.class;
+        return JooqUpdateBenchmark.class;
     }
 }

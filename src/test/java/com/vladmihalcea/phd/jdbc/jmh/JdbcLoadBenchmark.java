@@ -3,14 +3,7 @@ package com.vladmihalcea.phd.jdbc.jmh;
 import com.vladmihalcea.phd.app.ForumApplication;
 import com.vladmihalcea.phd.common.config.SpringRestConfiguration;
 import com.vladmihalcea.phd.common.controller.RestCaller;
-import com.vladmihalcea.phd.common.dto.PostCommentDto;
-import com.vladmihalcea.phd.common.dto.PostDto;
-import com.vladmihalcea.phd.common.dto.TagDto;
-import com.vladmihalcea.phd.common.dto.UserContext;
-import com.vladmihalcea.phd.common.service.ForumService;
 import com.vladmihalcea.phd.common.config.BenchmarkTestData;
-import com.vladmihalcea.phd.common.util.JsonUtil;
-import com.vladmihalcea.phd.common.util.TimeSortedIdentifierGenerator;
 import com.vladmihalcea.phd.jdbc.config.JdbcConfiguration;
 import org.openjdk.jmh.annotations.*;
 import org.springframework.boot.SpringApplication;
@@ -29,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @State(Scope.Benchmark)
-public class JdbcVariableBenchmark {
+public class JdbcLoadBenchmark {
 
     private ConfigurableApplicationContext context;
 

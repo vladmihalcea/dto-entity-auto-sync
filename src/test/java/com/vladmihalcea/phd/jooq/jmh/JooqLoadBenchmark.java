@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 @BenchmarkMode(Mode.AverageTime)
 @OutputTimeUnit(TimeUnit.MILLISECONDS)
 @State(Scope.Benchmark)
-public class JooqVariableBenchmark {
+public class JooqLoadBenchmark {
 
     private ConfigurableApplicationContext context;
 

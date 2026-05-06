@@ -1,14 +1,14 @@
-package com.vladmihalcea.phd.jdbc.jmh;
+package com.vladmihalcea.phd.jpa.jmh;
 
 import com.vladmihalcea.phd.common.util.AbstractBenchmarkTest;
 
 /**
  * @author Vlad Mihalcea
  */
-public class JdbcVariableBenchmarkTest extends AbstractBenchmarkTest {
+public class JpaUpdateBenchmarkTest extends AbstractBenchmarkTest {
 
     @Override
     protected Class benchmarkClass() {
-        return JdbcVariableBenchmark.class;
+        return JpaUpdateBenchmark.class;
     }
 }
