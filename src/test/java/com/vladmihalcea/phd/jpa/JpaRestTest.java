@@ -1,12 +1,10 @@
 package com.vladmihalcea.phd.jpa;
 
 import com.vladmihalcea.phd.app.ForumApplication;
+import com.vladmihalcea.phd.common.config.BenchmarkTestData;
 import com.vladmihalcea.phd.common.config.SpringWebConfiguration;
 import com.vladmihalcea.phd.common.controller.RestCaller;
-import com.vladmihalcea.phd.common.dto.PostCommentDto;
-import com.vladmihalcea.phd.common.dto.PostDto;
-import com.vladmihalcea.phd.common.dto.TagDto;
-import com.vladmihalcea.phd.common.dto.UserContext;
+import com.vladmihalcea.phd.common.dto.*;
 import com.vladmihalcea.phd.common.util.AbstractSpringTest;
 import com.vladmihalcea.phd.common.util.JsonUtil;
 import com.vladmihalcea.phd.common.util.TimeSortedIdentifierGenerator;
@@ -18,7 +16,10 @@ import com.vladmihalcea.phd.jpa.domain.User;
 import com.vladmihalcea.phd.jpa.mapper.UserMapper;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -27,6 +28,7 @@ import org.springframework.web.client.RestTemplate;
 import tools.jackson.databind.JsonNode;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -38,11 +40,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
     classes = {
         JpaConfiguration.class,
         SpringWebConfiguration.class,
-        ForumApplication.class
+        ForumApplication.class,
+        BenchmarkTestData.class
     },
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
-public class JpaRestTest extends AbstractSpringTest {
+public class JpaRestTest {
+
+    protected final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
     @Autowired
     private UserMapper userMapper;
@@ -52,6 +57,9 @@ public class JpaRestTest extends AbstractSpringTest {
 
     @Autowired
     private TransactionTemplate transactionTemplate;
+
+    @Autowired
+    private BenchmarkTestData testData;
 
     private final RestCaller restCaller;
 
@@ -64,24 +72,22 @@ public class JpaRestTest extends AbstractSpringTest {
         );
     }
 
-    @Override
+    @BeforeEach
+    public void init() {
+        if(!testData.isDataValid()) {
+            testData.createTestData();
+        }
+        afterInit();
+    }
+
     public void afterInit() {
         postId = transactionTemplate.<Long>execute(transactionStatus -> {
-            User vlad = new User()
-                .setEmail("vlad@acme.com")
-                .setFirstName("Vlad")
-                .setLastName("Mihalcea");
-            User john = new User()
-                .setEmail("john@acme.com")
-                .setFirstName("John")
-                .setLastName("Doe");
-            User jane = new User()
-                .setEmail("jane@acme.com")
-                .setFirstName("Jane")
-                .setLastName("Doe");
-            entityManager.persist(vlad);
-            entityManager.persist(john);
-            entityManager.persist(jane);
+            List<User> users = entityManager.createQuery("select u from User u").getResultList();
+
+            User vlad = users.stream().filter(u -> u.getEmail().equals("vlad@acme.com")).findFirst().get();
+            User john = users.stream().filter(u -> u.getEmail().equals("john@acme.com")).findFirst().get();
+            User jane = users.stream().filter(u -> u.getEmail().equals("jane@acme.com")).findFirst().get();
+
 
             UserContext.setCurrentUser(
                 userMapper.toDTO(vlad)
@@ -128,6 +134,11 @@ public class JpaRestTest extends AbstractSpringTest {
 
     @Test
     public void testDiffMergeSync() {
+        try {
+            Thread.sleep(1000 * 20);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
         LOGGER.info("Sync DTOs and JPA entity state");
         PostDto postDTO = restCaller.loadPostDTO(postId);
 
@@ -156,7 +167,9 @@ public class JpaRestTest extends AbstractSpringTest {
         );
 
         LOGGER.info("Update JPA entity state from PostDTO");
+        long startNanos = System.nanoTime();
         restCaller.updatePost(postDTO);
+        LOGGER.info("Update PostDTO using diffMerge took: {} ms", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNanos));
 
         LOGGER.info("Reload PostDTO to check the modifications");
         PostDto updatedPostDTO = restCaller.loadPostDTO(postId);

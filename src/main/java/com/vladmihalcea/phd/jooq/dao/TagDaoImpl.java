@@ -21,15 +21,6 @@ public class TagDaoImpl implements TagDao {
         this.ctx = ctx;
     }
 
-    public TagDto findByName(String name) {
-        return ctx.select(TAGS_ID, TAGS_NAME, TAGS_DESCRIPTION)
-            .from(TAGS)
-            .where(TAGS_NAME.eq(name))
-            .fetchOne(r -> new TagDto()
-                .setId(r.get(TAGS_ID))
-                .setName(r.get(TAGS_NAME)));
-    }
-
     public List<TagDto> findByPostId(Long postId) {
         return ctx.select(TAGS_ID, TAGS_NAME, TAGS_DESCRIPTION)
             .from(TAGS)

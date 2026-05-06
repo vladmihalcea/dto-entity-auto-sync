@@ -8,7 +8,6 @@ import java.util.List;
  * @author Vlad Mihalcea
  */
 public interface TagDao {
-    TagDto findByName(String name);
 
     List<TagDto> findByPostId(Long postId);
 

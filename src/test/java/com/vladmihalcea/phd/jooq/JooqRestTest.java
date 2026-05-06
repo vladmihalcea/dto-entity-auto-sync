@@ -1,30 +1,32 @@
 package com.vladmihalcea.phd.jooq;
 
 import com.vladmihalcea.phd.app.ForumApplication;
+import com.vladmihalcea.phd.common.config.BenchmarkTestData;
 import com.vladmihalcea.phd.common.config.SpringRestConfiguration;
-import com.vladmihalcea.phd.common.config.SpringWebConfiguration;
 import com.vladmihalcea.phd.common.controller.RestCaller;
 import com.vladmihalcea.phd.common.dto.*;
 import com.vladmihalcea.phd.common.service.ForumService;
-import com.vladmihalcea.phd.common.util.AbstractSpringTest;
 import com.vladmihalcea.phd.common.util.JsonUtil;
 import com.vladmihalcea.phd.common.util.TimeSortedIdentifierGenerator;
 import com.vladmihalcea.phd.jooq.config.JooqConfiguration;
 import com.vladmihalcea.phd.jooq.dao.PostDaoImpl;
-import com.vladmihalcea.phd.jooq.dao.UserDaoImpl;
 import org.jooq.DSLContext;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.client.RestTemplate;
 import tools.jackson.databind.JsonNode;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
+import static com.vladmihalcea.phd.jooq.schema.Tables.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -34,11 +36,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
     classes = {
         JooqConfiguration.class,
         SpringRestConfiguration.class,
-        ForumApplication.class
+        ForumApplication.class,
+        BenchmarkTestData.class,
     },
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
-public class JooqRestTest extends AbstractSpringTest {
+public class JooqRestTest {
     
     protected final Logger LOGGER = LoggerFactory.getLogger(getClass());
 
@@ -49,10 +52,13 @@ public class JooqRestTest extends AbstractSpringTest {
     private PostDaoImpl postDAO;
 
     @Autowired
-    private UserDaoImpl userDAO;
+    private DSLContext ctx;
 
     @Autowired
-    private DSLContext ctx;
+    private TransactionTemplate transactionTemplate;
+
+    @Autowired
+    private BenchmarkTestData testData;
 
     private final RestCaller restCaller;
 
@@ -65,40 +71,29 @@ public class JooqRestTest extends AbstractSpringTest {
         );
     }
 
-    @Override
-    protected void deleteAll() {
-        ctx.execute("DELETE FROM post_tags");
-        ctx.execute("DELETE FROM post_comments");
-        ctx.execute("DELETE FROM posts");
-        ctx.execute("DELETE FROM tags");
-        ctx.execute("DELETE FROM users");
+    @BeforeEach
+    public void init() {
+        if(!testData.isDataValid()) {
+            testData.createTestData();
+        }
+        afterInit();
     }
 
-    @Override
     public void afterInit() {
         postId = transactionTemplate.<Long>execute(transactionStatus -> {
-            UserDto vlad = new UserDto()
-                .setId(TimeSortedIdentifierGenerator.generate())
-                .setEmail("vlad@acme.com")
-                .setFirstName("Vlad")
-                .setLastName("Mihalcea");
-            UserDto john = new UserDto()
-                .setId(TimeSortedIdentifierGenerator.generate())
-                .setEmail("john@acme.com")
-                .setFirstName("John")
-                .setLastName("Doe");
-            UserDto jane = new UserDto()
-                .setId(TimeSortedIdentifierGenerator.generate())
-                .setEmail("jane@acme.com")
-                .setFirstName("Jane")
-                .setLastName("Doe");
+            List<UserDto> users = ctx.select(USERS_ID, USERS_EMAIL, USERS_FIRST_NAME, USERS_LAST_NAME)
+                .from(USERS)
+                .fetch(r -> new UserDto()
+                    .setId(r.get(USERS_ID))
+                    .setEmail(r.get(USERS_EMAIL))
+                    .setFirstName(r.get(USERS_FIRST_NAME))
+                    .setLastName(r.get(USERS_LAST_NAME)));
 
-            transactionTemplate.execute(status -> {
-                userDAO.insert(vlad);
-                userDAO.insert(john);
-                userDAO.insert(jane);
-                return null;
-            });
+            UserDto vlad = users.stream().filter(u -> u.getEmail().equals("vlad@acme.com")).findFirst().get();
+
+            UserDto john = users.stream().filter(u -> u.getEmail().equals("john@acme.com")).findFirst().get();
+
+            UserDto jane = users.stream().filter(u -> u.getEmail().equals("jane@acme.com")).findFirst().get();
 
             UserContext.setCurrentUser(vlad);
 
@@ -225,7 +220,10 @@ public class JooqRestTest extends AbstractSpringTest {
                 .setName("Jakarta Persistence")
         );
 
+        LOGGER.info("Update PostDTO using diffMerge");
+        long startNanos = System.nanoTime();
         restCaller.diffMerge(originalPost, modifiedPost);
+        LOGGER.info("Update PostDTO using diffMerge took: {} ms", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNanos));
 
         PostDto updatedPostDTO = restCaller.loadPostDTO(postId);
         assertEquals(modifiedPost, updatedPostDTO);

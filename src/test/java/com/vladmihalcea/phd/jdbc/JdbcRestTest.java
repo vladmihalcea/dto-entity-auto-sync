@@ -1,6 +1,7 @@
 package com.vladmihalcea.phd.jdbc;
 
 import com.vladmihalcea.phd.app.ForumApplication;
+import com.vladmihalcea.phd.common.config.BenchmarkTestData;
 import com.vladmihalcea.phd.common.config.SpringRestConfiguration;
 import com.vladmihalcea.phd.common.controller.RestCaller;
 import com.vladmihalcea.phd.common.dto.*;
@@ -11,6 +12,7 @@ import com.vladmihalcea.phd.common.util.TimeSortedIdentifierGenerator;
 import com.vladmihalcea.phd.jdbc.config.JdbcConfiguration;
 import com.vladmihalcea.phd.jdbc.dao.PostDaoImpl;
 import com.vladmihalcea.phd.jdbc.dao.UserDaoImpl;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,12 +20,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.web.client.RestTemplate;
 import tools.jackson.databind.JsonNode;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -34,7 +40,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
     classes = {
         JdbcConfiguration.class,
         SpringRestConfiguration.class,
-        ForumApplication.class
+        ForumApplication.class,
+        BenchmarkTestData.class
     },
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT
 )
@@ -57,6 +64,9 @@ public class JdbcRestTest extends AbstractSpringTest {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    @Autowired
+    private BenchmarkTestData testData;
+
     private final RestCaller restCaller;
 
     private Long postId;
@@ -68,40 +78,31 @@ public class JdbcRestTest extends AbstractSpringTest {
         );
     }
 
-    @Override
-    protected void deleteAll() {
-        jdbcTemplate.execute("DELETE FROM post_tags");
-        jdbcTemplate.execute("DELETE FROM post_comments");
-        jdbcTemplate.execute("DELETE FROM posts");
-        jdbcTemplate.execute("DELETE FROM tags");
-        jdbcTemplate.execute("DELETE FROM users");
+    @BeforeEach
+    public void init() {
+        if(!testData.isDataValid()) {
+            testData.createTestData();
+        }
+        afterInit();
     }
 
-    @Override
     public void afterInit() {
         postId = transactionTemplate.<Long>execute(transactionStatus -> {
-            UserDto vlad = new UserDto()
-                .setId(TimeSortedIdentifierGenerator.generate())
-                .setEmail("vlad@acme.com")
-                .setFirstName("Vlad")
-                .setLastName("Mihalcea");
-            UserDto john = new UserDto()
-                .setId(TimeSortedIdentifierGenerator.generate())
-                .setEmail("john@acme.com")
-                .setFirstName("John")
-                .setLastName("Doe");
-            UserDto jane = new UserDto()
-                .setId(TimeSortedIdentifierGenerator.generate())
-                .setEmail("jane@acme.com")
-                .setFirstName("Jane")
-                .setLastName("Doe");
+            List<UserDto> users = jdbcTemplate.query("""
+                select id, email, first_name, last_name
+                from users
+                """, (rs, rowNum) -> new UserDto()
+                    .setId(rs.getLong("id"))
+                    .setEmail(rs.getString("email"))
+                    .setFirstName(rs.getString("first_name"))
+                    .setLastName(rs.getString("last_name")));
 
-            transactionTemplate.execute(status -> {
-                userDAO.insert(vlad);
-                userDAO.insert(john);
-                userDAO.insert(jane);
-                return null;
-            });
+            UserDto vlad = users.stream().filter(u -> u.getEmail().equals("vlad@acme.com")).findFirst().get();
+
+            UserDto john = users.stream().filter(u -> u.getEmail().equals("john@acme.com")).findFirst().get();
+
+            UserDto jane = users.stream().filter(u -> u.getEmail().equals("jane@acme.com")).findFirst().get();
+
 
             UserContext.setCurrentUser(vlad);
 
@@ -228,7 +229,10 @@ public class JdbcRestTest extends AbstractSpringTest {
                 .setName("Jakarta Persistence")
         );
 
+        LOGGER.info("Update PostDTO using diffMerge");
+        long startNanos = System.nanoTime();
         restCaller.diffMerge(originalPost, modifiedPost);
+        LOGGER.info("Update PostDTO using diffMerge took: {} ms", TimeUnit.NANOSECONDS.toMillis(System.nanoTime() - startNanos));
 
         PostDto updatedPostDTO = restCaller.loadPostDTO(postId);
         assertEquals(modifiedPost, updatedPostDTO);

@@ -17,9 +17,6 @@ import java.util.List;
 @Repository
 public class TagDaoImpl implements TagDao {
 
-    private static final String FIND_BY_NAME =
-        "SELECT id, name, description FROM tags WHERE name = ?";
-
     private static final String FIND_BY_POST_ID =
         "SELECT t.id, t.name, t.description FROM tags t " +
         "JOIN post_tags pt ON pt.tag_id = t.id WHERE pt.post_id = ? ORDER BY t.id";
@@ -33,22 +30,12 @@ public class TagDaoImpl implements TagDao {
     private static final String UPSERT =
         "INSERT INTO tags (id, name, description) " +
         "VALUES (?, ?, ?) " +
-        "ON CONFLICT (id) DO UPDATE " +
-        "SET name = ?, description = ?";
+        "ON CONFLICT (id) DO NOTHING";
 
     private final JdbcTemplate jdbcTemplate;
 
     public TagDaoImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-    }
-
-    @Override
-    public TagDto findByName(String name) {
-        try {
-            return jdbcTemplate.queryForObject(FIND_BY_NAME, new TagRowMapper(), name);
-        } catch (EmptyResultDataAccessException e) {
-            return null;
-        }
     }
 
     @Override
@@ -68,7 +55,7 @@ public class TagDaoImpl implements TagDao {
 
     @Override
     public void upsert(TagDto tag) {
-        jdbcTemplate.update(UPSERT, tag.getId(), tag.getName(), null, tag.getName(), null);
+        jdbcTemplate.update(UPSERT, tag.getId(), tag.getName(), null);
     }
 
     public static class TagRowMapper implements RowMapper<TagDto> {
