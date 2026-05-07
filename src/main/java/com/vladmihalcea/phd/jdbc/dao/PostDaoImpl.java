@@ -70,8 +70,8 @@ public class PostDaoImpl implements PostDao {
         "   '[]'::jsonb " +
         "  ) " +
         "  from \"tags\" " +
-        "        join \"post_tags\" on \"post_tags\".\"tag_id\" = \"tags\".\"id\" " +
-        "        where \"post_tags\".\"post_id\" = \"posts\".\"id\" " +
+        "  join \"post_tags\" on \"post_tags\".\"tag_id\" = \"tags\".\"id\" " +
+        "  where \"post_tags\".\"post_id\" = \"posts\".\"id\" " +
         " ) " +
         ") " +
         "from \"posts\" " +
