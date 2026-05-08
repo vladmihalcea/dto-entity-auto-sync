@@ -1,8 +1,7 @@
-package com.vladmihalcea.phd.jdbc.dao;
+package com.vladmihalcea.phd.dao;
 
-import com.vladmihalcea.phd.common.dao.PostCommentDao;
-import com.vladmihalcea.phd.common.dto.PostCommentDto;
-import com.vladmihalcea.phd.common.dto.UserDto;
+import com.vladmihalcea.phd.dto.PostCommentDto;
+import com.vladmihalcea.phd.dto.UserDto;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;

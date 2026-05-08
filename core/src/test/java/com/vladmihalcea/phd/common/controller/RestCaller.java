@@ -96,18 +96,18 @@ public class RestCaller {
         );
     }
 
-    public void diffMerge(PostDto originalPost, PostDto modifiedPost) {
-        restTemplate.postForObject(
-            baseUrl() + "/post/diff-merge",
-            new PostDto[]{originalPost, modifiedPost},
-            Void.class
-        );
-    }
-
     public void updatePostComment(PostCommentDto reply) {
         restTemplate.put(
             baseUrl() + "/post/comment",
             reply,
+            Void.class
+        );
+    }
+
+    public void diffMerge(PostDto originalPost, PostDto modifiedPost) {
+        restTemplate.postForObject(
+            baseUrl() + "/post/diff-merge",
+            new PostDto[]{originalPost, modifiedPost},
             Void.class
         );
     }

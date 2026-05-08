@@ -134,11 +134,6 @@ public class JpaRestTest {
 
     @Test
     public void testDiffMergeSync() {
-        try {
-            Thread.sleep(1000 * 20);
-        } catch (InterruptedException e) {
-            throw new RuntimeException(e);
-        }
         LOGGER.info("Sync DTOs and JPA entity state");
         PostDto postDTO = restCaller.loadPostDTO(postId);
 
