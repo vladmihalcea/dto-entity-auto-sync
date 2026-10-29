@@ -1,0 +1,17 @@
+# Typed MS-JSON (W6-5, supplementary): the cost of returning a typed DTO instead of forwarding the database JSON.
+# On JDBC and jOOQ, the server either forwards the MULTISET JSON string or maps it into a PostDto that Jackson
+# serializes again; the client reads both responses as a String, so only the server work differs.
+# Cell: <name> <module> <rounds> <benchmark regex> [JMH options]
+@jmh -bm sample -wi 15 -w 3s -i 30 -r 3s
+jdbc-msjson-string-0   core  10 JdbcLoadBenchmark\.benchmarkLoadJsonStringRest_0_collection_size$
+jdbc-msjson-dto-0      core  10 JdbcLoadBenchmark\.benchmarkLoadDtoUsingMultisetAndRest_0_collection_size$
+jdbc-msjson-string-10  core  10 JdbcLoadBenchmark\.benchmarkLoadJsonStringRest_10_collection_size$
+jdbc-msjson-dto-10     core  10 JdbcLoadBenchmark\.benchmarkLoadDtoUsingMultisetAndRest_10_collection_size$
+jdbc-msjson-string-100 core  10 JdbcLoadBenchmark\.benchmarkLoadJsonStringRest_100_collection_size$
+jdbc-msjson-dto-100    core  10 JdbcLoadBenchmark\.benchmarkLoadDtoUsingMultisetAndRest_100_collection_size$
+jooq-msjson-string-0   core  10 JooqLoadBenchmark\.benchmarkLoadJsonStringRest_0_collection_size$
+jooq-msjson-dto-0      core  10 JooqLoadBenchmark\.benchmarkLoadDtoUsingMultisetAndRest_0_collection_size$
+jooq-msjson-string-10  core  10 JooqLoadBenchmark\.benchmarkLoadJsonStringRest_10_collection_size$
+jooq-msjson-dto-10     core  10 JooqLoadBenchmark\.benchmarkLoadDtoUsingMultisetAndRest_10_collection_size$
+jooq-msjson-string-100 core  10 JooqLoadBenchmark\.benchmarkLoadJsonStringRest_100_collection_size$
+jooq-msjson-dto-100    core  10 JooqLoadBenchmark\.benchmarkLoadDtoUsingMultisetAndRest_100_collection_size$

@@ -7,6 +7,7 @@ import com.vladmihalcea.phd.common.controller.RestCaller;
 import com.vladmihalcea.phd.common.dto.*;
 import com.vladmihalcea.phd.common.util.AbstractSpringTest;
 import com.vladmihalcea.phd.common.util.JsonUtil;
+import com.vladmihalcea.phd.common.util.BenchmarkRestTemplate;
 import com.vladmihalcea.phd.common.util.TimeSortedIdentifierGenerator;
 import com.vladmihalcea.phd.jpa.config.JpaConfiguration;
 import com.vladmihalcea.phd.jpa.domain.Post;
@@ -24,7 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.transaction.support.TransactionTemplate;
-import org.springframework.web.client.RestTemplate;
 import tools.jackson.databind.JsonNode;
 
 import java.util.List;
@@ -68,7 +68,7 @@ public class JpaRestTest {
     public JpaRestTest(@LocalServerPort int port) {
         this.restCaller = new RestCaller(
             port,
-            new RestTemplate()
+            BenchmarkRestTemplate.create()
         );
     }
 
@@ -127,9 +127,53 @@ public class JpaRestTest {
         LOGGER.info("Load a Post as a JSON document using jOOQ's MULTISET");
         PostDto postDTO = restCaller.loadPostDTO(postId);
         JsonNode postViewToNode = restCaller.loadPostDTOUsingMultiset(postId);
-        JsonNode postDTOToNode = JsonUtil.JSON_MAPPER.valueToTree(postDTO);
+        // Parse the serialized DTO, like the HTTP response, so that both trees use the same numeric node types
+        JsonNode postDTOToNode = JsonUtil.JSON_MAPPER.readTree(JsonUtil.JSON_MAPPER.writeValueAsString(postDTO));
 
         assertEquals(postDTOToNode, postViewToNode);
+    }
+
+    @Test
+    public void testMultiOpsDtoSync() {
+        LOGGER.info("Sync DTOs and JPA entity state through the per-change Multi-Ops calls");
+        PostDto postDTO = restCaller.loadPostDTO(postId);
+
+        postDTO.setTitle("Multi-Ops DTO Sync Pattern").upvote();
+        restCaller.patchPost(postDTO);
+
+        List<PostCommentDto> replies = postDTO.getReplies();
+        PostCommentDto removed = replies.stream().filter(comment -> comment.getParentId() != null).findFirst().orElseThrow();
+        replies.remove(removed);
+        restCaller.removePostComment(postId, removed.getId());
+
+        for (PostCommentDto r : replies) {
+            r.upvote();
+            restCaller.updatePostComment(postId, r);
+        }
+
+        PostCommentDto newReply = new PostCommentDto()
+            .setId(TimeSortedIdentifierGenerator.generate())
+            .setContent("Does it work with jOOQ?")
+            .setAuthor(UserContext.getCurrentUser())
+            .setParentId(replies.getFirst().getId());
+        replies.add(newReply);
+        restCaller.createPostComment(postId, newReply);
+
+        TagDto jpaTag = postDTO.getTags().stream()
+            .filter(t -> t.getName().equals("JPA"))
+            .findFirst()
+            .orElseThrow();
+        postDTO.getTags().remove(jpaTag);
+        restCaller.removeTag(postId, jpaTag);
+
+        TagDto jakarta = new TagDto()
+            .setId(TimeSortedIdentifierGenerator.generate())
+            .setName("Jakarta Persistence");
+        postDTO.getTags().add(jakarta);
+        restCaller.createTag(postId, jakarta);
+
+        PostDto updatedPostDTO = restCaller.loadPostDTO(postId);
+        assertEquals(postDTO, updatedPostDTO);
     }
 
     @Test

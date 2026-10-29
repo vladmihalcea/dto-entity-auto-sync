@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import static com.vladmihalcea.phd.common.config.DataSetGenerator.FAN_OUT_POST_ID;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
@@ -42,46 +43,46 @@ public class JpaMultipleTest {
 
     @Test
     public void testLoadPostDTOVariableCollections() {
-        PostDto postDTO_0 = forumService.loadPostDTO(100_000L);
+        PostDto postDTO_0 = forumService.loadPostDTO(FAN_OUT_POST_ID + 0);
         assertEquals(0, postDTO_0.getReplies().size());
         assertEquals(0, postDTO_0.getTags().size());
 
-        PostDto postDTO_5 = forumService.loadPostDTO(100_005L);
+        PostDto postDTO_5 = forumService.loadPostDTO(FAN_OUT_POST_ID + 5);
         assertEquals(5, postDTO_5.getReplies().size());
         assertEquals(5, postDTO_5.getTags().size());
 
-        PostDto postDTO_10 = forumService.loadPostDTO(100_010L);
+        PostDto postDTO_10 = forumService.loadPostDTO(FAN_OUT_POST_ID + 10);
         assertEquals(10, postDTO_10.getReplies().size());
         assertEquals(10, postDTO_10.getTags().size());
 
-        PostDto postDTO_25 = forumService.loadPostDTO(100_025L);
+        PostDto postDTO_25 = forumService.loadPostDTO(FAN_OUT_POST_ID + 25);
         assertEquals(25, postDTO_25.getReplies().size());
         assertEquals(25, postDTO_25.getTags().size());
 
-        PostDto postDTO_100 = forumService.loadPostDTO(100_100L);
+        PostDto postDTO_100 = forumService.loadPostDTO(FAN_OUT_POST_ID + 100);
         assertEquals(100, postDTO_100.getReplies().size());
         assertEquals(100, postDTO_100.getTags().size());
     }
 
     @Test
     public void testLoadPostDTOUsingMultisetVariableCollections() {
-        com.vladmihalcea.phd.jpa.view.PostDto postDTO_0 = forumService.loadPostDTOUsingMultiset(100_000L);
+        com.vladmihalcea.phd.jpa.view.PostDto postDTO_0 = forumService.loadPostDTOUsingMultiset(FAN_OUT_POST_ID + 0);
         assertEquals(0, postDTO_0.getReplies().size());
         assertEquals(0, postDTO_0.getTags().size());
 
-        com.vladmihalcea.phd.jpa.view.PostDto postDTO_5 = forumService.loadPostDTOUsingMultiset(100_005L);
+        com.vladmihalcea.phd.jpa.view.PostDto postDTO_5 = forumService.loadPostDTOUsingMultiset(FAN_OUT_POST_ID + 5);
         assertEquals(5, postDTO_5.getReplies().size());
         assertEquals(5, postDTO_5.getTags().size());
 
-        com.vladmihalcea.phd.jpa.view.PostDto postDTO_10 = forumService.loadPostDTOUsingMultiset(100_010L);
+        com.vladmihalcea.phd.jpa.view.PostDto postDTO_10 = forumService.loadPostDTOUsingMultiset(FAN_OUT_POST_ID + 10);
         assertEquals(10, postDTO_10.getReplies().size());
         assertEquals(10, postDTO_10.getTags().size());
 
-        com.vladmihalcea.phd.jpa.view.PostDto postDTO_25 = forumService.loadPostDTOUsingMultiset(100_025L);
+        com.vladmihalcea.phd.jpa.view.PostDto postDTO_25 = forumService.loadPostDTOUsingMultiset(FAN_OUT_POST_ID + 25);
         assertEquals(25, postDTO_25.getReplies().size());
         assertEquals(25, postDTO_25.getTags().size());
 
-        com.vladmihalcea.phd.jpa.view.PostDto postDTO_100 = forumService.loadPostDTOUsingMultiset(100_100L);
+        com.vladmihalcea.phd.jpa.view.PostDto postDTO_100 = forumService.loadPostDTOUsingMultiset(FAN_OUT_POST_ID + 100);
         assertEquals(100, postDTO_100.getReplies().size());
         assertEquals(100, postDTO_100.getTags().size());
     }

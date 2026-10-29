@@ -65,13 +65,13 @@ public class ForumService {
         return comment;
     }
 
-    public void updatePostComment(PostCommentDto comment) {
-        postCommentDAO.update(comment);
+    public void updatePostComment(Long postId, PostCommentDto comment) {
+        postCommentDAO.update(postId, comment);
     }
 
-    public void removePostComment(Long commentId) {
-        postCommentDAO.deleteChildrenOf(commentId);
-        postCommentDAO.delete(commentId);
+    public void removePostComment(Long postId, Long commentId) {
+        postCommentDAO.deleteChildrenOf(postId, commentId);
+        postCommentDAO.delete(postId, commentId);
     }
 
     public TagDto createTag(Long postId, TagDto tag) {

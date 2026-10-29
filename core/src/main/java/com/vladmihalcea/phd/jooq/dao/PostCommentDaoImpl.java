@@ -59,24 +59,26 @@ public class PostCommentDaoImpl implements PostCommentDao {
             .execute();
     }
 
-    public void update(PostCommentDto comment) {
+    public void update(Long postId, PostCommentDto comment) {
         ctx.update(POST_COMMENTS)
             .set(PC_CONTENT, comment.getContent())
             .set(PC_VOTES, comment.getVotes())
             .set(PC_PARENT_ID, comment.getParentId())
-            .where(PC_ID.eq(comment.getId()))
+            .where(PC_ID.eq(comment.getId()).and(PC_POST_ID.eq(postId)))
             .execute();
     }
 
-    public void delete(Long id) {
-        ctx.deleteFrom(POST_COMMENTS).where(PC_ID.eq(id)).execute();
+    public void delete(Long postId, Long id) {
+        ctx.deleteFrom(POST_COMMENTS)
+            .where(PC_ID.eq(id).and(PC_POST_ID.eq(postId)))
+            .execute();
     }
 
     /**
      * Recursively deletes all descendants of the given parent comment using a
      * PostgreSQL recursive CTE — no DDL ON DELETE CASCADE required.
      */
-    public void deleteChildrenOf(Long parentId) {
+    public void deleteChildrenOf(Long postId, Long parentId) {
         Field<Long> id = DSL.field(DSL.name("descendants", "id"), Long.class);
 
         CommonTableExpression<org.jooq.Record1<Long>> descendants = DSL.name("descendants")
@@ -84,7 +86,7 @@ public class PostCommentDaoImpl implements PostCommentDao {
             .as(
                 DSL.select(PC_ID)
                     .from(POST_COMMENTS)
-                    .where(PC_PARENT_ID.eq(parentId))
+                    .where(PC_PARENT_ID.eq(parentId).and(PC_POST_ID.eq(postId)))
                     .unionAll(
                         DSL.select(PC_ID)
                             .from(POST_COMMENTS)

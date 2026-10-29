@@ -1,0 +1,6 @@
+# Check after the BIOS update of 6 Nov: one read, one write, and one versioning write, with short iterations
+# Cell: <name> <module> <rounds> <benchmark regex> [JMH options]
+@jmh -bm sample -wi 2 -w 2s -i 3 -r 2s
+jdbc-msjson-10                  core        1  JdbcLoadBenchmark\.benchmarkLoadJsonStringRest_10_collection_size$
+jpa-diffmerge-service           core        1  JpaBenchmark\.benchmarkDiffMergeSync$
+versioning-jdbc-diffmerge-rest  versioning  1  JdbcUpdateBenchmark\.benchmarkDiffMergeSyncUsingRest$
