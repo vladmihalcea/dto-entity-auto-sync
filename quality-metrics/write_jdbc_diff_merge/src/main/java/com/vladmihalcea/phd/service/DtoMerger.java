@@ -43,8 +43,8 @@ public class DtoMerger {
 
         for (Map.Entry<Long, PostCommentDto> entry : originalComments.entrySet()) {
             if (!modifiedComments.containsKey(entry.getKey())) {
-                postCommentDAO.deleteChildrenOf(entry.getKey());
-                postCommentDAO.delete(entry.getKey());
+                postCommentDAO.deleteChildrenOf(originalPost.getId(), entry.getKey());
+                postCommentDAO.delete(originalPost.getId(), entry.getKey());
             }
         }
 
@@ -57,7 +57,7 @@ public class DtoMerger {
             } else if (!Objects.equals(original.getContent(), modified.getContent()) ||
                        original.getVotes() != modified.getVotes() ||
                        !Objects.equals(original.getParentId(), modified.getParentId())) {
-                postCommentDAO.update(modified);
+                postCommentDAO.update(originalPost.getId(), modified);
             }
         }
 

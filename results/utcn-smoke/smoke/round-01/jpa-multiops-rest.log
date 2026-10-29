@@ -1,0 +1,368 @@
+# JMH version: 1.37
+# VM version: JDK 21.0.4, OpenJDK 64-Bit Server VM, 21.0.4+7-LTS
+# VM invoker: /opt/temurin-21.0.4+7/bin/java
+# VM options: -Xms4g -Xmx4g -XX:+AlwaysPreTouch -Djmh.separateClasspathJAR=true
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 2 iterations, 2 s each
+# Measurement: 3 iterations, 2 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Sampling time
+# Benchmark: com.vladmihalcea.phd.jpa.jmh.JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest
+
+# Run progress: 0.00% complete, ETA 00:00:10
+# Fork: 1 of 1
+# Warmup Iteration   1: Telemetry: CPU clock from the APERF and MPERF counters of the running cores; package power from Intel RAPL
+Database of the core module: jdbc:postgresql://10.10.10.1:5432/dto2entity, run 15, PostgreSQL 18.6 (Ubuntu 18.6-0ubuntu0.26.04.1) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0, 64-bit, effective_cache_size=24GB, fsync=on, jit=on, maintenance_work_mem=1GB, max_connections=100, random_page_cost=1.1, shared_buffers=8GB, synchronous_commit=on, wal_sync_method=fdatasync, work_mem=16MB
+2026-11-12 14:25:04,723 WARN  [com.vladmihalcea.phd.jpa.jmh.JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest-jmh-worker-1]: c.b.a.AnnotationUtils - Stereotype annotation can not be found, skipping annotation inheritance via stereotype.
+43.130 ±(99.9%) 21.741 ms/op
+# Warmup Iteration   2: 27.195 ±(99.9%) 1.281 ms/op
+Iteration   1: 20.915 ±(99.9%) 1.128 ms/op
+                 app.cpu.mhz:                 4099.990 MHz
+                 app.cpu.power:               66.859 W
+                 app.cpu.power.limit:         165.000 W
+                 app.cpu.util:                12.968 %
+                 app.temp:                    54.000 degC
+                 app.thermal.throttles:       ≈ 0 #
+                 db.cpu.mhz:                  4100.022 MHz
+                 db.cpu.power:                49.636 W
+                 db.cpu.power.limit:          165.000 W
+                 db.cpu.util:                 0.688 %
+                 db.temp:                     37.000 degC
+                 db.thermal.throttles:        ≈ 0 #
+                 layer.commit.ms:             6.751 ms/op
+                 layer.commits:               6.000 #/op
+                 layer.http.calls:            6.000 #/op
+                 layer.http.client.ms:        20.584 ms/op
+                 layer.http.delete.client.ms: 3.106 ms/call
+                 layer.http.delete.server.ms: 2.692 ms/call
+                 layer.http.patch.client.ms:  3.440 ms/call
+                 layer.http.patch.server.ms:  2.880 ms/call
+                 layer.http.post.client.ms:   3.872 ms/call
+                 layer.http.post.server.ms:   3.281 ms/call
+                 layer.http.put.client.ms:    3.187 ms/call
+                 layer.http.put.server.ms:    2.732 ms/call
+                 layer.http.server.ms:        17.557 ms/op
+                 layer.service.ms:            14.671 ms/op
+                 layer.sql.ms:                3.290 ms/op
+                 layer.sql.statements:        13.000 #/op
+                 layer.throughput:            45.000 ops/s
+                 p0.00:                       17.269 ms/op
+                 p0.50:                       20.611 ms/op
+                 p0.90:                       22.872 ms/op
+                 p0.95:                       24.633 ms/op
+                 p0.99:                       44.040 ms/op
+                 p0.999:                      44.040 ms/op
+                 p0.9999:                     44.040 ms/op
+                 p1.00:                       44.040 ms/op
+
+Iteration   2: 18.365 ±(99.9%) 0.587 ms/op
+                 app.cpu.mhz:                 4099.987 MHz
+                 app.cpu.power:               69.130 W
+                 app.cpu.power.limit:         165.000 W
+                 app.cpu.util:                14.318 %
+                 app.temp:                    52.000 degC
+                 app.thermal.throttles:       ≈ 0 #
+                 db.cpu.mhz:                  4099.936 MHz
+                 db.cpu.power:                49.999 W
+                 db.cpu.power.limit:          165.000 W
+                 db.cpu.util:                 0.813 %
+                 db.temp:                     38.000 degC
+                 db.thermal.throttles:        ≈ 0 #
+                 layer.commit.ms:             6.528 ms/op
+                 layer.commits:               6.000 #/op
+                 layer.http.calls:            6.000 #/op
+                 layer.http.client.ms:        18.085 ms/op
+                 layer.http.delete.client.ms: 2.780 ms/call
+                 layer.http.delete.server.ms: 2.414 ms/call
+                 layer.http.patch.client.ms:  3.027 ms/call
+                 layer.http.patch.server.ms:  2.517 ms/call
+                 layer.http.post.client.ms:   3.315 ms/call
+                 layer.http.post.server.ms:   2.808 ms/call
+                 layer.http.put.client.ms:    2.869 ms/call
+                 layer.http.put.server.ms:    2.440 ms/call
+                 layer.http.server.ms:        15.400 ms/op
+                 layer.service.ms:            13.350 ms/op
+                 layer.sql.ms:                3.085 ms/op
+                 layer.sql.statements:        13.000 #/op
+                 layer.throughput:            51.000 ops/s
+                 p0.00:                       15.794 ms/op
+                 p0.50:                       17.875 ms/op
+                 p0.90:                       20.306 ms/op
+                 p0.95:                       22.736 ms/op
+                 p0.99:                       25.674 ms/op
+                 p0.999:                      25.723 ms/op
+                 p0.9999:                     25.723 ms/op
+                 p1.00:                       25.723 ms/op
+
+Iteration   3: 17.547 ±(99.9%) 0.961 ms/op
+                 app.cpu.mhz:                 4099.996 MHz
+                 app.cpu.power:               69.370 W
+                 app.cpu.power.limit:         165.000 W
+                 app.cpu.util:                14.519 %
+                 app.temp:                    54.000 degC
+                 app.thermal.throttles:       ≈ 0 #
+                 db.cpu.mhz:                  4100.019 MHz
+                 db.cpu.power:                50.256 W
+                 db.cpu.power.limit:          165.000 W
+                 db.cpu.util:                 0.908 %
+                 db.temp:                     38.000 degC
+                 db.thermal.throttles:        ≈ 0 #
+                 layer.commit.ms:             6.792 ms/op
+                 layer.commits:               6.000 #/op
+                 layer.http.calls:            6.000 #/op
+                 layer.http.client.ms:        17.305 ms/op
+                 layer.http.delete.client.ms: 2.658 ms/call
+                 layer.http.delete.server.ms: 2.327 ms/call
+                 layer.http.patch.client.ms:  2.907 ms/call
+                 layer.http.patch.server.ms:  2.412 ms/call
+                 layer.http.post.client.ms:   3.171 ms/call
+                 layer.http.post.server.ms:   2.680 ms/call
+                 layer.http.put.client.ms:    2.740 ms/call
+                 layer.http.put.server.ms:    2.334 ms/call
+                 layer.http.server.ms:        14.761 ms/op
+                 layer.service.ms:            12.915 ms/op
+                 layer.sql.ms:                2.971 ms/op
+                 layer.sql.statements:        13.000 #/op
+                 layer.throughput:            53.500 ops/s
+                 p0.00:                       14.713 ms/op
+                 p0.50:                       17.007 ms/op
+                 p0.90:                       19.425 ms/op
+                 p0.95:                       20.467 ms/op
+                 p0.99:                       35.793 ms/op
+                 p0.999:                      36.241 ms/op
+                 p0.9999:                     36.241 ms/op
+                 p1.00:                       36.241 ms/op
+
+
+
+Result "com.vladmihalcea.phd.jpa.jmh.JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest":
+  N = 299
+  mean =     18.840 ±(99.9%) 0.578 ms/op
+
+  Histogram, ms/op:
+    [10.000, 12.500) = 0 
+    [12.500, 15.000) = 2 
+    [15.000, 17.500) = 97 
+    [17.500, 20.000) = 127 
+    [20.000, 22.500) = 50 
+    [22.500, 25.000) = 15 
+    [25.000, 27.500) = 3 
+    [27.500, 30.000) = 2 
+    [30.000, 32.500) = 1 
+    [32.500, 35.000) = 0 
+    [35.000, 37.500) = 1 
+    [37.500, 40.000) = 0 
+    [40.000, 42.500) = 0 
+    [42.500, 45.000) = 1 
+    [45.000, 47.500) = 0 
+
+  Percentiles, ms/op:
+      p(0.0000) =     14.713 ms/op
+     p(50.0000) =     18.121 ms/op
+     p(90.0000) =     21.889 ms/op
+     p(95.0000) =     23.069 ms/op
+     p(99.0000) =     30.638 ms/op
+     p(99.9000) =     44.040 ms/op
+     p(99.9900) =     44.040 ms/op
+     p(99.9990) =     44.040 ms/op
+     p(99.9999) =     44.040 ms/op
+    p(100.0000) =     44.040 ms/op
+
+Secondary result "com.vladmihalcea.phd.jpa.jmh.JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:app.cpu.mhz":
+  4099.991 ±(99.9%) 0.088 MHz [Average]
+  (min, avg, max) = (4099.987, 4099.991, 4099.996), stdev = 0.005
+  CI (99.9%): [4099.903, 4100.079] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jpa.jmh.JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:app.cpu.power":
+  68.453 ±(99.9%) 25.275 W [Average]
+  (min, avg, max) = (66.859, 68.453, 69.370), stdev = 1.385
+  CI (99.9%): [43.178, 93.729] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jpa.jmh.JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:app.cpu.power.limit":
+  165.000 ±(99.9%) 0.001 W [Minimum]
+  (min, avg, max) = (165.000, 165.000, 165.000), stdev = 0.001
+  CI (99.9%): [165.000, 165.000] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jpa.jmh.JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:app.cpu.util":
+  13.935 ±(99.9%) 15.389 % [Average]
+  (min, avg, max) = (12.968, 13.935, 14.519), stdev = 0.844
+  CI (99.9%): [≈ 0, 29.324] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jpa.jmh.JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:app.temp":
+  54.000 ±(99.9%) 0.001 degC [Maximum]
+  (min, avg, max) = (52.000, 53.333, 54.000), stdev = 1.155
+  CI (99.9%): [54.000, 54.000] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jpa.jmh.JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:app.thermal.throttles":
+  ≈ 0 #
+
+Secondary result "com.vladmihalcea.phd.jpa.jmh.JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:db.cpu.mhz":
+  4099.992 ±(99.9%) 0.887 MHz [Average]
+  (min, avg, max) = (4099.936, 4099.992, 4100.022), stdev = 0.049
+  CI (99.9%): [4099.105, 4100.879] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jpa.jmh.JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:db.cpu.power":
+  49.964 ±(99.9%) 5.689 W [Average]
+  (min, avg, max) = (49.636, 49.964, 50.256), stdev = 0.312
+  CI (99.9%): [44.275, 55.653] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jpa.jmh.JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:db.cpu.power.limit":
+  165.000 ±(99.9%) 0.001 W [Minimum]
+  (min, avg, max) = (165.000, 165.000, 165.000), stdev = 0.001
+  CI (99.9%): [165.000, 165.000] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jpa.jmh.JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:db.cpu.util":
+  0.803 ±(99.9%) 2.007 % [Average]
+  (min, avg, max) = (0.688, 0.803, 0.908), stdev = 0.110
+  CI (99.9%): [≈ 0, 2.810] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jpa.jmh.JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:db.temp":
+  38.000 ±(99.9%) 0.001 degC [Maximum]
+  (min, avg, max) = (37.000, 37.667, 38.000), stdev = 0.577
+  CI (99.9%): [38.000, 38.000] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jpa.jmh.JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:db.thermal.throttles":
+  ≈ 0 #
+
+Secondary result "com.vladmihalcea.phd.jpa.jmh.JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.commit.ms":
+  6.690 ±(99.9%) 2.590 ms/op [Average]
+  (min, avg, max) = (6.528, 6.690, 6.792), stdev = 0.142
+  CI (99.9%): [4.100, 9.280] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jpa.jmh.JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.commits":
+  6.000 ±(99.9%) 0.001 #/op [Average]
+  (min, avg, max) = (6.000, 6.000, 6.000), stdev = 0.001
+  CI (99.9%): [6.000, 6.000] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jpa.jmh.JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.calls":
+  6.000 ±(99.9%) 0.001 #/op [Average]
+  (min, avg, max) = (6.000, 6.000, 6.000), stdev = 0.001
+  CI (99.9%): [6.000, 6.000] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jpa.jmh.JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.client.ms":
+  18.658 ±(99.9%) 31.255 ms/op [Average]
+  (min, avg, max) = (17.305, 18.658, 20.584), stdev = 1.713
+  CI (99.9%): [≈ 0, 49.913] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jpa.jmh.JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.delete.client.ms":
+  2.848 ±(99.9%) 4.227 ms/call [Average]
+  (min, avg, max) = (2.658, 2.848, 3.106), stdev = 0.232
+  CI (99.9%): [≈ 0, 7.075] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jpa.jmh.JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.delete.server.ms":
+  2.478 ±(99.9%) 3.474 ms/call [Average]
+  (min, avg, max) = (2.327, 2.478, 2.692), stdev = 0.190
+  CI (99.9%): [≈ 0, 5.952] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jpa.jmh.JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.patch.client.ms":
+  3.125 ±(99.9%) 5.100 ms/call [Average]
+  (min, avg, max) = (2.907, 3.125, 3.440), stdev = 0.280
+  CI (99.9%): [≈ 0, 8.225] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jpa.jmh.JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.patch.server.ms":
+  2.603 ±(99.9%) 4.475 ms/call [Average]
+  (min, avg, max) = (2.412, 2.603, 2.880), stdev = 0.245
+  CI (99.9%): [≈ 0, 7.078] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jpa.jmh.JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.post.client.ms":
+  3.453 ±(99.9%) 6.760 ms/call [Average]
+  (min, avg, max) = (3.171, 3.453, 3.872), stdev = 0.371
+  CI (99.9%): [≈ 0, 10.213] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jpa.jmh.JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.post.server.ms":
+  2.923 ±(99.9%) 5.776 ms/call [Average]
+  (min, avg, max) = (2.680, 2.923, 3.281), stdev = 0.317
+  CI (99.9%): [≈ 0, 8.699] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jpa.jmh.JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.put.client.ms":
+  2.932 ±(99.9%) 4.199 ms/call [Average]
+  (min, avg, max) = (2.740, 2.932, 3.187), stdev = 0.230
+  CI (99.9%): [≈ 0, 7.132] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jpa.jmh.JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.put.server.ms":
+  2.502 ±(99.9%) 3.758 ms/call [Average]
+  (min, avg, max) = (2.334, 2.502, 2.732), stdev = 0.206
+  CI (99.9%): [≈ 0, 6.260] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jpa.jmh.JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.server.ms":
+  15.906 ±(99.9%) 26.729 ms/op [Average]
+  (min, avg, max) = (14.761, 15.906, 17.557), stdev = 1.465
+  CI (99.9%): [≈ 0, 42.635] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jpa.jmh.JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.service.ms":
+  13.645 ±(99.9%) 16.680 ms/op [Average]
+  (min, avg, max) = (12.915, 13.645, 14.671), stdev = 0.914
+  CI (99.9%): [≈ 0, 30.326] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jpa.jmh.JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.sql.ms":
+  3.115 ±(99.9%) 2.952 ms/op [Average]
+  (min, avg, max) = (2.971, 3.115, 3.290), stdev = 0.162
+  CI (99.9%): [0.163, 6.067] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jpa.jmh.JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.sql.statements":
+  13.000 ±(99.9%) 0.001 #/op [Average]
+  (min, avg, max) = (13.000, 13.000, 13.000), stdev = 0.001
+  CI (99.9%): [13.000, 13.000] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jpa.jmh.JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.throughput":
+  49.833 ±(99.9%) 79.697 ops/s [Average]
+  (min, avg, max) = (45.000, 49.833, 53.500), stdev = 4.368
+  CI (99.9%): [≈ 0, 129.530] (assumes normal distribution)
+
+
+# Run complete. Total time: 00:00:20
+
+REMEMBER: The numbers below are just data. To gain reusable insights, you need to follow up on
+why the numbers are the way they are. Use profilers (see -prof, -lprof), design factorial
+experiments, perform baseline and negative tests that provide experimental control, make sure
+the benchmarking environment is safe on JVM/OS/HW level, ask for reviews from the domain experts.
+Do not assume the numbers tell you what you want them to tell.
+
+NOTE: Current JVM experimentally supports Compiler Blackholes, and they are in use. Please exercise
+extra caution when trusting the results, look into the generated code to check the benchmark still
+works, and factor in a small probability of new VM bugs. Additionally, while comparisons between
+different JVMs are already problematic, the performance difference caused by different Blackhole
+modes can be very significant. Please make sure you use the consistent Blackhole mode for comparisons.
+
+Benchmark                                                                        Mode  Cnt     Score    Error    Units
+JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest                              sample  299    18.840 ±  0.578    ms/op
+JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:app.cpu.mhz                  sample    3  4099.991 ±  0.088      MHz
+JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:app.cpu.power                sample    3    68.453 ± 25.275        W
+JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:app.cpu.power.limit          sample    3   165.000                 W
+JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:app.cpu.util                 sample    3    13.935 ± 15.389        %
+JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:app.temp                     sample    3    54.000              degC
+JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:app.thermal.throttles        sample    3       ≈ 0                 #
+JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:db.cpu.mhz                   sample    3  4099.992 ±  0.887      MHz
+JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:db.cpu.power                 sample    3    49.964 ±  5.689        W
+JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:db.cpu.power.limit           sample    3   165.000                 W
+JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:db.cpu.util                  sample    3     0.803 ±  2.007        %
+JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:db.temp                      sample    3    38.000              degC
+JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:db.thermal.throttles         sample    3       ≈ 0                 #
+JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.commit.ms              sample    3     6.690 ±  2.590    ms/op
+JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.commits                sample    3     6.000 ±  0.001     #/op
+JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.calls             sample    3     6.000 ±  0.001     #/op
+JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.client.ms         sample    3    18.658 ± 31.255    ms/op
+JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.delete.client.ms  sample    3     2.848 ±  4.227  ms/call
+JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.delete.server.ms  sample    3     2.478 ±  3.474  ms/call
+JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.patch.client.ms   sample    3     3.125 ±  5.100  ms/call
+JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.patch.server.ms   sample    3     2.603 ±  4.475  ms/call
+JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.post.client.ms    sample    3     3.453 ±  6.760  ms/call
+JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.post.server.ms    sample    3     2.923 ±  5.776  ms/call
+JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.put.client.ms     sample    3     2.932 ±  4.199  ms/call
+JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.put.server.ms     sample    3     2.502 ±  3.758  ms/call
+JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.server.ms         sample    3    15.906 ± 26.729    ms/op
+JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.service.ms             sample    3    13.645 ± 16.680    ms/op
+JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.sql.ms                 sample    3     3.115 ±  2.952    ms/op
+JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.sql.statements         sample    3    13.000 ±  0.001     #/op
+JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.throughput             sample    3    49.833 ± 79.697    ops/s
+JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:p0.00                        sample         14.713             ms/op
+JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:p0.50                        sample         18.121             ms/op
+JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:p0.90                        sample         21.889             ms/op
+JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:p0.95                        sample         23.069             ms/op
+JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:p0.99                        sample         30.638             ms/op
+JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:p0.999                       sample         44.040             ms/op
+JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:p0.9999                      sample         44.040             ms/op
+JpaUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:p1.00                        sample         44.040             ms/op
+
+Benchmark result is saved to /root/dto2entity/results/utcn-smoke/smoke/round-01/jpa-multiops-rest.json.part

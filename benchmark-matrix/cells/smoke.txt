@@ -1,0 +1,25 @@
+# Smoke run on the new machines: one fork of one read and one write benchmark per stack and module,
+# with short iterations, to check Temurin 21, the database connection, the telemetry agent, and the fork durations.
+# It also runs every write variant once, a 16-thread write, whose operations per thread and iteration must stay
+# below the 1,250 posts of a thread's range at SF1, and an SF10 write, which measures the SF10 load and restore.
+# Cell: <name> <module> <rounds> <benchmark regex> [JMH options]
+@jmh -bm sample -wi 2 -w 2s -i 3 -r 2s
+jdbc-mqdto-10            core        1  JdbcLoadBenchmark\.benchmarkLoadDtoUsingRest_10_collection_size$
+jdbc-msjson-10           core        1  JdbcLoadBenchmark\.benchmarkLoadJsonStringRest_10_collection_size$
+jooq-mqdto-10            core        1  JooqLoadBenchmark\.benchmarkLoadDtoUsingRest_10_collection_size$
+jooq-msjson-10           core        1  JooqLoadBenchmark\.benchmarkLoadJsonStringRest_10_collection_size$
+jpa-mqdto-10             core        1  JpaLoadBenchmark\.benchmarkLoadDtoUsingRest_10_collection_size$
+jpa-msjson-10            core        1  JpaLoadBenchmark\.benchmarkLoadDtoUsingBlazeAndRest_10_collection_size$
+jdbc-multiops-rest       core        1  JdbcUpdateBenchmark\.benchmarkMultiOpsSyncUsingRest$
+jdbc-diffmerge-rest      core        1  JdbcUpdateBenchmark\.benchmarkDiffMergeSyncUsingRest$
+jooq-multiops-rest       core        1  JooqUpdateBenchmark\.benchmarkMultiOpsSyncUsingRest$
+jooq-diffmerge-rest      core        1  JooqUpdateBenchmark\.benchmarkDiffMergeSyncUsingRest$
+jpa-multiops-rest        core        1  JpaUpdateBenchmark\.benchmarkMultiOpsSyncUsingRest$
+jpa-diffmerge-rest       core        1  JpaUpdateBenchmark\.benchmarkDiffMergeSyncUsingRest$
+jdbc-diffmerge-service   core        1  JdbcBenchmark\.benchmarkDiffMergeSync$
+jpa-multiops-service     core        1  JpaBenchmark\.benchmarkMultiOpsSync$
+jpa-diffmerge-service    core        1  JpaBenchmark\.benchmarkDiffMergeSync$
+jdbc-diffmerge-rest-t16  core        1  JdbcUpdateBenchmark\.benchmarkDiffMergeSyncUsingRest$  -t 16
+jdbc-diffmerge-rest-sf10 core        1  JdbcUpdateBenchmark\.benchmarkDiffMergeSyncUsingRest$  -jvmArgsAppend -Dbenchmark.scale=10
+versioning-jdbc-diffmerge-rest  versioning  1  JdbcUpdateBenchmark\.benchmarkDiffMergeSyncUsingRest$
+versioning-jpa-diffmerge-rest   versioning  1  JpaUpdateBenchmark\.benchmarkDiffMergeSyncUsingRest$

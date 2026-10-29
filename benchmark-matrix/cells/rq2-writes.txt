@@ -1,0 +1,16 @@
+# RQ2, write path: Multi-Ops versus Diff-Merge over REST and at the service level (the DB-only variants of R1-6),
+# 10 rounds, interleaved in one block. On JPA, Multi-Ops is not idiomatic and is labeled as such (R1-14).
+# Cell: <name> <module> <rounds> <benchmark regex> [JMH options]
+@jmh -bm sample -wi 15 -w 3s -i 30 -r 3s
+jdbc-multiops-rest       core  10  JdbcUpdateBenchmark\.benchmarkMultiOpsSyncUsingRest$
+jdbc-diffmerge-rest      core  10  JdbcUpdateBenchmark\.benchmarkDiffMergeSyncUsingRest$
+jooq-multiops-rest       core  10  JooqUpdateBenchmark\.benchmarkMultiOpsSyncUsingRest$
+jooq-diffmerge-rest      core  10  JooqUpdateBenchmark\.benchmarkDiffMergeSyncUsingRest$
+jpa-multiops-rest        core  10 JpaUpdateBenchmark\.benchmarkMultiOpsSyncUsingRest$
+jpa-diffmerge-rest       core  10  JpaUpdateBenchmark\.benchmarkDiffMergeSyncUsingRest$
+jdbc-multiops-service    core  10  JdbcBenchmark\.benchmarkMultiOpsSync$
+jdbc-diffmerge-service   core  10  JdbcBenchmark\.benchmarkDiffMergeSync$
+jooq-multiops-service    core  10  JooqBenchmark\.benchmarkMultiOpsSync$
+jooq-diffmerge-service   core  10  JooqBenchmark\.benchmarkDiffMergeSync$
+jpa-multiops-service     core  10 JpaBenchmark\.benchmarkMultiOpsSync$
+jpa-diffmerge-service    core  10  JpaBenchmark\.benchmarkDiffMergeSync$

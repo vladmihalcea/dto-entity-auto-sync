@@ -60,11 +60,11 @@ public class JdbcMultipleTest extends AbstractSpringTest {
             List<PostCommentDto> replies = postDTO.getReplies();
             PostCommentDto removed = replies.stream().filter(comment -> comment.getParentId() != null).findFirst().orElseThrow();
             replies.remove(removed);
-            forumService.removePostComment(removed.getId());
+            forumService.removePostComment(postId, removed.getId());
 
             for (PostCommentDto r : replies) {
                 r.upvote();
-                forumService.updatePostComment(r);
+                forumService.updatePostComment(postId, r);
             }
 
             PostCommentDto newReply = new PostCommentDto()

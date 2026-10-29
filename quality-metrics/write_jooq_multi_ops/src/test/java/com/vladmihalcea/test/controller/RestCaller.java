@@ -64,18 +64,19 @@ public class RestCaller {
         );
     }
 
-    public void removePostComment(Long id) {
+    public void removePostComment(Long postId, Long id) {
         restTemplate.delete(
-            baseUrl() + "/post/comment/{commentId}",
+            baseUrl() + "/post/{postId}/comment/{commentId}",
+            postId,
             id
         );
     }
 
-    public void updatePostComment(PostCommentDto reply) {
+    public void updatePostComment(Long postId, PostCommentDto reply) {
         restTemplate.put(
-            baseUrl() + "/post/comment",
+            baseUrl() + "/post/{postId}/comment",
             reply,
-            Void.class
+            postId
         );
     }
 }

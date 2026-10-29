@@ -1,0 +1,6 @@
+# Check before the layer-overhead block of 10 Nov (the layout of the campaign: s68 runs the benchmarks, s66 PostgreSQL):
+# one write with and without the layer profiler, with short iterations
+# Cell: <name> <module> <rounds> <benchmark regex> [options]
+@jmh -bm sample -wi 2 -w 2s -i 3 -r 2s
+jdbc-diffmerge-rest          core  1  JdbcUpdateBenchmark\.benchmarkDiffMergeSyncUsingRest$
+jdbc-diffmerge-rest-nolayer  core  1  JdbcUpdateBenchmark\.benchmarkDiffMergeSyncUsingRest$  --without-layer-profiler

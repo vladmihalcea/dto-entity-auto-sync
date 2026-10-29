@@ -27,14 +27,15 @@ public class PostCommentDAOImpl implements PostCommentDao {
         "VALUES (?, ?, ?, ?, ?, ?)";
 
     private static final String UPDATE =
-        "UPDATE post_comments SET content = ?, votes = ?, parent_id = ? WHERE id = ?";
+        "UPDATE post_comments SET content = ?, votes = ?, parent_id = ? " +
+        "WHERE id = ? AND post_id = ?";
 
     private static final String DELETE =
-        "DELETE FROM post_comments WHERE id = ?";
+        "DELETE FROM post_comments WHERE id = ? AND post_id = ?";
 
     private static final String DELETE_CHILDREN_RECURSIVE =
         "WITH RECURSIVE descendants AS (" +
-        "  SELECT id FROM post_comments WHERE parent_id = ? " +
+        "  SELECT id FROM post_comments WHERE parent_id = ? AND post_id = ? " +
         "  UNION ALL " +
         "  SELECT c.id FROM post_comments c JOIN descendants d ON c.parent_id = d.id" +
         ") DELETE FROM post_comments WHERE id IN (SELECT id FROM descendants)";
@@ -58,19 +59,20 @@ public class PostCommentDAOImpl implements PostCommentDao {
     }
 
     @Override
-    public void update(PostCommentDto comment) {
+    public void update(Long postId, PostCommentDto comment) {
         jdbcTemplate.update(UPDATE,
-            comment.getContent(), comment.getVotes(), comment.getParentId(), comment.getId());
+            comment.getContent(), comment.getVotes(), comment.getParentId(),
+            comment.getId(), postId);
     }
 
     @Override
-    public void delete(Long id) {
-        jdbcTemplate.update(DELETE, id);
+    public void delete(Long postId, Long id) {
+        jdbcTemplate.update(DELETE, id, postId);
     }
 
     @Override
-    public void deleteChildrenOf(Long parentId) {
-        jdbcTemplate.update(DELETE_CHILDREN_RECURSIVE, parentId);
+    public void deleteChildrenOf(Long postId, Long parentId) {
+        jdbcTemplate.update(DELETE_CHILDREN_RECURSIVE, parentId, postId);
     }
 
     public static class PostCommentRowMapper implements RowMapper<PostCommentDto> {

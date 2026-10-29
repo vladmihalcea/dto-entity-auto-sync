@@ -1,0 +1,19 @@
+# Role swap (robustness check, D-19): the W7 headline cells at SF1 with one thread, 10 rounds, with the roles of the two
+# servers swapped (the former database server runs the benchmarks, the former application server PostgreSQL). The cells
+# keep the names of their rq1-rest and rq2-writes twins, so that every fork pairs with the same cell of the campaign;
+# matching orderings and similar magnitudes rule out a quirk of one physical server.
+# On JPA, Multi-Ops is not idiomatic and is labeled as such (R1-14).
+# Cell: <name> <module> <rounds> <benchmark regex> [JMH options]
+@jmh -bm sample -wi 15 -w 3s -i 30 -r 3s
+jdbc-mqdto-10        core  10 JdbcLoadBenchmark\.benchmarkLoadDtoUsingRest_10_collection_size$
+jdbc-msjson-10       core  10 JdbcLoadBenchmark\.benchmarkLoadJsonStringRest_10_collection_size$
+jooq-mqdto-10        core  10 JooqLoadBenchmark\.benchmarkLoadDtoUsingRest_10_collection_size$
+jooq-msjson-10       core  10 JooqLoadBenchmark\.benchmarkLoadJsonStringRest_10_collection_size$
+jpa-mqdto-10         core  10 JpaLoadBenchmark\.benchmarkLoadDtoUsingRest_10_collection_size$
+jpa-msjson-10        core  10 JpaLoadBenchmark\.benchmarkLoadDtoUsingBlazeAndRest_10_collection_size$
+jdbc-multiops-rest   core  10 JdbcUpdateBenchmark\.benchmarkMultiOpsSyncUsingRest$
+jdbc-diffmerge-rest  core  10 JdbcUpdateBenchmark\.benchmarkDiffMergeSyncUsingRest$
+jooq-multiops-rest   core  10 JooqUpdateBenchmark\.benchmarkMultiOpsSyncUsingRest$
+jooq-diffmerge-rest  core  10 JooqUpdateBenchmark\.benchmarkDiffMergeSyncUsingRest$
+jpa-multiops-rest    core  10 JpaUpdateBenchmark\.benchmarkMultiOpsSyncUsingRest$
+jpa-diffmerge-rest   core  10 JpaUpdateBenchmark\.benchmarkDiffMergeSyncUsingRest$

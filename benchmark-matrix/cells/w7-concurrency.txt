@@ -1,0 +1,43 @@
+# W7 concurrency (AE-3, R2-1): the RQ1 REST reads at fan-out 10 and the RQ2 REST writes with 4, 8, and 16 benchmark
+# threads, 10 rounds; the rq1-rest and rq2-writes blocks cover one thread. Every read thread loads the same fan-out-10
+# post, while every write thread edits only the posts of its own range (PostRange), so concurrent writes never touch
+# the same post. JMH runs closed-loop, so the tail percentiles under concurrency are a lower bound.
+# On JPA, Multi-Ops is not idiomatic and is labeled as such (R1-14).
+# Cell: <name> <module> <rounds> <benchmark regex> [JMH options]
+@jmh -bm sample -wi 15 -w 3s -i 30 -r 3s
+jdbc-mqdto-10-t4         core  10 JdbcLoadBenchmark\.benchmarkLoadDtoUsingRest_10_collection_size$          -t 4
+jdbc-msjson-10-t4        core  10 JdbcLoadBenchmark\.benchmarkLoadJsonStringRest_10_collection_size$        -t 4
+jooq-mqdto-10-t4         core  10 JooqLoadBenchmark\.benchmarkLoadDtoUsingRest_10_collection_size$          -t 4
+jooq-msjson-10-t4        core  10 JooqLoadBenchmark\.benchmarkLoadJsonStringRest_10_collection_size$        -t 4
+jpa-mqdto-10-t4          core  10 JpaLoadBenchmark\.benchmarkLoadDtoUsingRest_10_collection_size$           -t 4
+jpa-msjson-10-t4         core  10 JpaLoadBenchmark\.benchmarkLoadDtoUsingBlazeAndRest_10_collection_size$   -t 4
+jdbc-multiops-rest-t4    core  10 JdbcUpdateBenchmark\.benchmarkMultiOpsSyncUsingRest$                      -t 4
+jdbc-diffmerge-rest-t4   core  10 JdbcUpdateBenchmark\.benchmarkDiffMergeSyncUsingRest$                     -t 4
+jooq-multiops-rest-t4    core  10 JooqUpdateBenchmark\.benchmarkMultiOpsSyncUsingRest$                      -t 4
+jooq-diffmerge-rest-t4   core  10 JooqUpdateBenchmark\.benchmarkDiffMergeSyncUsingRest$                     -t 4
+jpa-multiops-rest-t4     core  10 JpaUpdateBenchmark\.benchmarkMultiOpsSyncUsingRest$                     -t 4
+jpa-diffmerge-rest-t4    core  10 JpaUpdateBenchmark\.benchmarkDiffMergeSyncUsingRest$                      -t 4
+jdbc-mqdto-10-t8         core  10 JdbcLoadBenchmark\.benchmarkLoadDtoUsingRest_10_collection_size$          -t 8
+jdbc-msjson-10-t8        core  10 JdbcLoadBenchmark\.benchmarkLoadJsonStringRest_10_collection_size$        -t 8
+jooq-mqdto-10-t8         core  10 JooqLoadBenchmark\.benchmarkLoadDtoUsingRest_10_collection_size$          -t 8
+jooq-msjson-10-t8        core  10 JooqLoadBenchmark\.benchmarkLoadJsonStringRest_10_collection_size$        -t 8
+jpa-mqdto-10-t8          core  10 JpaLoadBenchmark\.benchmarkLoadDtoUsingRest_10_collection_size$           -t 8
+jpa-msjson-10-t8         core  10 JpaLoadBenchmark\.benchmarkLoadDtoUsingBlazeAndRest_10_collection_size$   -t 8
+jdbc-multiops-rest-t8    core  10 JdbcUpdateBenchmark\.benchmarkMultiOpsSyncUsingRest$                      -t 8
+jdbc-diffmerge-rest-t8   core  10 JdbcUpdateBenchmark\.benchmarkDiffMergeSyncUsingRest$                     -t 8
+jooq-multiops-rest-t8    core  10 JooqUpdateBenchmark\.benchmarkMultiOpsSyncUsingRest$                      -t 8
+jooq-diffmerge-rest-t8   core  10 JooqUpdateBenchmark\.benchmarkDiffMergeSyncUsingRest$                     -t 8
+jpa-multiops-rest-t8     core  10 JpaUpdateBenchmark\.benchmarkMultiOpsSyncUsingRest$                     -t 8
+jpa-diffmerge-rest-t8    core  10 JpaUpdateBenchmark\.benchmarkDiffMergeSyncUsingRest$                      -t 8
+jdbc-mqdto-10-t16        core  10 JdbcLoadBenchmark\.benchmarkLoadDtoUsingRest_10_collection_size$          -t 16
+jdbc-msjson-10-t16       core  10 JdbcLoadBenchmark\.benchmarkLoadJsonStringRest_10_collection_size$        -t 16
+jooq-mqdto-10-t16        core  10 JooqLoadBenchmark\.benchmarkLoadDtoUsingRest_10_collection_size$          -t 16
+jooq-msjson-10-t16       core  10 JooqLoadBenchmark\.benchmarkLoadJsonStringRest_10_collection_size$        -t 16
+jpa-mqdto-10-t16         core  10 JpaLoadBenchmark\.benchmarkLoadDtoUsingRest_10_collection_size$           -t 16
+jpa-msjson-10-t16        core  10 JpaLoadBenchmark\.benchmarkLoadDtoUsingBlazeAndRest_10_collection_size$   -t 16
+jdbc-multiops-rest-t16   core  10 JdbcUpdateBenchmark\.benchmarkMultiOpsSyncUsingRest$                      -t 16
+jdbc-diffmerge-rest-t16  core  10 JdbcUpdateBenchmark\.benchmarkDiffMergeSyncUsingRest$                     -t 16
+jooq-multiops-rest-t16   core  10 JooqUpdateBenchmark\.benchmarkMultiOpsSyncUsingRest$                      -t 16
+jooq-diffmerge-rest-t16  core  10 JooqUpdateBenchmark\.benchmarkDiffMergeSyncUsingRest$                     -t 16
+jpa-multiops-rest-t16    core  10 JpaUpdateBenchmark\.benchmarkMultiOpsSyncUsingRest$                     -t 16
+jpa-diffmerge-rest-t16   core  10 JpaUpdateBenchmark\.benchmarkDiffMergeSyncUsingRest$                      -t 16

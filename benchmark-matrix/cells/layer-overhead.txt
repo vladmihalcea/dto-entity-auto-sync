@@ -1,0 +1,19 @@
+# Overhead of the layer profiler (the observer effect): three cells of the campaign, each with the layer profiler,
+# as in every reported block, and without it, in the same randomized rounds, so that the difference of the means of
+# the twins is the cost of recording the layer timings. Every fork installs the probes; without the profiler they do
+# not record, and each costs one volatile read. The telemetry profiler runs in every fork.
+# The cells: a read with one of the highest probe rates of RQ1 (JDBC MQ-DTO at fan-out 0: 7 probes in about 0.9 ms;
+# JDBC MS-JSON at fan-out 0 has 5 in about 0.64 ms), the shortest edit (JDBC Diff-Merge over REST: 12 probes in
+# about 2.1 ms), and the RQ2 edit with the most probes (JPA Multi-Ops over REST: 37 probes in about 6.3 ms).
+# The digest in session.properties covers the cell lines only, so comments do not change it.
+# Same JMH options and rounds as rq1-rest and rq2-writes,
+# on the layout of the campaign: s68 runs the benchmarks and s66 PostgreSQL.
+# On JPA, Multi-Ops is not idiomatic and is labeled as such (R1-14).
+# Cell: <name> <module> <rounds> <benchmark regex> [options]
+@jmh -bm sample -wi 15 -w 3s -i 30 -r 3s
+jdbc-mqdto-0                 core  10  JdbcLoadBenchmark\.benchmarkLoadDtoUsingRest_0_collection_size$
+jdbc-mqdto-0-nolayer         core  10  JdbcLoadBenchmark\.benchmarkLoadDtoUsingRest_0_collection_size$  --without-layer-profiler
+jdbc-diffmerge-rest          core  10  JdbcUpdateBenchmark\.benchmarkDiffMergeSyncUsingRest$
+jdbc-diffmerge-rest-nolayer  core  10  JdbcUpdateBenchmark\.benchmarkDiffMergeSyncUsingRest$  --without-layer-profiler
+jpa-multiops-rest            core  10  JpaUpdateBenchmark\.benchmarkMultiOpsSyncUsingRest$
+jpa-multiops-rest-nolayer    core  10  JpaUpdateBenchmark\.benchmarkMultiOpsSyncUsingRest$  --without-layer-profiler

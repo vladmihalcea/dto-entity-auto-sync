@@ -156,6 +156,15 @@ public class JdbcRestTest extends AbstractSpringTest {
     }
 
     @Test
+    public void testLoadPostDtoUsingMultiset() {
+        LOGGER.info("Load a Post as a DTO mapped from the MULTISET JSON");
+        // Both MS-JSON endpoints return the same document, so the typed-msjson benchmark block compares equal payloads
+        JsonNode postDtoToNode = JsonUtil.JSON_MAPPER.readTree(restCaller.loadPostDTOUsingMultisetAsString(postId));
+        JsonNode postJsonStringToNode = JsonUtil.JSON_MAPPER.readTree(restCaller.loadPostJsonString(postId));
+        assertEquals(postJsonStringToNode, postDtoToNode);
+    }
+
+    @Test
     public void testMultiOpsDtoSync() {
         LOGGER.info("Sync DTOs and JDBC state");
         PostDto postDTO = restCaller.loadPostDTO(postId);
@@ -166,11 +175,11 @@ public class JdbcRestTest extends AbstractSpringTest {
         List<PostCommentDto> replies = postDTO.getReplies();
         PostCommentDto removed = replies.stream().filter(comment -> comment.getParentId() != null).findFirst().orElseThrow();
         replies.remove(removed);
-        restCaller.removePostComment(removed.getId());
+        restCaller.removePostComment(postId, removed.getId());
 
         for (PostCommentDto reply : replies) {
             reply.upvote();
-            restCaller.updatePostComment(reply);
+            restCaller.updatePostComment(postId, reply);
         }
 
         PostCommentDto newReply = new PostCommentDto()
@@ -200,7 +209,7 @@ public class JdbcRestTest extends AbstractSpringTest {
 
     @Test
     public void testDiffMergeSync() {
-        LOGGER.info("Sync DTOs and JDBC state via a single JSON Patch");
+        LOGGER.info("Sync DTOs and JDBC state via a single Diff-Merge call");
 
         PostDto originalPost = restCaller.loadPostDTO(postId);
         PostDto modifiedPost = JsonUtil.clone(originalPost);

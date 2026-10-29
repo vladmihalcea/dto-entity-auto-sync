@@ -17,6 +17,7 @@
 
     <modules>
         <module>core</module>
+        <module>versioning</module>
     </modules>
 
     <properties>
@@ -35,7 +36,7 @@
         <jacoco.version>0.8.2</jacoco.version>
 
         <testcontainers.version>2.0.1</testcontainers.version>
-        <postgresql.version>42.3.3</postgresql.version>
+        <postgresql.version>42.7.14</postgresql.version>
 
         <datasource-proxy.version>1.10</datasource-proxy.version>
         <junit.version>6.0.1</junit.version>
@@ -152,6 +153,114 @@
                 <skip.unit.tests>true</skip.unit.tests>
                 <console.log.level>WARN</console.log.level>
             </properties>
+        </profile>
+        <!--
+            Builds a self-contained benchmark bundle in target/benchmark-bundle of every module,
+            which runs with a Java runtime only, e.g., against a PostgreSQL server on another machine:
+            mvn -P benchmark-bundle package
+        -->
+        <profile>
+            <id>benchmark-bundle</id>
+            <properties>
+                <skip.unit.tests>true</skip.unit.tests>
+                <console.log.level>WARN</console.log.level>
+                <spring-boot.repackage.skip>true</spring-boot.repackage.skip>
+                <benchmark.bundle.directory>${project.build.directory}/benchmark-bundle</benchmark.bundle.directory>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-clean-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <!-- Every bundle starts from an empty folder, so no jar of an older dependency version stays in lib -->
+                                <id>benchmark-bundle-clean</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>clean</goal>
+                                </goals>
+                                <configuration>
+                                    <excludeDefaultDirectories>true</excludeDefaultDirectories>
+                                    <filesets>
+                                        <fileset>
+                                            <directory>${benchmark.bundle.directory}</directory>
+                                        </fileset>
+                                    </filesets>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>benchmark-bundle-dependencies</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>copy-dependencies</goal>
+                                </goals>
+                                <configuration>
+                                    <includeScope>test</includeScope>
+                                    <outputDirectory>${benchmark.bundle.directory}/lib</outputDirectory>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-resources-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>benchmark-bundle-classes</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${benchmark.bundle.directory}/classes</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${project.build.outputDirectory}</directory>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>benchmark-bundle-test-classes</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${benchmark.bundle.directory}/test-classes</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${project.build.testOutputDirectory}</directory>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>benchmark-bundle-scripts</id>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>copy-resources</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${benchmark.bundle.directory}</outputDirectory>
+                                    <resources>
+                                        <resource>
+                                            <directory>${project.basedir}/../benchmark-bundle</directory>
+                                        </resource>
+                                    </resources>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 

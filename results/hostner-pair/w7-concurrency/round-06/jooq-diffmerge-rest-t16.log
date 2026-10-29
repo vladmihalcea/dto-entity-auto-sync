@@ -1,0 +1,1215 @@
+# JMH version: 1.37
+# VM version: JDK 21.0.4, OpenJDK 64-Bit Server VM, 21.0.4+7-LTS
+# VM invoker: /opt/temurin-21.0.4+7/bin/java
+# VM options: -Xms4g -Xmx4g -XX:+AlwaysPreTouch -Djmh.separateClasspathJAR=true
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 15 iterations, 3 s each
+# Measurement: 30 iterations, 3 s each
+# Timeout: 10 min per iteration
+# Threads: 16 threads, will synchronize iterations
+# Benchmark mode: Sampling time
+# Benchmark: com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest
+
+# Run progress: 0.00% complete, ETA 00:02:15
+# Fork: 1 of 1
+# Warmup Iteration   1: Telemetry: CPU clock from the APERF and MPERF counters of the running cores; package power from Intel RAPL
+Database of the core module: jdbc:postgresql://37.148.161.24:5432/dto2entity, run 1277, PostgreSQL 18.6 (Ubuntu 18.6-0ubuntu0.26.04.1) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0, 64-bit, effective_cache_size=24GB, fsync=on, jit=on, maintenance_work_mem=1GB, max_connections=100, random_page_cost=1.1, shared_buffers=8GB, synchronous_commit=on, wal_sync_method=fdatasync, work_mem=16MB
+14.695 ±(99.9%) 0.543 ms/op
+# Warmup Iteration   2: 7.385 ±(99.9%) 0.079 ms/op
+# Warmup Iteration   3: 5.623 ±(99.9%) 0.043 ms/op
+# Warmup Iteration   4: 4.861 ±(99.9%) 0.041 ms/op
+# Warmup Iteration   5: 4.266 ±(99.9%) 0.027 ms/op
+# Warmup Iteration   6: 3.499 ±(99.9%) 0.055 ms/op
+# Warmup Iteration   7: 3.294 ±(99.9%) 0.062 ms/op
+# Warmup Iteration   8: 3.245 ±(99.9%) 0.008 ms/op
+# Warmup Iteration   9: 3.195 ±(99.9%) 0.011 ms/op
+# Warmup Iteration  10: 3.196 ±(99.9%) 0.008 ms/op
+# Warmup Iteration  11: 3.191 ±(99.9%) 0.008 ms/op
+# Warmup Iteration  12: 3.205 ±(99.9%) 0.012 ms/op
+# Warmup Iteration  13: 3.168 ±(99.9%) 0.008 ms/op
+# Warmup Iteration  14: 3.181 ±(99.9%) 0.009 ms/op
+# Warmup Iteration  15: 3.193 ±(99.9%) 0.011 ms/op
+Iteration   1: 3.183 ±(99.9%) 0.008 ms/op
+                 app.cpu.mhz:               4279.441 MHz
+                 app.cpu.power:             72.188 W
+                 app.cpu.power.limit:       80.000 W
+                 app.cpu.util:              82.531 %
+                 app.temp:                  77.000 degC
+                 app.thermal.throttles:     ≈ 0 #
+                 db.cpu.mhz:                4383.677 MHz
+                 db.cpu.power:              40.690 W
+                 db.cpu.power.limit:        80.000 W
+                 db.cpu.util:               18.132 %
+                 db.temp:                   68.000 degC
+                 db.thermal.throttles:      ≈ 0 #
+                 layer.commit.ms:           0.281 ms/op
+                 layer.commits:             1.000 #/op
+                 layer.http.calls:          1.000 #/op
+                 layer.http.client.ms:      3.173 ms/op
+                 layer.http.post.client.ms: 3.173 ms/call
+                 layer.http.post.server.ms: 2.752 ms/call
+                 layer.http.server.ms:      2.752 ms/op
+                 layer.service.ms:          2.628 ms/op
+                 layer.sql.ms:              1.843 ms/op
+                 layer.sql.statements:      8.000 #/op
+                 layer.throughput:          3546.667 ops/s
+                 p0.00:                     2.679 ms/op
+                 p0.50:                     3.154 ms/op
+                 p0.90:                     3.436 ms/op
+                 p0.95:                     3.539 ms/op
+                 p0.99:                     3.867 ms/op
+                 p0.999:                    5.561 ms/op
+                 p0.9999:                   6.279 ms/op
+                 p1.00:                     6.283 ms/op
+
+Iteration   2: 3.179 ±(99.9%) 0.008 ms/op
+                 app.cpu.mhz:               4286.615 MHz
+                 app.cpu.power:             72.532 W
+                 app.cpu.power.limit:       80.000 W
+                 app.cpu.util:              85.806 %
+                 app.temp:                  78.000 degC
+                 app.thermal.throttles:     ≈ 0 #
+                 db.cpu.mhz:                4387.078 MHz
+                 db.cpu.power:              41.525 W
+                 db.cpu.power.limit:        80.000 W
+                 db.cpu.util:               18.120 %
+                 db.temp:                   66.000 degC
+                 db.thermal.throttles:      ≈ 0 #
+                 layer.commit.ms:           0.280 ms/op
+                 layer.commits:             1.000 #/op
+                 layer.http.calls:          1.000 #/op
+                 layer.http.client.ms:      3.170 ms/op
+                 layer.http.post.client.ms: 3.170 ms/call
+                 layer.http.post.server.ms: 2.758 ms/call
+                 layer.http.server.ms:      2.758 ms/op
+                 layer.service.ms:          2.635 ms/op
+                 layer.sql.ms:              1.851 ms/op
+                 layer.sql.statements:      8.000 #/op
+                 layer.throughput:          3551.333 ops/s
+                 p0.00:                     2.703 ms/op
+                 p0.50:                     3.150 ms/op
+                 p0.90:                     3.424 ms/op
+                 p0.95:                     3.523 ms/op
+                 p0.99:                     3.838 ms/op
+                 p0.999:                    5.601 ms/op
+                 p0.9999:                   5.941 ms/op
+                 p1.00:                     5.947 ms/op
+
+Iteration   3: 3.186 ±(99.9%) 0.010 ms/op
+                 app.cpu.mhz:               4276.178 MHz
+                 app.cpu.power:             73.350 W
+                 app.cpu.power.limit:       80.000 W
+                 app.cpu.util:              82.653 %
+                 app.temp:                  81.000 degC
+                 app.thermal.throttles:     ≈ 0 #
+                 db.cpu.mhz:                4412.474 MHz
+                 db.cpu.power:              38.309 W
+                 db.cpu.power.limit:        80.000 W
+                 db.cpu.util:               16.222 %
+                 db.temp:                   64.000 degC
+                 db.thermal.throttles:      ≈ 0 #
+                 layer.commit.ms:           0.286 ms/op
+                 layer.commits:             1.000 #/op
+                 layer.http.calls:          1.000 #/op
+                 layer.http.client.ms:      3.177 ms/op
+                 layer.http.post.client.ms: 3.177 ms/call
+                 layer.http.post.server.ms: 2.762 ms/call
+                 layer.http.server.ms:      2.762 ms/op
+                 layer.service.ms:          2.637 ms/op
+                 layer.sql.ms:              1.848 ms/op
+                 layer.sql.statements:      8.000 #/op
+                 layer.throughput:          3547.333 ops/s
+                 p0.00:                     2.716 ms/op
+                 p0.50:                     3.146 ms/op
+                 p0.90:                     3.428 ms/op
+                 p0.95:                     3.531 ms/op
+                 p0.99:                     3.863 ms/op
+                 p0.999:                    8.480 ms/op
+                 p0.9999:                   9.319 ms/op
+                 p1.00:                     9.322 ms/op
+
+Iteration   4: 3.173 ±(99.9%) 0.008 ms/op
+                 app.cpu.mhz:               4276.616 MHz
+                 app.cpu.power:             75.326 W
+                 app.cpu.power.limit:       80.000 W
+                 app.cpu.util:              82.744 %
+                 app.temp:                  79.000 degC
+                 app.thermal.throttles:     ≈ 0 #
+                 db.cpu.mhz:                4384.398 MHz
+                 db.cpu.power:              39.182 W
+                 db.cpu.power.limit:        80.000 W
+                 db.cpu.util:               18.015 %
+                 db.temp:                   66.000 degC
+                 db.thermal.throttles:      ≈ 0 #
+                 layer.commit.ms:           0.277 ms/op
+                 layer.commits:             1.000 #/op
+                 layer.http.calls:          1.000 #/op
+                 layer.http.client.ms:      3.163 ms/op
+                 layer.http.post.client.ms: 3.163 ms/call
+                 layer.http.post.server.ms: 2.753 ms/call
+                 layer.http.server.ms:      2.753 ms/op
+                 layer.service.ms:          2.629 ms/op
+                 layer.sql.ms:              1.848 ms/op
+                 layer.sql.statements:      8.000 #/op
+                 layer.throughput:          3554.333 ops/s
+                 p0.00:                     2.720 ms/op
+                 p0.50:                     3.142 ms/op
+                 p0.90:                     3.412 ms/op
+                 p0.95:                     3.518 ms/op
+                 p0.99:                     3.798 ms/op
+                 p0.999:                    5.849 ms/op
+                 p0.9999:                   6.586 ms/op
+                 p1.00:                     6.586 ms/op
+
+Iteration   5: 3.213 ±(99.9%) 0.031 ms/op
+                 app.cpu.mhz:               4281.380 MHz
+                 app.cpu.power:             76.104 W
+                 app.cpu.power.limit:       80.000 W
+                 app.cpu.util:              85.754 %
+                 app.temp:                  78.000 degC
+                 app.thermal.throttles:     ≈ 0 #
+                 db.cpu.mhz:                4388.659 MHz
+                 db.cpu.power:              40.934 W
+                 db.cpu.power.limit:        80.000 W
+                 db.cpu.util:               18.024 %
+                 db.temp:                   63.000 degC
+                 db.thermal.throttles:      ≈ 0 #
+                 layer.commit.ms:           0.315 ms/op
+                 layer.commits:             1.000 #/op
+                 layer.http.calls:          1.000 #/op
+                 layer.http.client.ms:      3.203 ms/op
+                 layer.http.post.client.ms: 3.203 ms/call
+                 layer.http.post.server.ms: 2.793 ms/call
+                 layer.http.server.ms:      2.793 ms/op
+                 layer.service.ms:          2.669 ms/op
+                 layer.sql.ms:              1.847 ms/op
+                 layer.sql.statements:      8.000 #/op
+                 layer.throughput:          3526.333 ops/s
+                 p0.00:                     2.703 ms/op
+                 p0.50:                     3.146 ms/op
+                 p0.90:                     3.424 ms/op
+                 p0.95:                     3.535 ms/op
+                 p0.99:                     3.867 ms/op
+                 p0.999:                    26.199 ms/op
+                 p0.9999:                   29.225 ms/op
+                 p1.00:                     29.229 ms/op
+
+Iteration   6: 3.180 ±(99.9%) 0.010 ms/op
+                 app.cpu.mhz:               4274.832 MHz
+                 app.cpu.power:             73.708 W
+                 app.cpu.power.limit:       80.000 W
+                 app.cpu.util:              82.745 %
+                 app.temp:                  82.000 degC
+                 app.thermal.throttles:     ≈ 0 #
+                 db.cpu.mhz:                4412.425 MHz
+                 db.cpu.power:              39.942 W
+                 db.cpu.power.limit:        80.000 W
+                 db.cpu.util:               16.490 %
+                 db.temp:                   63.000 degC
+                 db.thermal.throttles:      ≈ 0 #
+                 layer.commit.ms:           0.285 ms/op
+                 layer.commits:             1.000 #/op
+                 layer.http.calls:          1.000 #/op
+                 layer.http.client.ms:      3.170 ms/op
+                 layer.http.post.client.ms: 3.170 ms/call
+                 layer.http.post.server.ms: 2.765 ms/call
+                 layer.http.server.ms:      2.765 ms/op
+                 layer.service.ms:          2.642 ms/op
+                 layer.sql.ms:              1.852 ms/op
+                 layer.sql.statements:      8.000 #/op
+                 layer.throughput:          3553.333 ops/s
+                 p0.00:                     2.716 ms/op
+                 p0.50:                     3.142 ms/op
+                 p0.90:                     3.420 ms/op
+                 p0.95:                     3.523 ms/op
+                 p0.99:                     3.948 ms/op
+                 p0.999:                    6.466 ms/op
+                 p0.9999:                   8.574 ms/op
+                 p1.00:                     8.585 ms/op
+
+Iteration   7: 3.160 ±(99.9%) 0.008 ms/op
+                 app.cpu.mhz:               4274.359 MHz
+                 app.cpu.power:             73.089 W
+                 app.cpu.power.limit:       80.000 W
+                 app.cpu.util:              82.904 %
+                 app.temp:                  78.000 degC
+                 app.thermal.throttles:     ≈ 0 #
+                 db.cpu.mhz:                4383.964 MHz
+                 db.cpu.power:              40.259 W
+                 db.cpu.power.limit:        80.000 W
+                 db.cpu.util:               18.160 %
+                 db.temp:                   67.000 degC
+                 db.thermal.throttles:      ≈ 0 #
+                 layer.commit.ms:           0.275 ms/op
+                 layer.commits:             1.000 #/op
+                 layer.http.calls:          1.000 #/op
+                 layer.http.client.ms:      3.149 ms/op
+                 layer.http.post.client.ms: 3.149 ms/call
+                 layer.http.post.server.ms: 2.754 ms/call
+                 layer.http.server.ms:      2.754 ms/op
+                 layer.service.ms:          2.632 ms/op
+                 layer.sql.ms:              1.850 ms/op
+                 layer.sql.statements:      8.000 #/op
+                 layer.throughput:          3570.000 ops/s
+                 p0.00:                     2.707 ms/op
+                 p0.50:                     3.125 ms/op
+                 p0.90:                     3.396 ms/op
+                 p0.95:                     3.490 ms/op
+                 p0.99:                     3.785 ms/op
+                 p0.999:                    5.805 ms/op
+                 p0.9999:                   5.996 ms/op
+                 p1.00:                     5.997 ms/op
+
+Iteration   8: 3.173 ±(99.9%) 0.008 ms/op
+                 app.cpu.mhz:               4289.427 MHz
+                 app.cpu.power:             76.520 W
+                 app.cpu.power.limit:       80.000 W
+                 app.cpu.util:              85.840 %
+                 app.temp:                  78.000 degC
+                 app.thermal.throttles:     ≈ 0 #
+                 db.cpu.mhz:                4389.101 MHz
+                 db.cpu.power:              40.191 W
+                 db.cpu.power.limit:        80.000 W
+                 db.cpu.util:               17.994 %
+                 db.temp:                   66.000 degC
+                 db.thermal.throttles:      ≈ 0 #
+                 layer.commit.ms:           0.278 ms/op
+                 layer.commits:             1.000 #/op
+                 layer.http.calls:          1.000 #/op
+                 layer.http.client.ms:      3.163 ms/op
+                 layer.http.post.client.ms: 3.163 ms/call
+                 layer.http.post.server.ms: 2.758 ms/call
+                 layer.http.server.ms:      2.758 ms/op
+                 layer.service.ms:          2.633 ms/op
+                 layer.sql.ms:              1.849 ms/op
+                 layer.sql.statements:      8.000 #/op
+                 layer.throughput:          3558.333 ops/s
+                 p0.00:                     2.695 ms/op
+                 p0.50:                     3.146 ms/op
+                 p0.90:                     3.408 ms/op
+                 p0.95:                     3.510 ms/op
+                 p0.99:                     3.778 ms/op
+                 p0.999:                    5.687 ms/op
+                 p0.9999:                   6.239 ms/op
+                 p1.00:                     6.267 ms/op
+
+Iteration   9: 3.196 ±(99.9%) 0.012 ms/op
+                 app.cpu.mhz:               4275.836 MHz
+                 app.cpu.power:             74.043 W
+                 app.cpu.power.limit:       80.000 W
+                 app.cpu.util:              83.035 %
+                 app.temp:                  82.000 degC
+                 app.thermal.throttles:     ≈ 0 #
+                 db.cpu.mhz:                4416.631 MHz
+                 db.cpu.power:              39.630 W
+                 db.cpu.power.limit:        80.000 W
+                 db.cpu.util:               16.065 %
+                 db.temp:                   61.000 degC
+                 db.thermal.throttles:      ≈ 0 #
+                 layer.commit.ms:           0.289 ms/op
+                 layer.commits:             1.000 #/op
+                 layer.http.calls:          1.000 #/op
+                 layer.http.client.ms:      3.186 ms/op
+                 layer.http.post.client.ms: 3.186 ms/call
+                 layer.http.post.server.ms: 2.771 ms/call
+                 layer.http.server.ms:      2.771 ms/op
+                 layer.service.ms:          2.646 ms/op
+                 layer.sql.ms:              1.852 ms/op
+                 layer.sql.statements:      8.000 #/op
+                 layer.throughput:          3541.667 ops/s
+                 p0.00:                     2.716 ms/op
+                 p0.50:                     3.154 ms/op
+                 p0.90:                     3.437 ms/op
+                 p0.95:                     3.547 ms/op
+                 p0.99:                     3.910 ms/op
+                 p0.999:                    9.820 ms/op
+                 p0.9999:                   10.516 ms/op
+                 p1.00:                     10.519 ms/op
+
+Iteration  10: 3.191 ±(99.9%) 0.009 ms/op
+                 app.cpu.mhz:               4276.959 MHz
+                 app.cpu.power:             72.512 W
+                 app.cpu.power.limit:       80.000 W
+                 app.cpu.util:              82.915 %
+                 app.temp:                  78.000 degC
+                 app.thermal.throttles:     ≈ 0 #
+                 db.cpu.mhz:                4384.576 MHz
+                 db.cpu.power:              40.024 W
+                 db.cpu.power.limit:        80.000 W
+                 db.cpu.util:               18.040 %
+                 db.temp:                   67.000 degC
+                 db.thermal.throttles:      ≈ 0 #
+                 layer.commit.ms:           0.280 ms/op
+                 layer.commits:             1.000 #/op
+                 layer.http.calls:          1.000 #/op
+                 layer.http.client.ms:      3.181 ms/op
+                 layer.http.post.client.ms: 3.181 ms/call
+                 layer.http.post.server.ms: 2.761 ms/call
+                 layer.http.server.ms:      2.761 ms/op
+                 layer.service.ms:          2.637 ms/op
+                 layer.sql.ms:              1.850 ms/op
+                 layer.sql.statements:      8.000 #/op
+                 layer.throughput:          3541.333 ops/s
+                 p0.00:                     2.736 ms/op
+                 p0.50:                     3.154 ms/op
+                 p0.90:                     3.441 ms/op
+                 p0.95:                     3.543 ms/op
+                 p0.99:                     3.898 ms/op
+                 p0.999:                    5.910 ms/op
+                 p0.9999:                   6.378 ms/op
+                 p1.00:                     6.390 ms/op
+
+Iteration  11: 3.176 ±(99.9%) 0.008 ms/op
+                 app.cpu.mhz:               4290.443 MHz
+                 app.cpu.power:             74.214 W
+                 app.cpu.power.limit:       80.000 W
+                 app.cpu.util:              85.822 %
+                 app.temp:                  78.000 degC
+                 app.thermal.throttles:     ≈ 0 #
+                 db.cpu.mhz:                4386.808 MHz
+                 db.cpu.power:              41.084 W
+                 db.cpu.power.limit:        80.000 W
+                 db.cpu.util:               18.044 %
+                 db.temp:                   63.000 degC
+                 db.thermal.throttles:      ≈ 0 #
+                 layer.commit.ms:           0.277 ms/op
+                 layer.commits:             1.000 #/op
+                 layer.http.calls:          1.000 #/op
+                 layer.http.client.ms:      3.167 ms/op
+                 layer.http.post.client.ms: 3.167 ms/call
+                 layer.http.post.server.ms: 2.752 ms/call
+                 layer.http.server.ms:      2.752 ms/op
+                 layer.service.ms:          2.629 ms/op
+                 layer.sql.ms:              1.847 ms/op
+                 layer.sql.statements:      8.000 #/op
+                 layer.throughput:          3553.000 ops/s
+                 p0.00:                     2.712 ms/op
+                 p0.50:                     3.146 ms/op
+                 p0.90:                     3.424 ms/op
+                 p0.95:                     3.523 ms/op
+                 p0.99:                     3.777 ms/op
+                 p0.999:                    5.620 ms/op
+                 p0.9999:                   6.314 ms/op
+                 p1.00:                     6.349 ms/op
+
+Iteration  12: 3.171 ±(99.9%) 0.009 ms/op
+                 app.cpu.mhz:               4276.037 MHz
+                 app.cpu.power:             72.498 W
+                 app.cpu.power.limit:       80.000 W
+                 app.cpu.util:              82.929 %
+                 app.temp:                  78.000 degC
+                 app.thermal.throttles:     ≈ 0 #
+                 db.cpu.mhz:                4411.019 MHz
+                 db.cpu.power:              41.073 W
+                 db.cpu.power.limit:        80.000 W
+                 db.cpu.util:               16.316 %
+                 db.temp:                   64.000 degC
+                 db.thermal.throttles:      ≈ 0 #
+                 layer.commit.ms:           0.281 ms/op
+                 layer.commits:             1.000 #/op
+                 layer.http.calls:          1.000 #/op
+                 layer.http.client.ms:      3.161 ms/op
+                 layer.http.post.client.ms: 3.161 ms/call
+                 layer.http.post.server.ms: 2.764 ms/call
+                 layer.http.server.ms:      2.764 ms/op
+                 layer.service.ms:          2.641 ms/op
+                 layer.sql.ms:              1.852 ms/op
+                 layer.sql.statements:      8.000 #/op
+                 layer.throughput:          3560.333 ops/s
+                 p0.00:                     2.683 ms/op
+                 p0.50:                     3.129 ms/op
+                 p0.90:                     3.408 ms/op
+                 p0.95:                     3.510 ms/op
+                 p0.99:                     3.912 ms/op
+                 p0.999:                    6.771 ms/op
+                 p0.9999:                   7.667 ms/op
+                 p1.00:                     7.668 ms/op
+
+Iteration  13: 3.161 ±(99.9%) 0.008 ms/op
+                 app.cpu.mhz:               4278.007 MHz
+                 app.cpu.power:             75.150 W
+                 app.cpu.power.limit:       80.000 W
+                 app.cpu.util:              82.918 %
+                 app.temp:                  78.000 degC
+                 app.thermal.throttles:     ≈ 0 #
+                 db.cpu.mhz:                4384.397 MHz
+                 db.cpu.power:              39.917 W
+                 db.cpu.power.limit:        80.000 W
+                 db.cpu.util:               18.001 %
+                 db.temp:                   68.000 degC
+                 db.thermal.throttles:      ≈ 0 #
+                 layer.commit.ms:           0.274 ms/op
+                 layer.commits:             1.000 #/op
+                 layer.http.calls:          1.000 #/op
+                 layer.http.client.ms:      3.151 ms/op
+                 layer.http.post.client.ms: 3.151 ms/call
+                 layer.http.post.server.ms: 2.753 ms/call
+                 layer.http.server.ms:      2.753 ms/op
+                 layer.service.ms:          2.631 ms/op
+                 layer.sql.ms:              1.849 ms/op
+                 layer.sql.statements:      8.000 #/op
+                 layer.throughput:          3567.667 ops/s
+                 p0.00:                     2.707 ms/op
+                 p0.50:                     3.129 ms/op
+                 p0.90:                     3.391 ms/op
+                 p0.95:                     3.494 ms/op
+                 p0.99:                     3.821 ms/op
+                 p0.999:                    5.634 ms/op
+                 p0.9999:                   5.989 ms/op
+                 p1.00:                     5.997 ms/op
+
+Iteration  14: 3.212 ±(99.9%) 0.035 ms/op
+                 app.cpu.mhz:               4261.746 MHz
+                 app.cpu.power:             72.417 W
+                 app.cpu.power.limit:       80.000 W
+                 app.cpu.util:              82.862 %
+                 app.temp:                  77.000 degC
+                 app.thermal.throttles:     ≈ 0 #
+                 db.cpu.mhz:                4386.794 MHz
+                 db.cpu.power:              40.641 W
+                 db.cpu.power.limit:        80.000 W
+                 db.cpu.util:               17.900 %
+                 db.temp:                   64.000 degC
+                 db.thermal.throttles:      ≈ 0 #
+                 layer.commit.ms:           0.317 ms/op
+                 layer.commits:             1.000 #/op
+                 layer.http.calls:          1.000 #/op
+                 layer.http.client.ms:      3.203 ms/op
+                 layer.http.post.client.ms: 3.203 ms/call
+                 layer.http.post.server.ms: 2.800 ms/call
+                 layer.http.server.ms:      2.800 ms/op
+                 layer.service.ms:          2.677 ms/op
+                 layer.sql.ms:              1.851 ms/op
+                 layer.sql.statements:      8.000 #/op
+                 layer.throughput:          3526.333 ops/s
+                 p0.00:                     2.699 ms/op
+                 p0.50:                     3.138 ms/op
+                 p0.90:                     3.416 ms/op
+                 p0.95:                     3.518 ms/op
+                 p0.99:                     3.860 ms/op
+                 p0.999:                    30.111 ms/op
+                 p0.9999:                   31.972 ms/op
+                 p1.00:                     31.982 ms/op
+
+Iteration  15: 3.212 ±(99.9%) 0.010 ms/op
+                 app.cpu.mhz:               4290.293 MHz
+                 app.cpu.power:             76.247 W
+                 app.cpu.power.limit:       80.000 W
+                 app.cpu.util:              85.168 %
+                 app.temp:                  77.000 degC
+                 app.thermal.throttles:     ≈ 0 #
+                 db.cpu.mhz:                4405.875 MHz
+                 db.cpu.power:              39.164 W
+                 db.cpu.power.limit:        80.000 W
+                 db.cpu.util:               16.304 %
+                 db.temp:                   64.000 degC
+                 db.thermal.throttles:      ≈ 0 #
+                 layer.commit.ms:           0.289 ms/op
+                 layer.commits:             1.000 #/op
+                 layer.http.calls:          1.000 #/op
+                 layer.http.client.ms:      3.202 ms/op
+                 layer.http.post.client.ms: 3.202 ms/call
+                 layer.http.post.server.ms: 2.765 ms/call
+                 layer.http.server.ms:      2.765 ms/op
+                 layer.service.ms:          2.640 ms/op
+                 layer.sql.ms:              1.847 ms/op
+                 layer.sql.statements:      8.000 #/op
+                 layer.throughput:          3524.667 ops/s
+                 p0.00:                     2.707 ms/op
+                 p0.50:                     3.178 ms/op
+                 p0.90:                     3.451 ms/op
+                 p0.95:                     3.559 ms/op
+                 p0.99:                     3.916 ms/op
+                 p0.999:                    8.237 ms/op
+                 p0.9999:                   9.399 ms/op
+                 p1.00:                     9.404 ms/op
+
+Iteration  16: 3.186 ±(99.9%) 0.009 ms/op
+                 app.cpu.mhz:               4279.302 MHz
+                 app.cpu.power:             73.081 W
+                 app.cpu.power.limit:       80.000 W
+                 app.cpu.util:              82.870 %
+                 app.temp:                  78.000 degC
+                 app.thermal.throttles:     ≈ 0 #
+                 db.cpu.mhz:                4384.544 MHz
+                 db.cpu.power:              41.285 W
+                 db.cpu.power.limit:        80.000 W
+                 db.cpu.util:               18.151 %
+                 db.temp:                   66.000 degC
+                 db.thermal.throttles:      ≈ 0 #
+                 layer.commit.ms:           0.274 ms/op
+                 layer.commits:             1.000 #/op
+                 layer.http.calls:          1.000 #/op
+                 layer.http.client.ms:      3.177 ms/op
+                 layer.http.post.client.ms: 3.177 ms/call
+                 layer.http.post.server.ms: 2.757 ms/call
+                 layer.http.server.ms:      2.757 ms/op
+                 layer.service.ms:          2.632 ms/op
+                 layer.sql.ms:              1.852 ms/op
+                 layer.sql.statements:      8.000 #/op
+                 layer.throughput:          3548.667 ops/s
+                 p0.00:                     2.720 ms/op
+                 p0.50:                     3.154 ms/op
+                 p0.90:                     3.428 ms/op
+                 p0.95:                     3.527 ms/op
+                 p0.99:                     3.903 ms/op
+                 p0.999:                    5.819 ms/op
+                 p0.9999:                   6.487 ms/op
+                 p1.00:                     6.513 ms/op
+
+Iteration  17: 3.200 ±(99.9%) 0.009 ms/op
+                 app.cpu.mhz:               4285.165 MHz
+                 app.cpu.power:             77.257 W
+                 app.cpu.power.limit:       80.000 W
+                 app.cpu.util:              85.812 %
+                 app.temp:                  78.000 degC
+                 app.thermal.throttles:     ≈ 0 #
+                 db.cpu.mhz:                4387.022 MHz
+                 db.cpu.power:              40.007 W
+                 db.cpu.power.limit:        80.000 W
+                 db.cpu.util:               17.994 %
+                 db.temp:                   61.000 degC
+                 db.thermal.throttles:      ≈ 0 #
+                 layer.commit.ms:           0.281 ms/op
+                 layer.commits:             1.000 #/op
+                 layer.http.calls:          1.000 #/op
+                 layer.http.client.ms:      3.190 ms/op
+                 layer.http.post.client.ms: 3.190 ms/call
+                 layer.http.post.server.ms: 2.761 ms/call
+                 layer.http.server.ms:      2.761 ms/op
+                 layer.service.ms:          2.634 ms/op
+                 layer.sql.ms:              1.849 ms/op
+                 layer.sql.statements:      8.000 #/op
+                 layer.throughput:          3537.333 ops/s
+                 p0.00:                     2.716 ms/op
+                 p0.50:                     3.166 ms/op
+                 p0.90:                     3.449 ms/op
+                 p0.95:                     3.551 ms/op
+                 p0.99:                     3.949 ms/op
+                 p0.999:                    5.775 ms/op
+                 p0.9999:                   6.336 ms/op
+                 p1.00:                     6.341 ms/op
+
+Iteration  18: 3.181 ±(99.9%) 0.010 ms/op
+                 app.cpu.mhz:               4288.778 MHz
+                 app.cpu.power:             75.563 W
+                 app.cpu.power.limit:       80.000 W
+                 app.cpu.util:              85.682 %
+                 app.temp:                  78.000 degC
+                 app.thermal.throttles:     ≈ 0 #
+                 db.cpu.mhz:                4406.216 MHz
+                 db.cpu.power:              40.344 W
+                 db.cpu.power.limit:        80.000 W
+                 db.cpu.util:               16.403 %
+                 db.temp:                   63.000 degC
+                 db.thermal.throttles:      ≈ 0 #
+                 layer.commit.ms:           0.282 ms/op
+                 layer.commits:             1.000 #/op
+                 layer.http.calls:          1.000 #/op
+                 layer.http.client.ms:      3.169 ms/op
+                 layer.http.post.client.ms: 3.169 ms/call
+                 layer.http.post.server.ms: 2.769 ms/call
+                 layer.http.server.ms:      2.769 ms/op
+                 layer.service.ms:          2.647 ms/op
+                 layer.sql.ms:              1.855 ms/op
+                 layer.sql.statements:      8.000 #/op
+                 layer.throughput:          3554.667 ops/s
+                 p0.00:                     2.699 ms/op
+                 p0.50:                     3.138 ms/op
+                 p0.90:                     3.416 ms/op
+                 p0.95:                     3.527 ms/op
+                 p0.99:                     3.982 ms/op
+                 p0.999:                    6.707 ms/op
+                 p0.9999:                   7.337 ms/op
+                 p1.00:                     7.340 ms/op
+
+Iteration  19: 3.202 ±(99.9%) 0.040 ms/op
+                 app.cpu.mhz:               4262.680 MHz
+                 app.cpu.power:             71.646 W
+                 app.cpu.power.limit:       80.000 W
+                 app.cpu.util:              82.960 %
+                 app.temp:                  78.000 degC
+                 app.thermal.throttles:     ≈ 0 #
+                 db.cpu.mhz:                4384.141 MHz
+                 db.cpu.power:              41.479 W
+                 db.cpu.power.limit:        80.000 W
+                 db.cpu.util:               18.040 %
+                 db.temp:                   66.000 degC
+                 db.thermal.throttles:      ≈ 0 #
+                 layer.commit.ms:           0.317 ms/op
+                 layer.commits:             1.000 #/op
+                 layer.http.calls:          1.000 #/op
+                 layer.http.client.ms:      3.192 ms/op
+                 layer.http.post.client.ms: 3.192 ms/call
+                 layer.http.post.server.ms: 2.806 ms/call
+                 layer.http.server.ms:      2.806 ms/op
+                 layer.service.ms:          2.684 ms/op
+                 layer.sql.ms:              1.856 ms/op
+                 layer.sql.statements:      8.000 #/op
+                 layer.throughput:          3539.333 ops/s
+                 p0.00:                     2.732 ms/op
+                 p0.50:                     3.117 ms/op
+                 p0.90:                     3.391 ms/op
+                 p0.95:                     3.494 ms/op
+                 p0.99:                     3.858 ms/op
+                 p0.999:                    35.439 ms/op
+                 p0.9999:                   36.495 ms/op
+                 p1.00:                     36.504 ms/op
+
+Iteration  20: 3.183 ±(99.9%) 0.008 ms/op
+                 app.cpu.mhz:               4289.125 MHz
+                 app.cpu.power:             75.446 W
+                 app.cpu.power.limit:       80.000 W
+                 app.cpu.util:              85.743 %
+                 app.temp:                  78.000 degC
+                 app.thermal.throttles:     ≈ 0 #
+                 db.cpu.mhz:                4387.161 MHz
+                 db.cpu.power:              41.203 W
+                 db.cpu.power.limit:        80.000 W
+                 db.cpu.util:               18.165 %
+                 db.temp:                   64.000 degC
+                 db.thermal.throttles:      ≈ 0 #
+                 layer.commit.ms:           0.276 ms/op
+                 layer.commits:             1.000 #/op
+                 layer.http.calls:          1.000 #/op
+                 layer.http.client.ms:      3.173 ms/op
+                 layer.http.post.client.ms: 3.173 ms/call
+                 layer.http.post.server.ms: 2.755 ms/call
+                 layer.http.server.ms:      2.755 ms/op
+                 layer.service.ms:          2.630 ms/op
+                 layer.sql.ms:              1.849 ms/op
+                 layer.sql.statements:      8.000 #/op
+                 layer.throughput:          3549.000 ops/s
+                 p0.00:                     2.720 ms/op
+                 p0.50:                     3.154 ms/op
+                 p0.90:                     3.424 ms/op
+                 p0.95:                     3.525 ms/op
+                 p0.99:                     3.830 ms/op
+                 p0.999:                    5.585 ms/op
+                 p0.9999:                   6.093 ms/op
+                 p1.00:                     6.103 ms/op
+
+Iteration  21: 3.201 ±(99.9%) 0.012 ms/op
+                 app.cpu.mhz:               4274.401 MHz
+                 app.cpu.power:             73.436 W
+                 app.cpu.power.limit:       80.000 W
+                 app.cpu.util:              82.858 %
+                 app.temp:                  78.000 degC
+                 app.thermal.throttles:     ≈ 0 #
+                 db.cpu.mhz:                4411.691 MHz
+                 db.cpu.power:              39.424 W
+                 db.cpu.power.limit:        80.000 W
+                 db.cpu.util:               16.346 %
+                 db.temp:                   63.000 degC
+                 db.thermal.throttles:      ≈ 0 #
+                 layer.commit.ms:           0.290 ms/op
+                 layer.commits:             1.000 #/op
+                 layer.http.calls:          1.000 #/op
+                 layer.http.client.ms:      3.191 ms/op
+                 layer.http.post.client.ms: 3.191 ms/call
+                 layer.http.post.server.ms: 2.776 ms/call
+                 layer.http.server.ms:      2.776 ms/op
+                 layer.service.ms:          2.651 ms/op
+                 layer.sql.ms:              1.853 ms/op
+                 layer.sql.statements:      8.000 #/op
+                 layer.throughput:          3534.667 ops/s
+                 p0.00:                     2.720 ms/op
+                 p0.50:                     3.152 ms/op
+                 p0.90:                     3.453 ms/op
+                 p0.95:                     3.576 ms/op
+                 p0.99:                     4.080 ms/op
+                 p0.999:                    10.481 ms/op
+                 p0.9999:                   11.414 ms/op
+                 p1.00:                     11.420 ms/op
+
+Iteration  22: 3.174 ±(99.9%) 0.008 ms/op
+                 app.cpu.mhz:               4276.850 MHz
+                 app.cpu.power:             73.688 W
+                 app.cpu.power.limit:       80.000 W
+                 app.cpu.util:              83.276 %
+                 app.temp:                  78.000 degC
+                 app.thermal.throttles:     ≈ 0 #
+                 db.cpu.mhz:                4384.445 MHz
+                 db.cpu.power:              41.695 W
+                 db.cpu.power.limit:        80.000 W
+                 db.cpu.util:               18.223 %
+                 db.temp:                   65.000 degC
+                 db.thermal.throttles:      ≈ 0 #
+                 layer.commit.ms:           0.283 ms/op
+                 layer.commits:             1.000 #/op
+                 layer.http.calls:          1.000 #/op
+                 layer.http.client.ms:      3.165 ms/op
+                 layer.http.post.client.ms: 3.165 ms/call
+                 layer.http.post.server.ms: 2.771 ms/call
+                 layer.http.server.ms:      2.771 ms/op
+                 layer.service.ms:          2.648 ms/op
+                 layer.sql.ms:              1.856 ms/op
+                 layer.sql.statements:      8.000 #/op
+                 layer.throughput:          3559.667 ops/s
+                 p0.00:                     2.716 ms/op
+                 p0.50:                     3.138 ms/op
+                 p0.90:                     3.416 ms/op
+                 p0.95:                     3.510 ms/op
+                 p0.99:                     3.838 ms/op
+                 p0.999:                    5.759 ms/op
+                 p0.9999:                   6.176 ms/op
+                 p1.00:                     6.177 ms/op
+
+Iteration  23: 3.197 ±(99.9%) 0.008 ms/op
+                 app.cpu.mhz:               4289.390 MHz
+                 app.cpu.power:             75.491 W
+                 app.cpu.power.limit:       80.000 W
+                 app.cpu.util:              85.706 %
+                 app.temp:                  78.000 degC
+                 app.thermal.throttles:     ≈ 0 #
+                 db.cpu.mhz:                4388.454 MHz
+                 db.cpu.power:              39.667 W
+                 db.cpu.power.limit:        80.000 W
+                 db.cpu.util:               18.036 %
+                 db.temp:                   66.000 degC
+                 db.thermal.throttles:      ≈ 0 #
+                 layer.commit.ms:           0.274 ms/op
+                 layer.commits:             1.000 #/op
+                 layer.http.calls:          1.000 #/op
+                 layer.http.client.ms:      3.186 ms/op
+                 layer.http.post.client.ms: 3.186 ms/call
+                 layer.http.post.server.ms: 2.747 ms/call
+                 layer.http.server.ms:      2.747 ms/op
+                 layer.service.ms:          2.620 ms/op
+                 layer.sql.ms:              1.842 ms/op
+                 layer.sql.statements:      8.000 #/op
+                 layer.throughput:          3537.000 ops/s
+                 p0.00:                     2.707 ms/op
+                 p0.50:                     3.170 ms/op
+                 p0.90:                     3.453 ms/op
+                 p0.95:                     3.551 ms/op
+                 p0.99:                     3.817 ms/op
+                 p0.999:                    5.951 ms/op
+                 p0.9999:                   6.370 ms/op
+                 p1.00:                     6.373 ms/op
+
+Iteration  24: 3.167 ±(99.9%) 0.009 ms/op
+                 app.cpu.mhz:               4274.105 MHz
+                 app.cpu.power:             73.301 W
+                 app.cpu.power.limit:       80.000 W
+                 app.cpu.util:              83.030 %
+                 app.temp:                  82.000 degC
+                 app.thermal.throttles:     ≈ 0 #
+                 db.cpu.mhz:                4411.492 MHz
+                 db.cpu.power:              40.009 W
+                 db.cpu.power.limit:        80.000 W
+                 db.cpu.util:               16.489 %
+                 db.temp:                   63.000 degC
+                 db.thermal.throttles:      ≈ 0 #
+                 layer.commit.ms:           0.280 ms/op
+                 layer.commits:             1.000 #/op
+                 layer.http.calls:          1.000 #/op
+                 layer.http.client.ms:      3.157 ms/op
+                 layer.http.post.client.ms: 3.157 ms/call
+                 layer.http.post.server.ms: 2.767 ms/call
+                 layer.http.server.ms:      2.767 ms/op
+                 layer.service.ms:          2.644 ms/op
+                 layer.sql.ms:              1.855 ms/op
+                 layer.sql.statements:      8.000 #/op
+                 layer.throughput:          3565.667 ops/s
+                 p0.00:                     2.662 ms/op
+                 p0.50:                     3.129 ms/op
+                 p0.90:                     3.396 ms/op
+                 p0.95:                     3.494 ms/op
+                 p0.99:                     3.899 ms/op
+                 p0.999:                    6.691 ms/op
+                 p0.9999:                   9.579 ms/op
+                 p1.00:                     9.585 ms/op
+
+Iteration  25: 3.196 ±(99.9%) 0.008 ms/op
+                 app.cpu.mhz:               4278.801 MHz
+                 app.cpu.power:             74.205 W
+                 app.cpu.power.limit:       80.000 W
+                 app.cpu.util:              82.933 %
+                 app.temp:                  78.000 degC
+                 app.thermal.throttles:     ≈ 0 #
+                 db.cpu.mhz:                4384.790 MHz
+                 db.cpu.power:              40.829 W
+                 db.cpu.power.limit:        80.000 W
+                 db.cpu.util:               18.092 %
+                 db.temp:                   65.000 degC
+                 db.thermal.throttles:      ≈ 0 #
+                 layer.commit.ms:           0.278 ms/op
+                 layer.commits:             1.000 #/op
+                 layer.http.calls:          1.000 #/op
+                 layer.http.client.ms:      3.186 ms/op
+                 layer.http.post.client.ms: 3.186 ms/call
+                 layer.http.post.server.ms: 2.753 ms/call
+                 layer.http.server.ms:      2.753 ms/op
+                 layer.service.ms:          2.629 ms/op
+                 layer.sql.ms:              1.847 ms/op
+                 layer.sql.statements:      8.000 #/op
+                 layer.throughput:          3539.667 ops/s
+                 p0.00:                     2.691 ms/op
+                 p0.50:                     3.166 ms/op
+                 p0.90:                     3.445 ms/op
+                 p0.95:                     3.539 ms/op
+                 p0.99:                     3.878 ms/op
+                 p0.999:                    5.754 ms/op
+                 p0.9999:                   6.010 ms/op
+                 p1.00:                     6.013 ms/op
+
+Iteration  26: 3.162 ±(99.9%) 0.008 ms/op
+                 app.cpu.mhz:               4281.347 MHz
+                 app.cpu.power:             75.080 W
+                 app.cpu.power.limit:       80.000 W
+                 app.cpu.util:              85.846 %
+                 app.temp:                  77.000 degC
+                 app.thermal.throttles:     ≈ 0 #
+                 db.cpu.mhz:                4387.979 MHz
+                 db.cpu.power:              40.138 W
+                 db.cpu.power.limit:        80.000 W
+                 db.cpu.util:               18.315 %
+                 db.temp:                   63.000 degC
+                 db.thermal.throttles:      ≈ 0 #
+                 layer.commit.ms:           0.275 ms/op
+                 layer.commits:             1.000 #/op
+                 layer.http.calls:          1.000 #/op
+                 layer.http.client.ms:      3.152 ms/op
+                 layer.http.post.client.ms: 3.152 ms/call
+                 layer.http.post.server.ms: 2.763 ms/call
+                 layer.http.server.ms:      2.763 ms/op
+                 layer.service.ms:          2.640 ms/op
+                 layer.sql.ms:              1.857 ms/op
+                 layer.sql.statements:      8.000 #/op
+                 layer.throughput:          3568.667 ops/s
+                 p0.00:                     2.736 ms/op
+                 p0.50:                     3.129 ms/op
+                 p0.90:                     3.387 ms/op
+                 p0.95:                     3.482 ms/op
+                 p0.99:                     3.785 ms/op
+                 p0.999:                    5.679 ms/op
+                 p0.9999:                   6.213 ms/op
+                 p1.00:                     6.226 ms/op
+
+Iteration  27: 3.193 ±(99.9%) 0.013 ms/op
+                 app.cpu.mhz:               4274.099 MHz
+                 app.cpu.power:             73.694 W
+                 app.cpu.power.limit:       80.000 W
+                 app.cpu.util:              83.040 %
+                 app.temp:                  84.000 degC
+                 app.thermal.throttles:     ≈ 0 #
+                 db.cpu.mhz:                4417.282 MHz
+                 db.cpu.power:              38.628 W
+                 db.cpu.power.limit:        80.000 W
+                 db.cpu.util:               16.252 %
+                 db.temp:                   64.000 degC
+                 db.thermal.throttles:      ≈ 0 #
+                 layer.commit.ms:           0.286 ms/op
+                 layer.commits:             1.000 #/op
+                 layer.http.calls:          1.000 #/op
+                 layer.http.client.ms:      3.184 ms/op
+                 layer.http.post.client.ms: 3.184 ms/call
+                 layer.http.post.server.ms: 2.770 ms/call
+                 layer.http.server.ms:      2.770 ms/op
+                 layer.service.ms:          2.647 ms/op
+                 layer.sql.ms:              1.854 ms/op
+                 layer.sql.statements:      8.000 #/op
+                 layer.throughput:          3542.667 ops/s
+                 p0.00:                     2.699 ms/op
+                 p0.50:                     3.154 ms/op
+                 p0.90:                     3.424 ms/op
+                 p0.95:                     3.527 ms/op
+                 p0.99:                     3.879 ms/op
+                 p0.999:                    10.682 ms/op
+                 p0.9999:                   11.383 ms/op
+                 p1.00:                     11.387 ms/op
+
+Iteration  28: 3.273 ±(99.9%) 0.075 ms/op
+                 app.cpu.mhz:               4278.410 MHz
+                 app.cpu.power:             74.860 W
+                 app.cpu.power.limit:       80.000 W
+                 app.cpu.util:              82.679 %
+                 app.temp:                  78.000 degC
+                 app.thermal.throttles:     ≈ 0 #
+                 db.cpu.mhz:                4385.789 MHz
+                 db.cpu.power:              39.924 W
+                 db.cpu.power.limit:        80.000 W
+                 db.cpu.util:               17.743 %
+                 db.temp:                   64.000 degC
+                 db.thermal.throttles:      ≈ 0 #
+                 layer.commit.ms:           0.365 ms/op
+                 layer.commits:             1.000 #/op
+                 layer.http.calls:          1.000 #/op
+                 layer.http.client.ms:      3.262 ms/op
+                 layer.http.post.client.ms: 3.262 ms/call
+                 layer.http.post.server.ms: 2.849 ms/call
+                 layer.http.server.ms:      2.849 ms/op
+                 layer.service.ms:          2.725 ms/op
+                 layer.sql.ms:              1.854 ms/op
+                 layer.sql.statements:      8.000 #/op
+                 layer.throughput:          3483.000 ops/s
+                 p0.00:                     2.732 ms/op
+                 p0.50:                     3.142 ms/op
+                 p0.90:                     3.424 ms/op
+                 p0.95:                     3.535 ms/op
+                 p0.99:                     3.932 ms/op
+                 p0.999:                    61.610 ms/op
+                 p0.9999:                   65.048 ms/op
+                 p1.00:                     65.077 ms/op
+
+Iteration  29: 3.207 ±(99.9%) 0.009 ms/op
+                 app.cpu.mhz:               4289.438 MHz
+                 app.cpu.power:             75.930 W
+                 app.cpu.power.limit:       80.000 W
+                 app.cpu.util:              86.157 %
+                 app.temp:                  78.000 degC
+                 app.thermal.throttles:     ≈ 0 #
+                 db.cpu.mhz:                4385.551 MHz
+                 db.cpu.power:              41.897 W
+                 db.cpu.power.limit:        80.000 W
+                 db.cpu.util:               18.242 %
+                 db.temp:                   62.000 degC
+                 db.thermal.throttles:      ≈ 0 #
+                 layer.commit.ms:           0.281 ms/op
+                 layer.commits:             1.000 #/op
+                 layer.http.calls:          1.000 #/op
+                 layer.http.client.ms:      3.197 ms/op
+                 layer.http.post.client.ms: 3.197 ms/call
+                 layer.http.post.server.ms: 2.775 ms/call
+                 layer.http.server.ms:      2.775 ms/op
+                 layer.service.ms:          2.648 ms/op
+                 layer.sql.ms:              1.857 ms/op
+                 layer.sql.statements:      8.000 #/op
+                 layer.throughput:          3526.333 ops/s
+                 p0.00:                     2.716 ms/op
+                 p0.50:                     3.162 ms/op
+                 p0.90:                     3.478 ms/op
+                 p0.95:                     3.609 ms/op
+                 p0.99:                     4.114 ms/op
+                 p0.999:                    5.872 ms/op
+                 p0.9999:                   6.346 ms/op
+                 p1.00:                     6.349 ms/op
+
+Iteration  30: 3.207 ±(99.9%) 0.012 ms/op
+                 app.cpu.mhz:               4267.195 MHz
+                 app.cpu.power:             70.804 W
+                 app.cpu.power.limit:       80.000 W
+                 app.cpu.util:              76.823 %
+                 app.temp:                  83.000 degC
+                 app.thermal.throttles:     ≈ 0 #
+                 db.cpu.mhz:                4387.728 MHz
+                 db.cpu.power:              38.484 W
+                 db.cpu.power.limit:        80.000 W
+                 db.cpu.util:               16.841 %
+                 db.temp:                   65.000 degC
+                 db.thermal.throttles:      ≈ 0 #
+                 layer.commit.ms:           0.285 ms/op
+                 layer.commits:             1.000 #/op
+                 layer.http.calls:          1.000 #/op
+                 layer.http.client.ms:      3.197 ms/op
+                 layer.http.post.client.ms: 3.197 ms/call
+                 layer.http.post.server.ms: 2.762 ms/call
+                 layer.http.server.ms:      2.762 ms/op
+                 layer.service.ms:          2.637 ms/op
+                 layer.sql.ms:              1.848 ms/op
+                 layer.sql.statements:      8.000 #/op
+                 layer.throughput:          3526.000 ops/s
+                 p0.00:                     2.716 ms/op
+                 p0.50:                     3.166 ms/op
+                 p0.90:                     3.449 ms/op
+                 p0.95:                     3.555 ms/op
+                 p0.99:                     3.872 ms/op
+                 p0.999:                    9.996 ms/op
+                 p0.9999:                   11.083 ms/op
+                 p1.00:                     11.092 ms/op
+
+
+
+Result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest":
+  N = 319005
+  mean =      3.190 ±(99.9%) 0.004 ms/op
+
+  Histogram, ms/op:
+    [ 0.000,  5.000) = 317136 
+    [ 5.000, 10.000) = 1757 
+    [10.000, 15.000) = 48 
+    [15.000, 20.000) = 1 
+    [20.000, 25.000) = 0 
+    [25.000, 30.000) = 21 
+    [30.000, 35.000) = 15 
+    [35.000, 40.000) = 11 
+    [40.000, 45.000) = 0 
+    [45.000, 50.000) = 0 
+    [50.000, 55.000) = 1 
+    [55.000, 60.000) = 0 
+    [60.000, 65.000) = 14 
+
+  Percentiles, ms/op:
+      p(0.0000) =      2.662 ms/op
+     p(50.0000) =      3.146 ms/op
+     p(90.0000) =      3.424 ms/op
+     p(95.0000) =      3.531 ms/op
+     p(99.0000) =      3.875 ms/op
+     p(99.9000) =      5.997 ms/op
+     p(99.9900) =     32.034 ms/op
+     p(99.9990) =     63.430 ms/op
+     p(99.9999) =     65.077 ms/op
+    p(100.0000) =     65.077 ms/op
+
+Secondary result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:app.cpu.mhz":
+  4279.242 ±(99.9%) 5.178 MHz [Average]
+  (min, avg, max) = (4261.746, 4279.242, 4290.443), stdev = 7.750
+  CI (99.9%): [4274.064, 4284.420] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:app.cpu.power":
+  74.113 ±(99.9%) 1.060 W [Average]
+  (min, avg, max) = (70.804, 74.113, 77.257), stdev = 1.586
+  CI (99.9%): [73.053, 75.172] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:app.cpu.power.limit":
+  80.000 ±(99.9%) 0.001 W [Minimum]
+  (min, avg, max) = (80.000, 80.000, 80.000), stdev = 0.001
+  CI (99.9%): [80.000, 80.000] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:app.cpu.util":
+  83.735 ±(99.9%) 1.283 % [Average]
+  (min, avg, max) = (76.823, 83.735, 86.157), stdev = 1.920
+  CI (99.9%): [82.452, 85.018] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:app.temp":
+  84.000 ±(99.9%) 0.001 degC [Maximum]
+  (min, avg, max) = (77.000, 78.767, 84.000), stdev = 1.906
+  CI (99.9%): [84.000, 84.000] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:app.thermal.throttles":
+  ≈ 0 #
+
+Secondary result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:db.cpu.mhz":
+  4393.739 ±(99.9%) 8.154 MHz [Average]
+  (min, avg, max) = (4383.677, 4393.739, 4417.282), stdev = 12.205
+  CI (99.9%): [4385.585, 4401.893] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:db.cpu.power":
+  40.253 ±(99.9%) 0.635 W [Average]
+  (min, avg, max) = (38.309, 40.253, 41.897), stdev = 0.950
+  CI (99.9%): [39.618, 40.887] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:db.cpu.power.limit":
+  80.000 ±(99.9%) 0.001 W [Minimum]
+  (min, avg, max) = (80.000, 80.000, 80.000), stdev = 0.001
+  CI (99.9%): [80.000, 80.000] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:db.cpu.util":
+  17.505 ±(99.9%) 0.554 % [Average]
+  (min, avg, max) = (16.065, 17.505, 18.315), stdev = 0.829
+  CI (99.9%): [16.952, 18.059] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:db.temp":
+  68.000 ±(99.9%) 0.001 degC [Maximum]
+  (min, avg, max) = (61.000, 64.467, 68.000), stdev = 1.852
+  CI (99.9%): [68.000, 68.000] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:db.thermal.throttles":
+  ≈ 0 #
+
+Secondary result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:layer.commit.ms":
+  0.287 ±(99.9%) 0.013 ms/op [Average]
+  (min, avg, max) = (0.274, 0.287, 0.365), stdev = 0.019
+  CI (99.9%): [0.274, 0.300] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:layer.commits":
+  1.000 ±(99.9%) 0.001 #/op [Average]
+  (min, avg, max) = (1.000, 1.000, 1.000), stdev = 0.001
+  CI (99.9%): [1.000, 1.000] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:layer.http.calls":
+  1.000 ±(99.9%) 0.001 #/op [Average]
+  (min, avg, max) = (1.000, 1.000, 1.000), stdev = 0.001
+  CI (99.9%): [1.000, 1.000] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:layer.http.client.ms":
+  3.180 ±(99.9%) 0.015 ms/op [Average]
+  (min, avg, max) = (3.149, 3.180, 3.262), stdev = 0.022
+  CI (99.9%): [3.165, 3.195] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:layer.http.post.client.ms":
+  3.180 ±(99.9%) 0.015 ms/call [Average]
+  (min, avg, max) = (3.149, 3.180, 3.262), stdev = 0.022
+  CI (99.9%): [3.165, 3.195] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:layer.http.post.server.ms":
+  2.768 ±(99.9%) 0.014 ms/call [Average]
+  (min, avg, max) = (2.747, 2.768, 2.849), stdev = 0.021
+  CI (99.9%): [2.754, 2.782] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:layer.http.server.ms":
+  2.768 ±(99.9%) 0.014 ms/op [Average]
+  (min, avg, max) = (2.747, 2.768, 2.849), stdev = 0.021
+  CI (99.9%): [2.754, 2.782] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:layer.service.ms":
+  2.644 ±(99.9%) 0.014 ms/op [Average]
+  (min, avg, max) = (2.620, 2.644, 2.725), stdev = 0.021
+  CI (99.9%): [2.630, 2.658] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:layer.sql.ms":
+  1.851 ±(99.9%) 0.003 ms/op [Average]
+  (min, avg, max) = (1.842, 1.851, 1.857), stdev = 0.004
+  CI (99.9%): [1.848, 1.853] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:layer.sql.statements":
+  8.000 ±(99.9%) 0.001 #/op [Average]
+  (min, avg, max) = (8.000, 8.000, 8.000), stdev = 0.001
+  CI (99.9%): [8.000, 8.000] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:layer.throughput":
+  3544.500 ±(99.9%) 11.849 ops/s [Average]
+  (min, avg, max) = (3483.000, 3544.500, 3570.000), stdev = 17.736
+  CI (99.9%): [3532.651, 3556.349] (assumes normal distribution)
+
+
+# Run complete. Total time: 00:04:56
+
+REMEMBER: The numbers below are just data. To gain reusable insights, you need to follow up on
+why the numbers are the way they are. Use profilers (see -prof, -lprof), design factorial
+experiments, perform baseline and negative tests that provide experimental control, make sure
+the benchmarking environment is safe on JVM/OS/HW level, ask for reviews from the domain experts.
+Do not assume the numbers tell you what you want them to tell.
+
+NOTE: Current JVM experimentally supports Compiler Blackholes, and they are in use. Please exercise
+extra caution when trusting the results, look into the generated code to check the benchmark still
+works, and factor in a small probability of new VM bugs. Additionally, while comparisons between
+different JVMs are already problematic, the performance difference caused by different Blackhole
+modes can be very significant. Please make sure you use the consistent Blackhole mode for comparisons.
+
+Benchmark                                                                        Mode     Cnt     Score    Error    Units
+JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest                            sample  319005     3.190 ±  0.004    ms/op
+JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:app.cpu.mhz                sample      30  4279.242 ±  5.178      MHz
+JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:app.cpu.power              sample      30    74.113 ±  1.060        W
+JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:app.cpu.power.limit        sample      30    80.000                 W
+JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:app.cpu.util               sample      30    83.735 ±  1.283        %
+JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:app.temp                   sample      30    84.000              degC
+JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:app.thermal.throttles      sample      30       ≈ 0                 #
+JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:db.cpu.mhz                 sample      30  4393.739 ±  8.154      MHz
+JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:db.cpu.power               sample      30    40.253 ±  0.635        W
+JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:db.cpu.power.limit         sample      30    80.000                 W
+JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:db.cpu.util                sample      30    17.505 ±  0.554        %
+JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:db.temp                    sample      30    68.000              degC
+JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:db.thermal.throttles       sample      30       ≈ 0                 #
+JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:layer.commit.ms            sample      30     0.287 ±  0.013    ms/op
+JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:layer.commits              sample      30     1.000 ±  0.001     #/op
+JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:layer.http.calls           sample      30     1.000 ±  0.001     #/op
+JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:layer.http.client.ms       sample      30     3.180 ±  0.015    ms/op
+JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:layer.http.post.client.ms  sample      30     3.180 ±  0.015  ms/call
+JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:layer.http.post.server.ms  sample      30     2.768 ±  0.014  ms/call
+JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:layer.http.server.ms       sample      30     2.768 ±  0.014    ms/op
+JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:layer.service.ms           sample      30     2.644 ±  0.014    ms/op
+JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:layer.sql.ms               sample      30     1.851 ±  0.003    ms/op
+JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:layer.sql.statements       sample      30     8.000 ±  0.001     #/op
+JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:layer.throughput           sample      30  3544.500 ± 11.849    ops/s
+JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:p0.00                      sample             2.662             ms/op
+JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:p0.50                      sample             3.146             ms/op
+JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:p0.90                      sample             3.424             ms/op
+JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:p0.95                      sample             3.531             ms/op
+JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:p0.99                      sample             3.875             ms/op
+JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:p0.999                     sample             5.997             ms/op
+JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:p0.9999                    sample            32.034             ms/op
+JooqUpdateBenchmark.benchmarkDiffMergeSyncUsingRest:p1.00                      sample            65.077             ms/op
+
+Benchmark result is saved to /root/dto2entity/results/hostner-pair/w7-concurrency/round-06/jooq-diffmerge-rest-t16.json.part

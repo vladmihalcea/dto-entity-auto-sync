@@ -1,5 +1,7 @@
 package com.vladmihalcea.phd.common.util;
 
+import com.vladmihalcea.phd.common.telemetry.TelemetryProfiler;
+import com.vladmihalcea.phd.common.timing.LayerProfiler;
 import org.junit.jupiter.api.Test;
 import org.openjdk.jmh.results.BenchmarkResult;
 import org.openjdk.jmh.results.RunResult;
@@ -47,6 +49,8 @@ public abstract class AbstractBenchmarkTest {
             .measurementTime(TimeValue.seconds(ITERATION_DURATION_SECONDS))
             .timeUnit(TimeUnit.MILLISECONDS)
             .forks(1)
+            .addProfiler(TelemetryProfiler.class)
+            .addProfiler(LayerProfiler.class)
             .shouldFailOnError(true)
             .build();
 

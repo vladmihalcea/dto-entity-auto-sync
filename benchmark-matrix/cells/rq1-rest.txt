@@ -1,0 +1,34 @@
+# RQ1, read path over REST: MQ-DTO versus MS-JSON on every stack and fan-out level (10 rounds).
+# On JDBC and jOOQ, MS-JSON forwards the database-built JSON string; on JPA, it uses Blaze Persistence.
+# Cell: <name> <module> <rounds> <benchmark regex> [JMH options]
+@jmh -bm sample -wi 15 -w 3s -i 30 -r 3s
+jdbc-mqdto-0         core  10  JdbcLoadBenchmark\.benchmarkLoadDtoUsingRest_0_collection_size$
+jdbc-msjson-0        core  10  JdbcLoadBenchmark\.benchmarkLoadJsonStringRest_0_collection_size$
+jdbc-mqdto-5         core  10  JdbcLoadBenchmark\.benchmarkLoadDtoUsingRest_5_collection_size$
+jdbc-msjson-5        core  10  JdbcLoadBenchmark\.benchmarkLoadJsonStringRest_5_collection_size$
+jdbc-mqdto-10        core  10  JdbcLoadBenchmark\.benchmarkLoadDtoUsingRest_10_collection_size$
+jdbc-msjson-10       core  10  JdbcLoadBenchmark\.benchmarkLoadJsonStringRest_10_collection_size$
+jdbc-mqdto-25        core  10  JdbcLoadBenchmark\.benchmarkLoadDtoUsingRest_25_collection_size$
+jdbc-msjson-25       core  10  JdbcLoadBenchmark\.benchmarkLoadJsonStringRest_25_collection_size$
+jdbc-mqdto-100       core  10  JdbcLoadBenchmark\.benchmarkLoadDtoUsingRest_100_collection_size$
+jdbc-msjson-100      core  10  JdbcLoadBenchmark\.benchmarkLoadJsonStringRest_100_collection_size$
+jooq-mqdto-0         core  10  JooqLoadBenchmark\.benchmarkLoadDtoUsingRest_0_collection_size$
+jooq-msjson-0        core  10  JooqLoadBenchmark\.benchmarkLoadJsonStringRest_0_collection_size$
+jooq-mqdto-5         core  10  JooqLoadBenchmark\.benchmarkLoadDtoUsingRest_5_collection_size$
+jooq-msjson-5        core  10  JooqLoadBenchmark\.benchmarkLoadJsonStringRest_5_collection_size$
+jooq-mqdto-10        core  10  JooqLoadBenchmark\.benchmarkLoadDtoUsingRest_10_collection_size$
+jooq-msjson-10       core  10  JooqLoadBenchmark\.benchmarkLoadJsonStringRest_10_collection_size$
+jooq-mqdto-25        core  10  JooqLoadBenchmark\.benchmarkLoadDtoUsingRest_25_collection_size$
+jooq-msjson-25       core  10  JooqLoadBenchmark\.benchmarkLoadJsonStringRest_25_collection_size$
+jooq-mqdto-100       core  10  JooqLoadBenchmark\.benchmarkLoadDtoUsingRest_100_collection_size$
+jooq-msjson-100      core  10  JooqLoadBenchmark\.benchmarkLoadJsonStringRest_100_collection_size$
+jpa-mqdto-0          core  10  JpaLoadBenchmark\.benchmarkLoadDtoUsingRest_0_collection_size$
+jpa-msjson-0         core  10  JpaLoadBenchmark\.benchmarkLoadDtoUsingBlazeAndRest_0_collection_size$
+jpa-mqdto-5          core  10  JpaLoadBenchmark\.benchmarkLoadDtoUsingRest_5_collection_size$
+jpa-msjson-5         core  10  JpaLoadBenchmark\.benchmarkLoadDtoUsingBlazeAndRest_5_collection_size$
+jpa-mqdto-10         core  10  JpaLoadBenchmark\.benchmarkLoadDtoUsingRest_10_collection_size$
+jpa-msjson-10        core  10  JpaLoadBenchmark\.benchmarkLoadDtoUsingBlazeAndRest_10_collection_size$
+jpa-mqdto-25         core  10  JpaLoadBenchmark\.benchmarkLoadDtoUsingRest_25_collection_size$
+jpa-msjson-25        core  10  JpaLoadBenchmark\.benchmarkLoadDtoUsingBlazeAndRest_25_collection_size$
+jpa-mqdto-100        core  10  JpaLoadBenchmark\.benchmarkLoadDtoUsingRest_100_collection_size$
+jpa-msjson-100       core  10  JpaLoadBenchmark\.benchmarkLoadDtoUsingBlazeAndRest_100_collection_size$

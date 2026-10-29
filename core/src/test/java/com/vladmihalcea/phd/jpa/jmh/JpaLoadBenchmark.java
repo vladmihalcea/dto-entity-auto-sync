@@ -5,15 +5,20 @@ import com.vladmihalcea.phd.common.config.BenchmarkTestData;
 import com.vladmihalcea.phd.common.config.SpringWebConfiguration;
 import com.vladmihalcea.phd.common.controller.RestCaller;
 import com.vladmihalcea.phd.jpa.config.JpaConfiguration;
+import com.vladmihalcea.phd.common.util.BenchmarkRestTemplate;
+import com.vladmihalcea.phd.common.timing.LayerTimings;
+import com.vladmihalcea.phd.common.dto.PostDto;
+import tools.jackson.databind.JsonNode;
 import org.openjdk.jmh.annotations.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.Environment;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
+import static com.vladmihalcea.phd.common.config.DataSetGenerator.FAN_OUT_POST_ID;
 
 /**
  * JMH benchmark that measures the execution time of the JPA
@@ -48,7 +53,7 @@ public class JpaLoadBenchmark {
             .getRequiredProperty("local.server.port", Integer.class);
 
         restCaller = new RestCaller(
-            port, new RestTemplate()
+            port, LayerTimings.timed(BenchmarkRestTemplate.create())
         );
 
         BenchmarkTestData benchmarkSetup = context.getBean(BenchmarkTestData.class);
@@ -69,53 +74,53 @@ public class JpaLoadBenchmark {
     // -------------------------------------------------------------------------
 
     @Benchmark
-    public void benchmarkLoadDtoUsingRest_0_collection_size() {
-        restCaller.loadPostDTO(100_000L);
+    public PostDto benchmarkLoadDtoUsingRest_0_collection_size() {
+        return restCaller.loadPostDTO(FAN_OUT_POST_ID + 0);
     }
 
     @Benchmark
-    public void benchmarkLoadDtoUsingRest_5_collection_size() {
-        restCaller.loadPostDTO(100_005L);
+    public PostDto benchmarkLoadDtoUsingRest_5_collection_size() {
+        return restCaller.loadPostDTO(FAN_OUT_POST_ID + 5);
     }
 
     @Benchmark
-    public void benchmarkLoadDtoUsingRest_10_collection_size() {
-        restCaller.loadPostDTO(100_010L);
+    public PostDto benchmarkLoadDtoUsingRest_10_collection_size() {
+        return restCaller.loadPostDTO(FAN_OUT_POST_ID + 10);
     }
 
     @Benchmark
-    public void benchmarkLoadDtoUsingRest_25_collection_size() {
-        restCaller.loadPostDTO(100_025L);
+    public PostDto benchmarkLoadDtoUsingRest_25_collection_size() {
+        return restCaller.loadPostDTO(FAN_OUT_POST_ID + 25);
     }
 
     @Benchmark
-    public void benchmarkLoadDtoUsingRest_100_collection_size() {
-        restCaller.loadPostDTO(100_100L);
+    public PostDto benchmarkLoadDtoUsingRest_100_collection_size() {
+        return restCaller.loadPostDTO(FAN_OUT_POST_ID + 100);
     }
 
     @Benchmark
-    public void benchmarkLoadDtoUsingBlazeAndRest_0_collection_size() {
-        restCaller.loadPostDTOUsingMultiset(100_000L);
+    public JsonNode benchmarkLoadDtoUsingBlazeAndRest_0_collection_size() {
+        return restCaller.loadPostDTOUsingMultiset(FAN_OUT_POST_ID + 0);
     }
 
     @Benchmark
-    public void benchmarkLoadDtoUsingBlazeAndRest_5_collection_size() {
-        restCaller.loadPostDTOUsingMultiset(100_005L);
+    public JsonNode benchmarkLoadDtoUsingBlazeAndRest_5_collection_size() {
+        return restCaller.loadPostDTOUsingMultiset(FAN_OUT_POST_ID + 5);
     }
 
     @Benchmark
-    public void benchmarkLoadDtoUsingBlazeAndRest_10_collection_size() {
-        restCaller.loadPostDTOUsingMultiset(100_010L);
+    public JsonNode benchmarkLoadDtoUsingBlazeAndRest_10_collection_size() {
+        return restCaller.loadPostDTOUsingMultiset(FAN_OUT_POST_ID + 10);
     }
 
     @Benchmark
-    public void benchmarkLoadDtoUsingBlazeAndRest_25_collection_size() {
-        restCaller.loadPostDTOUsingMultiset(100_025L);
+    public JsonNode benchmarkLoadDtoUsingBlazeAndRest_25_collection_size() {
+        return restCaller.loadPostDTOUsingMultiset(FAN_OUT_POST_ID + 25);
     }
 
     @Benchmark
-    public void benchmarkLoadDtoUsingBlazeAndRest_100_collection_size() {
-        restCaller.loadPostDTOUsingMultiset(100_100L);
+    public JsonNode benchmarkLoadDtoUsingBlazeAndRest_100_collection_size() {
+        return restCaller.loadPostDTOUsingMultiset(FAN_OUT_POST_ID + 100);
     }
 }
 

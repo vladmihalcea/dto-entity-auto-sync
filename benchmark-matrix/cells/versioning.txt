@@ -1,0 +1,29 @@
+# Cost of the optimistic locking extension (W2-b): the write benchmarks of the core and versioning modules,
+# with the JPA Multi-Ops baseline (R1-14) on both sides,
+# interleaved in one block, so both sides of every comparison share the same run windows (10 rounds).
+# Cell: <name> <module> <rounds> <benchmark regex> [JMH options]
+@jmh -bm sample -wi 15 -w 3s -i 30 -r 3s
+core-jdbc-multiops-rest              core       10 JdbcUpdateBenchmark\.benchmarkMultiOpsSyncUsingRest$
+core-jdbc-diffmerge-rest             core       10 JdbcUpdateBenchmark\.benchmarkDiffMergeSyncUsingRest$
+core-jooq-multiops-rest              core       10 JooqUpdateBenchmark\.benchmarkMultiOpsSyncUsingRest$
+core-jooq-diffmerge-rest             core       10 JooqUpdateBenchmark\.benchmarkDiffMergeSyncUsingRest$
+core-jpa-multiops-rest               core       10 JpaUpdateBenchmark\.benchmarkMultiOpsSyncUsingRest$
+core-jpa-diffmerge-rest              core       10 JpaUpdateBenchmark\.benchmarkDiffMergeSyncUsingRest$
+core-jdbc-multiops-service           core       10 JdbcBenchmark\.benchmarkMultiOpsSync$
+core-jdbc-diffmerge-service          core       10 JdbcBenchmark\.benchmarkDiffMergeSync$
+core-jooq-multiops-service           core       10 JooqBenchmark\.benchmarkMultiOpsSync$
+core-jooq-diffmerge-service          core       10 JooqBenchmark\.benchmarkDiffMergeSync$
+core-jpa-multiops-service            core       10 JpaBenchmark\.benchmarkMultiOpsSync$
+core-jpa-diffmerge-service           core       10 JpaBenchmark\.benchmarkDiffMergeSync$
+versioning-jdbc-multiops-rest        versioning 10 JdbcUpdateBenchmark\.benchmarkMultiOpsSyncUsingRest$
+versioning-jdbc-diffmerge-rest       versioning 10 JdbcUpdateBenchmark\.benchmarkDiffMergeSyncUsingRest$
+versioning-jooq-multiops-rest        versioning 10 JooqUpdateBenchmark\.benchmarkMultiOpsSyncUsingRest$
+versioning-jooq-diffmerge-rest       versioning 10 JooqUpdateBenchmark\.benchmarkDiffMergeSyncUsingRest$
+versioning-jpa-multiops-rest         versioning 10 JpaUpdateBenchmark\.benchmarkMultiOpsSyncUsingRest$
+versioning-jpa-diffmerge-rest        versioning 10 JpaUpdateBenchmark\.benchmarkDiffMergeSyncUsingRest$
+versioning-jdbc-multiops-service     versioning 10 JdbcBenchmark\.benchmarkMultiOpsSync$
+versioning-jdbc-diffmerge-service    versioning 10 JdbcBenchmark\.benchmarkDiffMergeSync$
+versioning-jooq-multiops-service     versioning 10 JooqBenchmark\.benchmarkMultiOpsSync$
+versioning-jooq-diffmerge-service    versioning 10 JooqBenchmark\.benchmarkDiffMergeSync$
+versioning-jpa-multiops-service      versioning 10 JpaBenchmark\.benchmarkMultiOpsSync$
+versioning-jpa-diffmerge-service     versioning 10 JpaBenchmark\.benchmarkDiffMergeSync$

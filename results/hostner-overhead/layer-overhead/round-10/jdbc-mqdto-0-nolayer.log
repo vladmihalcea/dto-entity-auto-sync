@@ -1,0 +1,823 @@
+# JMH version: 1.37
+# VM version: JDK 21.0.4, OpenJDK 64-Bit Server VM, 21.0.4+7-LTS
+# VM invoker: /opt/temurin-21.0.4+7/bin/java
+# VM options: -Xms4g -Xmx4g -XX:+AlwaysPreTouch -Djmh.separateClasspathJAR=true
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 15 iterations, 3 s each
+# Measurement: 30 iterations, 3 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Sampling time
+# Benchmark: com.vladmihalcea.phd.jdbc.jmh.JdbcLoadBenchmark.benchmarkLoadDtoUsingRest_0_collection_size
+
+# Run progress: 0.00% complete, ETA 00:02:15
+# Fork: 1 of 1
+# Warmup Iteration   1: Telemetry: CPU clock from the APERF and MPERF counters of the running cores; package power from Intel RAPL
+Database of the core module: jdbc:postgresql://37.148.161.24:5432/dto2entity, run 1620, PostgreSQL 18.6 (Ubuntu 18.6-0ubuntu0.26.04.1) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0, 64-bit, effective_cache_size=24GB, fsync=on, jit=on, maintenance_work_mem=1GB, max_connections=100, random_page_cost=1.1, shared_buffers=8GB, synchronous_commit=on, wal_sync_method=fdatasync, work_mem=16MB
+2.994 ±(99.9%) 0.461 ms/op
+# Warmup Iteration   2: 1.874 ±(99.9%) 0.031 ms/op
+# Warmup Iteration   3: 1.235 ±(99.9%) 0.010 ms/op
+# Warmup Iteration   4: 1.156 ±(99.9%) 0.007 ms/op
+# Warmup Iteration   5: 1.026 ±(99.9%) 0.009 ms/op
+# Warmup Iteration   6: 0.989 ±(99.9%) 0.003 ms/op
+# Warmup Iteration   7: 0.976 ±(99.9%) 0.003 ms/op
+# Warmup Iteration   8: 0.992 ±(99.9%) 0.003 ms/op
+# Warmup Iteration   9: 0.956 ±(99.9%) 0.003 ms/op
+# Warmup Iteration  10: 0.922 ±(99.9%) 0.002 ms/op
+# Warmup Iteration  11: 0.926 ±(99.9%) 0.010 ms/op
+# Warmup Iteration  12: 0.922 ±(99.9%) 0.002 ms/op
+# Warmup Iteration  13: 0.903 ±(99.9%) 0.001 ms/op
+# Warmup Iteration  14: 0.915 ±(99.9%) 0.002 ms/op
+# Warmup Iteration  15: 0.906 ±(99.9%) 0.001 ms/op
+Iteration   1: 0.907 ±(99.9%) 0.001 ms/op
+                 app.cpu.mhz:           4453.870 MHz
+                 app.cpu.power:         23.756 W
+                 app.cpu.power.limit:   80.000 W
+                 app.cpu.util:          3.610 %
+                 app.temp:              45.000 degC
+                 app.thermal.throttles: ≈ 0 #
+                 db.cpu.mhz:            4599.201 MHz
+                 db.cpu.power:          22.892 W
+                 db.cpu.power.limit:    80.000 W
+                 db.cpu.util:           1.585 %
+                 db.temp:               40.000 degC
+                 db.thermal.throttles:  ≈ 0 #
+                 p0.00:                 0.859 ms/op
+                 p0.50:                 0.904 ms/op
+                 p0.90:                 0.926 ms/op
+                 p0.95:                 0.936 ms/op
+                 p0.99:                 1.023 ms/op
+                 p0.999:                1.090 ms/op
+                 p0.9999:               1.092 ms/op
+                 p1.00:                 1.092 ms/op
+
+Iteration   2: 0.911 ±(99.9%) 0.001 ms/op
+                 app.cpu.mhz:           4424.846 MHz
+                 app.cpu.power:         23.785 W
+                 app.cpu.power.limit:   80.000 W
+                 app.cpu.util:          3.638 %
+                 app.temp:              45.000 degC
+                 app.thermal.throttles: ≈ 0 #
+                 db.cpu.mhz:            4599.048 MHz
+                 db.cpu.power:          24.538 W
+                 db.cpu.power.limit:    80.000 W
+                 db.cpu.util:           1.504 %
+                 db.temp:               40.000 degC
+                 db.thermal.throttles:  ≈ 0 #
+                 p0.00:                 0.861 ms/op
+                 p0.50:                 0.908 ms/op
+                 p0.90:                 0.931 ms/op
+                 p0.95:                 0.941 ms/op
+                 p0.99:                 1.013 ms/op
+                 p0.999:                1.082 ms/op
+                 p0.9999:               1.163 ms/op
+                 p1.00:                 1.163 ms/op
+
+Iteration   3: 0.917 ±(99.9%) 0.001 ms/op
+                 app.cpu.mhz:           4383.446 MHz
+                 app.cpu.power:         22.140 W
+                 app.cpu.power.limit:   80.000 W
+                 app.cpu.util:          3.697 %
+                 app.temp:              45.000 degC
+                 app.thermal.throttles: ≈ 0 #
+                 db.cpu.mhz:            4593.873 MHz
+                 db.cpu.power:          24.183 W
+                 db.cpu.power.limit:    80.000 W
+                 db.cpu.util:           1.448 %
+                 db.temp:               40.000 degC
+                 db.thermal.throttles:  ≈ 0 #
+                 p0.00:                 0.868 ms/op
+                 p0.50:                 0.914 ms/op
+                 p0.90:                 0.940 ms/op
+                 p0.95:                 0.950 ms/op
+                 p0.99:                 1.030 ms/op
+                 p0.999:                1.124 ms/op
+                 p0.9999:               1.247 ms/op
+                 p1.00:                 1.247 ms/op
+
+Iteration   4: 0.923 ±(99.9%) 0.007 ms/op
+                 app.cpu.mhz:           4379.222 MHz
+                 app.cpu.power:         24.610 W
+                 app.cpu.power.limit:   80.000 W
+                 app.cpu.util:          4.249 %
+                 app.temp:              45.000 degC
+                 app.thermal.throttles: ≈ 0 #
+                 db.cpu.mhz:            4597.964 MHz
+                 db.cpu.power:          21.782 W
+                 db.cpu.power.limit:    80.000 W
+                 db.cpu.util:           1.587 %
+                 db.temp:               40.000 degC
+                 db.thermal.throttles:  ≈ 0 #
+                 p0.00:                 0.868 ms/op
+                 p0.50:                 0.919 ms/op
+                 p0.90:                 0.947 ms/op
+                 p0.95:                 0.957 ms/op
+                 p0.99:                 1.036 ms/op
+                 p0.999:                1.094 ms/op
+                 p0.9999:               7.913 ms/op
+                 p1.00:                 7.913 ms/op
+
+Iteration   5: 0.914 ±(99.9%) 0.002 ms/op
+                 app.cpu.mhz:           4497.526 MHz
+                 app.cpu.power:         24.806 W
+                 app.cpu.power.limit:   80.000 W
+                 app.cpu.util:          3.613 %
+                 app.temp:              47.000 degC
+                 app.thermal.throttles: ≈ 0 #
+                 db.cpu.mhz:            4599.170 MHz
+                 db.cpu.power:          23.508 W
+                 db.cpu.power.limit:    80.000 W
+                 db.cpu.util:           1.753 %
+                 db.temp:               39.000 degC
+                 db.thermal.throttles:  ≈ 0 #
+                 p0.00:                 0.858 ms/op
+                 p0.50:                 0.909 ms/op
+                 p0.90:                 0.938 ms/op
+                 p0.95:                 0.950 ms/op
+                 p0.99:                 1.049 ms/op
+                 p0.999:                1.094 ms/op
+                 p0.9999:               1.432 ms/op
+                 p1.00:                 1.432 ms/op
+
+Iteration   6: 0.917 ±(99.9%) 0.001 ms/op
+                 app.cpu.mhz:           4483.096 MHz
+                 app.cpu.power:         25.992 W
+                 app.cpu.power.limit:   80.000 W
+                 app.cpu.util:          3.806 %
+                 app.temp:              47.000 degC
+                 app.thermal.throttles: ≈ 0 #
+                 db.cpu.mhz:            4598.593 MHz
+                 db.cpu.power:          23.773 W
+                 db.cpu.power.limit:    80.000 W
+                 db.cpu.util:           1.670 %
+                 db.temp:               40.000 degC
+                 db.thermal.throttles:  ≈ 0 #
+                 p0.00:                 0.860 ms/op
+                 p0.50:                 0.913 ms/op
+                 p0.90:                 0.943 ms/op
+                 p0.95:                 0.955 ms/op
+                 p0.99:                 1.034 ms/op
+                 p0.999:                1.083 ms/op
+                 p0.9999:               1.141 ms/op
+                 p1.00:                 1.141 ms/op
+
+Iteration   7: 0.928 ±(99.9%) 0.002 ms/op
+                 app.cpu.mhz:           4399.554 MHz
+                 app.cpu.power:         25.311 W
+                 app.cpu.power.limit:   80.000 W
+                 app.cpu.util:          4.447 %
+                 app.temp:              46.000 degC
+                 app.thermal.throttles: ≈ 0 #
+                 db.cpu.mhz:            4599.415 MHz
+                 db.cpu.power:          23.238 W
+                 db.cpu.power.limit:    80.000 W
+                 db.cpu.util:           1.587 %
+                 db.temp:               40.000 degC
+                 db.thermal.throttles:  ≈ 0 #
+                 p0.00:                 0.863 ms/op
+                 p0.50:                 0.925 ms/op
+                 p0.90:                 0.953 ms/op
+                 p0.95:                 0.967 ms/op
+                 p0.99:                 1.064 ms/op
+                 p0.999:                1.118 ms/op
+                 p0.9999:               1.333 ms/op
+                 p1.00:                 1.333 ms/op
+
+Iteration   8: 0.926 ±(99.9%) 0.001 ms/op
+                 app.cpu.mhz:           4417.297 MHz
+                 app.cpu.power:         22.813 W
+                 app.cpu.power.limit:   80.000 W
+                 app.cpu.util:          3.696 %
+                 app.temp:              46.000 degC
+                 app.thermal.throttles: ≈ 0 #
+                 db.cpu.mhz:            4598.260 MHz
+                 db.cpu.power:          22.746 W
+                 db.cpu.power.limit:    80.000 W
+                 db.cpu.util:           1.588 %
+                 db.temp:               40.000 degC
+                 db.thermal.throttles:  ≈ 0 #
+                 p0.00:                 0.874 ms/op
+                 p0.50:                 0.923 ms/op
+                 p0.90:                 0.950 ms/op
+                 p0.95:                 0.962 ms/op
+                 p0.99:                 1.033 ms/op
+                 p0.999:                1.063 ms/op
+                 p0.9999:               1.130 ms/op
+                 p1.00:                 1.130 ms/op
+
+Iteration   9: 0.921 ±(99.9%) 0.001 ms/op
+                 app.cpu.mhz:           4422.207 MHz
+                 app.cpu.power:         23.235 W
+                 app.cpu.power.limit:   80.000 W
+                 app.cpu.util:          3.857 %
+                 app.temp:              45.000 degC
+                 app.thermal.throttles: ≈ 0 #
+                 db.cpu.mhz:            4598.653 MHz
+                 db.cpu.power:          22.710 W
+                 db.cpu.power.limit:    80.000 W
+                 db.cpu.util:           1.560 %
+                 db.temp:               40.000 degC
+                 db.thermal.throttles:  ≈ 0 #
+                 p0.00:                 0.868 ms/op
+                 p0.50:                 0.919 ms/op
+                 p0.90:                 0.946 ms/op
+                 p0.95:                 0.957 ms/op
+                 p0.99:                 1.024 ms/op
+                 p0.999:                1.062 ms/op
+                 p0.9999:               1.085 ms/op
+                 p1.00:                 1.085 ms/op
+
+Iteration  10: 0.907 ±(99.9%) 0.001 ms/op
+                 app.cpu.mhz:           4403.045 MHz
+                 app.cpu.power:         23.697 W
+                 app.cpu.power.limit:   80.000 W
+                 app.cpu.util:          3.886 %
+                 app.temp:              45.000 degC
+                 app.thermal.throttles: ≈ 0 #
+                 db.cpu.mhz:            4599.103 MHz
+                 db.cpu.power:          24.446 W
+                 db.cpu.power.limit:    80.000 W
+                 db.cpu.util:           1.559 %
+                 db.temp:               40.000 degC
+                 db.thermal.throttles:  ≈ 0 #
+                 p0.00:                 0.848 ms/op
+                 p0.50:                 0.904 ms/op
+                 p0.90:                 0.932 ms/op
+                 p0.95:                 0.942 ms/op
+                 p0.99:                 1.011 ms/op
+                 p0.999:                1.067 ms/op
+                 p0.9999:               1.102 ms/op
+                 p1.00:                 1.102 ms/op
+
+Iteration  11: 0.904 ±(99.9%) 0.002 ms/op
+                 app.cpu.mhz:           4455.886 MHz
+                 app.cpu.power:         25.983 W
+                 app.cpu.power.limit:   80.000 W
+                 app.cpu.util:          3.857 %
+                 app.temp:              46.000 degC
+                 app.thermal.throttles: ≈ 0 #
+                 db.cpu.mhz:            4599.092 MHz
+                 db.cpu.power:          22.934 W
+                 db.cpu.power.limit:    80.000 W
+                 db.cpu.util:           1.559 %
+                 db.temp:               40.000 degC
+                 db.thermal.throttles:  ≈ 0 #
+                 p0.00:                 0.838 ms/op
+                 p0.50:                 0.901 ms/op
+                 p0.90:                 0.934 ms/op
+                 p0.95:                 0.945 ms/op
+                 p0.99:                 1.018 ms/op
+                 p0.999:                1.083 ms/op
+                 p0.9999:               1.143 ms/op
+                 p1.00:                 1.143 ms/op
+
+Iteration  12: 0.916 ±(99.9%) 0.008 ms/op
+                 app.cpu.mhz:           4396.537 MHz
+                 app.cpu.power:         23.610 W
+                 app.cpu.power.limit:   80.000 W
+                 app.cpu.util:          4.053 %
+                 app.temp:              45.000 degC
+                 app.thermal.throttles: ≈ 0 #
+                 db.cpu.mhz:            4599.084 MHz
+                 db.cpu.power:          23.431 W
+                 db.cpu.power.limit:    80.000 W
+                 db.cpu.util:           1.476 %
+                 db.temp:               40.000 degC
+                 db.thermal.throttles:  ≈ 0 #
+                 p0.00:                 0.861 ms/op
+                 p0.50:                 0.911 ms/op
+                 p0.90:                 0.936 ms/op
+                 p0.95:                 0.946 ms/op
+                 p0.99:                 1.014 ms/op
+                 p0.999:                1.132 ms/op
+                 p0.9999:               8.913 ms/op
+                 p1.00:                 8.913 ms/op
+
+Iteration  13: 0.918 ±(99.9%) 0.001 ms/op
+                 app.cpu.mhz:           4392.776 MHz
+                 app.cpu.power:         23.656 W
+                 app.cpu.power.limit:   80.000 W
+                 app.cpu.util:          3.914 %
+                 app.temp:              45.000 degC
+                 app.thermal.throttles: ≈ 0 #
+                 db.cpu.mhz:            4584.311 MHz
+                 db.cpu.power:          24.839 W
+                 db.cpu.power.limit:    80.000 W
+                 db.cpu.util:           1.560 %
+                 db.temp:               40.000 degC
+                 db.thermal.throttles:  ≈ 0 #
+                 p0.00:                 0.862 ms/op
+                 p0.50:                 0.915 ms/op
+                 p0.90:                 0.941 ms/op
+                 p0.95:                 0.951 ms/op
+                 p0.99:                 1.012 ms/op
+                 p0.999:                1.059 ms/op
+                 p0.9999:               1.163 ms/op
+                 p1.00:                 1.163 ms/op
+
+Iteration  14: 0.907 ±(99.9%) 0.001 ms/op
+                 app.cpu.mhz:           4441.525 MHz
+                 app.cpu.power:         24.869 W
+                 app.cpu.power.limit:   80.000 W
+                 app.cpu.util:          3.998 %
+                 app.temp:              46.000 degC
+                 app.thermal.throttles: ≈ 0 #
+                 db.cpu.mhz:            4595.874 MHz
+                 db.cpu.power:          24.789 W
+                 db.cpu.power.limit:    80.000 W
+                 db.cpu.util:           1.442 %
+                 db.temp:               40.000 degC
+                 db.thermal.throttles:  ≈ 0 #
+                 p0.00:                 0.847 ms/op
+                 p0.50:                 0.906 ms/op
+                 p0.90:                 0.932 ms/op
+                 p0.95:                 0.940 ms/op
+                 p0.99:                 1.012 ms/op
+                 p0.999:                1.055 ms/op
+                 p0.9999:               1.208 ms/op
+                 p1.00:                 1.208 ms/op
+
+Iteration  15: 0.895 ±(99.9%) 0.002 ms/op
+                 app.cpu.mhz:           4451.443 MHz
+                 app.cpu.power:         24.535 W
+                 app.cpu.power.limit:   80.000 W
+                 app.cpu.util:          3.938 %
+                 app.temp:              46.000 degC
+                 app.thermal.throttles: ≈ 0 #
+                 db.cpu.mhz:            4598.809 MHz
+                 db.cpu.power:          22.688 W
+                 db.cpu.power.limit:    80.000 W
+                 db.cpu.util:           1.477 %
+                 db.temp:               40.000 degC
+                 db.thermal.throttles:  ≈ 0 #
+                 p0.00:                 0.836 ms/op
+                 p0.50:                 0.894 ms/op
+                 p0.90:                 0.920 ms/op
+                 p0.95:                 0.928 ms/op
+                 p0.99:                 1.033 ms/op
+                 p0.999:                1.085 ms/op
+                 p0.9999:               1.323 ms/op
+                 p1.00:                 1.323 ms/op
+
+Iteration  16: 0.899 ±(99.9%) 0.002 ms/op
+                 app.cpu.mhz:           4449.362 MHz
+                 app.cpu.power:         25.467 W
+                 app.cpu.power.limit:   80.000 W
+                 app.cpu.util:          4.495 %
+                 app.temp:              46.000 degC
+                 app.thermal.throttles: ≈ 0 #
+                 db.cpu.mhz:            4595.521 MHz
+                 db.cpu.power:          25.045 W
+                 db.cpu.power.limit:    80.000 W
+                 db.cpu.util:           1.504 %
+                 db.temp:               40.000 degC
+                 db.thermal.throttles:  ≈ 0 #
+                 p0.00:                 0.842 ms/op
+                 p0.50:                 0.897 ms/op
+                 p0.90:                 0.928 ms/op
+                 p0.95:                 0.941 ms/op
+                 p0.99:                 1.027 ms/op
+                 p0.999:                1.072 ms/op
+                 p0.9999:               1.081 ms/op
+                 p1.00:                 1.081 ms/op
+
+Iteration  17: 0.900 ±(99.9%) 0.001 ms/op
+                 app.cpu.mhz:           4479.348 MHz
+                 app.cpu.power:         26.376 W
+                 app.cpu.power.limit:   80.000 W
+                 app.cpu.util:          3.776 %
+                 app.temp:              47.000 degC
+                 app.thermal.throttles: ≈ 0 #
+                 db.cpu.mhz:            4596.340 MHz
+                 db.cpu.power:          25.176 W
+                 db.cpu.power.limit:    80.000 W
+                 db.cpu.util:           1.697 %
+                 db.temp:               40.000 degC
+                 db.thermal.throttles:  ≈ 0 #
+                 p0.00:                 0.845 ms/op
+                 p0.50:                 0.897 ms/op
+                 p0.90:                 0.921 ms/op
+                 p0.95:                 0.930 ms/op
+                 p0.99:                 1.002 ms/op
+                 p0.999:                1.073 ms/op
+                 p0.9999:               1.300 ms/op
+                 p1.00:                 1.300 ms/op
+
+Iteration  18: 0.905 ±(99.9%) 0.001 ms/op
+                 app.cpu.mhz:           4431.871 MHz
+                 app.cpu.power:         24.566 W
+                 app.cpu.power.limit:   80.000 W
+                 app.cpu.util:          3.611 %
+                 app.temp:              48.000 degC
+                 app.thermal.throttles: ≈ 0 #
+                 db.cpu.mhz:            4598.460 MHz
+                 db.cpu.power:          24.022 W
+                 db.cpu.power.limit:    80.000 W
+                 db.cpu.util:           1.476 %
+                 db.temp:               49.000 degC
+                 db.thermal.throttles:  ≈ 0 #
+                 p0.00:                 0.856 ms/op
+                 p0.50:                 0.905 ms/op
+                 p0.90:                 0.927 ms/op
+                 p0.95:                 0.935 ms/op
+                 p0.99:                 1.005 ms/op
+                 p0.999:                1.058 ms/op
+                 p0.9999:               1.233 ms/op
+                 p1.00:                 1.233 ms/op
+
+Iteration  19: 0.919 ±(99.9%) 0.009 ms/op
+                 app.cpu.mhz:           4384.044 MHz
+                 app.cpu.power:         23.876 W
+                 app.cpu.power.limit:   80.000 W
+                 app.cpu.util:          4.500 %
+                 app.temp:              48.000 degC
+                 app.thermal.throttles: ≈ 0 #
+                 db.cpu.mhz:            4596.918 MHz
+                 db.cpu.power:          24.829 W
+                 db.cpu.power.limit:    80.000 W
+                 db.cpu.util:           1.588 %
+                 db.temp:               40.000 degC
+                 db.thermal.throttles:  ≈ 0 #
+                 p0.00:                 0.850 ms/op
+                 p0.50:                 0.909 ms/op
+                 p0.90:                 0.954 ms/op
+                 p0.95:                 0.976 ms/op
+                 p0.99:                 1.053 ms/op
+                 p0.999:                1.733 ms/op
+                 p0.9999:               8.438 ms/op
+                 p1.00:                 8.438 ms/op
+
+Iteration  20: 0.918 ±(99.9%) 0.002 ms/op
+                 app.cpu.mhz:           4337.445 MHz
+                 app.cpu.power:         24.515 W
+                 app.cpu.power.limit:   80.000 W
+                 app.cpu.util:          4.978 %
+                 app.temp:              46.000 degC
+                 app.thermal.throttles: ≈ 0 #
+                 db.cpu.mhz:            4598.042 MHz
+                 db.cpu.power:          24.137 W
+                 db.cpu.power.limit:    80.000 W
+                 db.cpu.util:           1.559 %
+                 db.temp:               40.000 degC
+                 db.thermal.throttles:  ≈ 0 #
+                 p0.00:                 0.840 ms/op
+                 p0.50:                 0.914 ms/op
+                 p0.90:                 0.952 ms/op
+                 p0.95:                 0.968 ms/op
+                 p0.99:                 1.021 ms/op
+                 p0.999:                1.080 ms/op
+                 p0.9999:               1.190 ms/op
+                 p1.00:                 1.190 ms/op
+
+Iteration  21: 0.915 ±(99.9%) 0.001 ms/op
+                 app.cpu.mhz:           4373.019 MHz
+                 app.cpu.power:         22.545 W
+                 app.cpu.power.limit:   80.000 W
+                 app.cpu.util:          4.274 %
+                 app.temp:              46.000 degC
+                 app.thermal.throttles: ≈ 0 #
+                 db.cpu.mhz:            4598.496 MHz
+                 db.cpu.power:          24.145 W
+                 db.cpu.power.limit:    80.000 W
+                 db.cpu.util:           1.394 %
+                 db.temp:               40.000 degC
+                 db.thermal.throttles:  ≈ 0 #
+                 p0.00:                 0.859 ms/op
+                 p0.50:                 0.913 ms/op
+                 p0.90:                 0.939 ms/op
+                 p0.95:                 0.948 ms/op
+                 p0.99:                 1.006 ms/op
+                 p0.999:                1.061 ms/op
+                 p0.9999:               1.206 ms/op
+                 p1.00:                 1.206 ms/op
+
+Iteration  22: 0.916 ±(99.9%) 0.001 ms/op
+                 app.cpu.mhz:           4390.892 MHz
+                 app.cpu.power:         23.573 W
+                 app.cpu.power.limit:   80.000 W
+                 app.cpu.util:          3.724 %
+                 app.temp:              46.000 degC
+                 app.thermal.throttles: ≈ 0 #
+                 db.cpu.mhz:            4590.864 MHz
+                 db.cpu.power:          24.296 W
+                 db.cpu.power.limit:    80.000 W
+                 db.cpu.util:           1.477 %
+                 db.temp:               40.000 degC
+                 db.thermal.throttles:  ≈ 0 #
+                 p0.00:                 0.851 ms/op
+                 p0.50:                 0.914 ms/op
+                 p0.90:                 0.942 ms/op
+                 p0.95:                 0.952 ms/op
+                 p0.99:                 1.015 ms/op
+                 p0.999:                1.063 ms/op
+                 p0.9999:               1.069 ms/op
+                 p1.00:                 1.069 ms/op
+
+Iteration  23: 0.916 ±(99.9%) 0.002 ms/op
+                 app.cpu.mhz:           4427.572 MHz
+                 app.cpu.power:         22.455 W
+                 app.cpu.power.limit:   80.000 W
+                 app.cpu.util:          3.828 %
+                 app.temp:              46.000 degC
+                 app.thermal.throttles: ≈ 0 #
+                 db.cpu.mhz:            4598.800 MHz
+                 db.cpu.power:          23.194 W
+                 db.cpu.power.limit:    80.000 W
+                 db.cpu.util:           1.532 %
+                 db.temp:               40.000 degC
+                 db.thermal.throttles:  ≈ 0 #
+                 p0.00:                 0.852 ms/op
+                 p0.50:                 0.914 ms/op
+                 p0.90:                 0.947 ms/op
+                 p0.95:                 0.957 ms/op
+                 p0.99:                 1.008 ms/op
+                 p0.999:                1.077 ms/op
+                 p0.9999:               1.092 ms/op
+                 p1.00:                 1.092 ms/op
+
+Iteration  24: 0.915 ±(99.9%) 0.001 ms/op
+                 app.cpu.mhz:           4387.436 MHz
+                 app.cpu.power:         23.393 W
+                 app.cpu.power.limit:   80.000 W
+                 app.cpu.util:          3.860 %
+                 app.temp:              45.000 degC
+                 app.thermal.throttles: ≈ 0 #
+                 db.cpu.mhz:            4598.447 MHz
+                 db.cpu.power:          24.879 W
+                 db.cpu.power.limit:    80.000 W
+                 db.cpu.util:           1.367 %
+                 db.temp:               40.000 degC
+                 db.thermal.throttles:  ≈ 0 #
+                 p0.00:                 0.857 ms/op
+                 p0.50:                 0.915 ms/op
+                 p0.90:                 0.940 ms/op
+                 p0.95:                 0.948 ms/op
+                 p0.99:                 1.031 ms/op
+                 p0.999:                1.068 ms/op
+                 p0.9999:               1.153 ms/op
+                 p1.00:                 1.153 ms/op
+
+Iteration  25: 0.903 ±(99.9%) 0.001 ms/op
+                 app.cpu.mhz:           4445.642 MHz
+                 app.cpu.power:         23.943 W
+                 app.cpu.power.limit:   80.000 W
+                 app.cpu.util:          3.774 %
+                 app.temp:              46.000 degC
+                 app.thermal.throttles: ≈ 0 #
+                 db.cpu.mhz:            4598.225 MHz
+                 db.cpu.power:          24.932 W
+                 db.cpu.power.limit:    80.000 W
+                 db.cpu.util:           1.477 %
+                 db.temp:               40.000 degC
+                 db.thermal.throttles:  ≈ 0 #
+                 p0.00:                 0.846 ms/op
+                 p0.50:                 0.900 ms/op
+                 p0.90:                 0.931 ms/op
+                 p0.95:                 0.939 ms/op
+                 p0.99:                 0.982 ms/op
+                 p0.999:                1.068 ms/op
+                 p0.9999:               1.225 ms/op
+                 p1.00:                 1.225 ms/op
+
+Iteration  26: 0.911 ±(99.9%) 0.001 ms/op
+                 app.cpu.mhz:           4437.135 MHz
+                 app.cpu.power:         24.890 W
+                 app.cpu.power.limit:   80.000 W
+                 app.cpu.util:          3.747 %
+                 app.temp:              47.000 degC
+                 app.thermal.throttles: ≈ 0 #
+                 db.cpu.mhz:            4598.303 MHz
+                 db.cpu.power:          23.754 W
+                 db.cpu.power.limit:    80.000 W
+                 db.cpu.util:           1.422 %
+                 db.temp:               52.000 degC
+                 db.thermal.throttles:  ≈ 0 #
+                 p0.00:                 0.842 ms/op
+                 p0.50:                 0.908 ms/op
+                 p0.90:                 0.939 ms/op
+                 p0.95:                 0.948 ms/op
+                 p0.99:                 1.011 ms/op
+                 p0.999:                1.063 ms/op
+                 p0.9999:               1.145 ms/op
+                 p1.00:                 1.145 ms/op
+
+Iteration  27: 0.909 ±(99.9%) 0.007 ms/op
+                 app.cpu.mhz:           4443.586 MHz
+                 app.cpu.power:         24.981 W
+                 app.cpu.power.limit:   80.000 W
+                 app.cpu.util:          4.110 %
+                 app.temp:              47.000 degC
+                 app.thermal.throttles: ≈ 0 #
+                 db.cpu.mhz:            4594.489 MHz
+                 db.cpu.power:          24.434 W
+                 db.cpu.power.limit:    80.000 W
+                 db.cpu.util:           1.505 %
+                 db.temp:               52.000 degC
+                 db.thermal.throttles:  ≈ 0 #
+                 p0.00:                 0.844 ms/op
+                 p0.50:                 0.903 ms/op
+                 p0.90:                 0.935 ms/op
+                 p0.95:                 0.944 ms/op
+                 p0.99:                 1.026 ms/op
+                 p0.999:                1.079 ms/op
+                 p0.9999:               8.118 ms/op
+                 p1.00:                 8.118 ms/op
+
+Iteration  28: 0.911 ±(99.9%) 0.001 ms/op
+                 app.cpu.mhz:           4404.936 MHz
+                 app.cpu.power:         23.242 W
+                 app.cpu.power.limit:   80.000 W
+                 app.cpu.util:          3.828 %
+                 app.temp:              46.000 degC
+                 app.thermal.throttles: ≈ 0 #
+                 db.cpu.mhz:            4598.712 MHz
+                 db.cpu.power:          25.071 W
+                 db.cpu.power.limit:    80.000 W
+                 db.cpu.util:           1.504 %
+                 db.temp:               40.000 degC
+                 db.thermal.throttles:  ≈ 0 #
+                 p0.00:                 0.855 ms/op
+                 p0.50:                 0.910 ms/op
+                 p0.90:                 0.937 ms/op
+                 p0.95:                 0.945 ms/op
+                 p0.99:                 1.003 ms/op
+                 p0.999:                1.073 ms/op
+                 p0.9999:               1.085 ms/op
+                 p1.00:                 1.085 ms/op
+
+Iteration  29: 0.912 ±(99.9%) 0.001 ms/op
+                 app.cpu.mhz:           4414.154 MHz
+                 app.cpu.power:         25.552 W
+                 app.cpu.power.limit:   80.000 W
+                 app.cpu.util:          4.957 %
+                 app.temp:              55.000 degC
+                 app.thermal.throttles: ≈ 0 #
+                 db.cpu.mhz:            4597.861 MHz
+                 db.cpu.power:          24.663 W
+                 db.cpu.power.limit:    80.000 W
+                 db.cpu.util:           1.449 %
+                 db.temp:               40.000 degC
+                 db.thermal.throttles:  ≈ 0 #
+                 p0.00:                 0.845 ms/op
+                 p0.50:                 0.910 ms/op
+                 p0.90:                 0.939 ms/op
+                 p0.95:                 0.950 ms/op
+                 p0.99:                 0.999 ms/op
+                 p0.999:                1.069 ms/op
+                 p0.9999:               1.237 ms/op
+                 p1.00:                 1.237 ms/op
+
+Iteration  30: 0.904 ±(99.9%) 0.001 ms/op
+                 app.cpu.mhz:           4456.633 MHz
+                 app.cpu.power:         24.864 W
+                 app.cpu.power.limit:   80.000 W
+                 app.cpu.util:          3.720 %
+                 app.temp:              46.000 degC
+                 app.thermal.throttles: ≈ 0 #
+                 db.cpu.mhz:            4598.919 MHz
+                 db.cpu.power:          24.187 W
+                 db.cpu.power.limit:    80.000 W
+                 db.cpu.util:           1.586 %
+                 db.temp:               40.000 degC
+                 db.thermal.throttles:  ≈ 0 #
+                 p0.00:                 0.839 ms/op
+                 p0.50:                 0.902 ms/op
+                 p0.90:                 0.932 ms/op
+                 p0.95:                 0.941 ms/op
+                 p0.99:                 1.005 ms/op
+                 p0.999:                1.057 ms/op
+                 p0.9999:               1.090 ms/op
+                 p1.00:                 1.090 ms/op
+
+
+
+Result "com.vladmihalcea.phd.jdbc.jmh.JdbcLoadBenchmark.benchmarkLoadDtoUsingRest_0_collection_size":
+  N = 98624
+  mean =      0.912 ±(99.9%) 0.001 ms/op
+
+  Histogram, ms/op:
+    [0.000, 0.500) = 0 
+    [0.500, 1.000) = 97475 
+    [1.000, 1.500) = 1140 
+    [1.500, 2.000) = 4 
+    [2.000, 2.500) = 0 
+    [2.500, 3.000) = 0 
+    [3.000, 3.500) = 0 
+    [3.500, 4.000) = 0 
+    [4.000, 4.500) = 1 
+    [4.500, 5.000) = 0 
+    [5.000, 5.500) = 0 
+    [5.500, 6.000) = 0 
+    [6.000, 6.500) = 0 
+    [6.500, 7.000) = 0 
+    [7.000, 7.500) = 0 
+    [7.500, 8.000) = 1 
+    [8.000, 8.500) = 2 
+
+  Percentiles, ms/op:
+      p(0.0000) =      0.836 ms/op
+     p(50.0000) =      0.910 ms/op
+     p(90.0000) =      0.939 ms/op
+     p(95.0000) =      0.950 ms/op
+     p(99.0000) =      1.016 ms/op
+     p(99.9000) =      1.083 ms/op
+     p(99.9900) =      1.471 ms/op
+     p(99.9990) =      8.913 ms/op
+     p(99.9999) =      8.913 ms/op
+    p(100.0000) =      8.913 ms/op
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcLoadBenchmark.benchmarkLoadDtoUsingRest_0_collection_size:app.cpu.mhz":
+  4422.178 ±(99.9%) 24.401 MHz [Average]
+  (min, avg, max) = (4337.445, 4422.178, 4497.526), stdev = 36.523
+  CI (99.9%): [4397.777, 4446.580] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcLoadBenchmark.benchmarkLoadDtoUsingRest_0_collection_size:app.cpu.power":
+  24.235 ±(99.9%) 0.733 W [Average]
+  (min, avg, max) = (22.140, 24.235, 26.376), stdev = 1.097
+  CI (99.9%): [23.502, 24.967] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcLoadBenchmark.benchmarkLoadDtoUsingRest_0_collection_size:app.cpu.power.limit":
+  80.000 ±(99.9%) 0.001 W [Minimum]
+  (min, avg, max) = (80.000, 80.000, 80.000), stdev = 0.001
+  CI (99.9%): [80.000, 80.000] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcLoadBenchmark.benchmarkLoadDtoUsingRest_0_collection_size:app.cpu.util":
+  3.981 ±(99.9%) 0.247 % [Average]
+  (min, avg, max) = (3.610, 3.981, 4.978), stdev = 0.370
+  CI (99.9%): [3.734, 4.229] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcLoadBenchmark.benchmarkLoadDtoUsingRest_0_collection_size:app.temp":
+  55.000 ±(99.9%) 0.001 degC [Maximum]
+  (min, avg, max) = (45.000, 46.300, 55.000), stdev = 1.860
+  CI (99.9%): [55.000, 55.000] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcLoadBenchmark.benchmarkLoadDtoUsingRest_0_collection_size:app.thermal.throttles":
+  ≈ 0 #
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcLoadBenchmark.benchmarkLoadDtoUsingRest_0_collection_size:db.cpu.mhz":
+  4597.295 ±(99.9%) 2.080 MHz [Average]
+  (min, avg, max) = (4584.311, 4597.295, 4599.415), stdev = 3.114
+  CI (99.9%): [4595.215, 4599.375] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcLoadBenchmark.benchmarkLoadDtoUsingRest_0_collection_size:db.cpu.power":
+  23.975 ±(99.9%) 0.591 W [Average]
+  (min, avg, max) = (21.782, 23.975, 25.176), stdev = 0.885
+  CI (99.9%): [23.384, 24.567] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcLoadBenchmark.benchmarkLoadDtoUsingRest_0_collection_size:db.cpu.power.limit":
+  80.000 ±(99.9%) 0.001 W [Minimum]
+  (min, avg, max) = (80.000, 80.000, 80.000), stdev = 0.001
+  CI (99.9%): [80.000, 80.000] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcLoadBenchmark.benchmarkLoadDtoUsingRest_0_collection_size:db.cpu.util":
+  1.530 ±(99.9%) 0.058 % [Average]
+  (min, avg, max) = (1.367, 1.530, 1.753), stdev = 0.086
+  CI (99.9%): [1.472, 1.587] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcLoadBenchmark.benchmarkLoadDtoUsingRest_0_collection_size:db.temp":
+  52.000 ±(99.9%) 0.001 degC [Maximum]
+  (min, avg, max) = (39.000, 41.067, 52.000), stdev = 3.403
+  CI (99.9%): [52.000, 52.000] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcLoadBenchmark.benchmarkLoadDtoUsingRest_0_collection_size:db.thermal.throttles":
+  ≈ 0 #
+
+
+# Run complete. Total time: 00:02:24
+
+REMEMBER: The numbers below are just data. To gain reusable insights, you need to follow up on
+why the numbers are the way they are. Use profilers (see -prof, -lprof), design factorial
+experiments, perform baseline and negative tests that provide experimental control, make sure
+the benchmarking environment is safe on JVM/OS/HW level, ask for reviews from the domain experts.
+Do not assume the numbers tell you what you want them to tell.
+
+NOTE: Current JVM experimentally supports Compiler Blackholes, and they are in use. Please exercise
+extra caution when trusting the results, look into the generated code to check the benchmark still
+works, and factor in a small probability of new VM bugs. Additionally, while comparisons between
+different JVMs are already problematic, the performance difference caused by different Blackhole
+modes can be very significant. Please make sure you use the consistent Blackhole mode for comparisons.
+
+Benchmark                                                                              Mode    Cnt     Score    Error  Units
+JdbcLoadBenchmark.benchmarkLoadDtoUsingRest_0_collection_size                        sample  98624     0.912 ±  0.001  ms/op
+JdbcLoadBenchmark.benchmarkLoadDtoUsingRest_0_collection_size:app.cpu.mhz            sample     30  4422.178 ± 24.401    MHz
+JdbcLoadBenchmark.benchmarkLoadDtoUsingRest_0_collection_size:app.cpu.power          sample     30    24.235 ±  0.733      W
+JdbcLoadBenchmark.benchmarkLoadDtoUsingRest_0_collection_size:app.cpu.power.limit    sample     30    80.000               W
+JdbcLoadBenchmark.benchmarkLoadDtoUsingRest_0_collection_size:app.cpu.util           sample     30     3.981 ±  0.247      %
+JdbcLoadBenchmark.benchmarkLoadDtoUsingRest_0_collection_size:app.temp               sample     30    55.000            degC
+JdbcLoadBenchmark.benchmarkLoadDtoUsingRest_0_collection_size:app.thermal.throttles  sample     30       ≈ 0               #
+JdbcLoadBenchmark.benchmarkLoadDtoUsingRest_0_collection_size:db.cpu.mhz             sample     30  4597.295 ±  2.080    MHz
+JdbcLoadBenchmark.benchmarkLoadDtoUsingRest_0_collection_size:db.cpu.power           sample     30    23.975 ±  0.591      W
+JdbcLoadBenchmark.benchmarkLoadDtoUsingRest_0_collection_size:db.cpu.power.limit     sample     30    80.000               W
+JdbcLoadBenchmark.benchmarkLoadDtoUsingRest_0_collection_size:db.cpu.util            sample     30     1.530 ±  0.058      %
+JdbcLoadBenchmark.benchmarkLoadDtoUsingRest_0_collection_size:db.temp                sample     30    52.000            degC
+JdbcLoadBenchmark.benchmarkLoadDtoUsingRest_0_collection_size:db.thermal.throttles   sample     30       ≈ 0               #
+JdbcLoadBenchmark.benchmarkLoadDtoUsingRest_0_collection_size:p0.00                  sample            0.836           ms/op
+JdbcLoadBenchmark.benchmarkLoadDtoUsingRest_0_collection_size:p0.50                  sample            0.910           ms/op
+JdbcLoadBenchmark.benchmarkLoadDtoUsingRest_0_collection_size:p0.90                  sample            0.939           ms/op
+JdbcLoadBenchmark.benchmarkLoadDtoUsingRest_0_collection_size:p0.95                  sample            0.950           ms/op
+JdbcLoadBenchmark.benchmarkLoadDtoUsingRest_0_collection_size:p0.99                  sample            1.016           ms/op
+JdbcLoadBenchmark.benchmarkLoadDtoUsingRest_0_collection_size:p0.999                 sample            1.083           ms/op
+JdbcLoadBenchmark.benchmarkLoadDtoUsingRest_0_collection_size:p0.9999                sample            1.471           ms/op
+JdbcLoadBenchmark.benchmarkLoadDtoUsingRest_0_collection_size:p1.00                  sample            8.913           ms/op
+
+Benchmark result is saved to /root/dto2entity/results/hostner-overhead/layer-overhead/round-10/jdbc-mqdto-0-nolayer.json.part

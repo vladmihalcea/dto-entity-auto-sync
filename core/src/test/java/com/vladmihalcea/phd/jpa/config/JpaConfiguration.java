@@ -13,6 +13,8 @@ import com.vladmihalcea.phd.jpa.view.PostCommentDto;
 import com.vladmihalcea.phd.jpa.view.PostDto;
 import com.vladmihalcea.phd.jpa.view.TagDto;
 import com.vladmihalcea.phd.jpa.view.UserDto;
+import com.vladmihalcea.phd.common.timing.LayerTimingConfiguration;
+import com.vladmihalcea.phd.common.timing.LayerTimings;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 import io.hypersistence.utils.logging.InlineQueryLogEntryCreator;
@@ -26,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -44,6 +47,7 @@ import java.util.Properties;
  * @author Vlad Mihalcea
  */
 @Configuration
+@Import(LayerTimingConfiguration.class)
 @EnableTransactionManagement
 @EnableAspectJAutoProxy
 @ComponentScan(
@@ -60,7 +64,7 @@ public class JpaConfiguration {
 
     @Bean
     public Database database() {
-        return Database.POSTGRESQL;
+        return Database.current();
     }
 
     @Bean
@@ -71,8 +75,13 @@ public class JpaConfiguration {
     public DataSource poolingDataSource() {
         HikariConfig hikariConfig = new HikariConfig();
         hikariConfig.setAutoCommit(false);
-        hikariConfig.setMinimumIdle(hikariConfig.getMaximumPoolSize());
-        hikariConfig.setDataSource(dataSourceProvider().dataSource());
+        // The provider sizes the pool: by default up to 32 connections, so that the concurrent benchmark threads
+        // never wait for one, but only 10 idle ones, so that the cached Spring contexts of a test JVM stay below
+        // the max_connections of PostgreSQL
+        DataSourceProvider provider = dataSourceProvider();
+        hikariConfig.setMaximumPoolSize(provider.maxPoolSize());
+        hikariConfig.setMinimumIdle(provider.minIdle());
+        hikariConfig.setDataSource(provider.dataSource());
         return new HikariDataSource(hikariConfig);
     }
 
@@ -83,10 +92,12 @@ public class JpaConfiguration {
         loggingListener.setQueryLogEntryCreator(new InlineQueryLogEntryCreator());
         listener.addListener(loggingListener);
         listener.addListener(new DataSourceQueryCountListener());
+        listener.addListener(LayerTimings.queryListener());
         return ProxyDataSourceBuilder
             .create(poolingDataSource())
             .name(DATA_SOURCE_PROXY_NAME)
             .listener(listener)
+            .methodListener(LayerTimings.commitListener())
             .build();
     }
 
@@ -123,7 +134,7 @@ public class JpaConfiguration {
 
     protected Properties properties() {
         Properties properties = new Properties();
-        properties.setProperty("hibernate.hbm2ddl.auto", "update");
+        properties.setProperty("hibernate.hbm2ddl.auto", "validate");
         additionalProperties(properties);
         return properties;
     }

@@ -9,19 +9,21 @@ import com.vladmihalcea.phd.common.dto.TagDto;
 import com.vladmihalcea.phd.common.dto.UserContext;
 import com.vladmihalcea.phd.common.config.BenchmarkTestData;
 import com.vladmihalcea.phd.common.util.TimeSortedIdentifierGenerator;
+import com.vladmihalcea.phd.common.util.PostRange;
 import com.vladmihalcea.phd.jpa.config.JpaConfiguration;
 import com.vladmihalcea.phd.jpa.service.ForumService;
+import com.vladmihalcea.phd.common.util.BenchmarkRestTemplate;
+import com.vladmihalcea.phd.common.timing.LayerTimings;
 import org.openjdk.jmh.annotations.*;
+import org.openjdk.jmh.infra.ThreadParams;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.Environment;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * JMH benchmark that measures the execution time of the JPA
@@ -32,19 +34,13 @@ import java.util.concurrent.atomic.AtomicLong;
 @State(Scope.Benchmark)
 public class JpaBenchmark {
 
-    private boolean dataSetChanged = true;
+    private volatile boolean dataSetChanged = true;
 
     private ConfigurableApplicationContext context;
     private ForumService forumService;
     private BenchmarkTestData benchmarkSetup;
 
-    private Long postId;
-
-    private PostDto postDTO;
-
     private RestCaller restCaller;
-    private AtomicLong postIdGenerator = new AtomicLong();
-    private int POST_COUNT = 20_000;
 
     // -------------------------------------------------------------------------
     // Lifecycle
@@ -69,7 +65,7 @@ public class JpaBenchmark {
             .getRequiredProperty("local.server.port", Integer.class);
 
         restCaller = new RestCaller(
-            port, new RestTemplate()
+            port, LayerTimings.timed(BenchmarkRestTemplate.create())
         );
     }
 
@@ -81,25 +77,20 @@ public class JpaBenchmark {
     }
 
     /**
-     * Recreates the standard fixture before every benchmark invocation.
+     * Prepares the data set for the next iteration: the first iteration of a fork loads it,
+     * and every later one restores only the posts that the previous iteration edited.
      */
     @Setup(Level.Iteration)
     public void onEachIteration() {
-        resetData();
-    }
-
-    @Setup(Level.Invocation)
-    public void onEachInvocation() {
-        postId = (postIdGenerator.getAndIncrement() % POST_COUNT) + 1;
-        postDTO = forumService.loadPostDTO(postId);
-        UserContext.setCurrentUser(postDTO.getAuthor());
+        try (LayerTimings.Pause pause = LayerTimings.pause()) {
+            resetData();
+        }
     }
 
     private void resetData() {
         if (dataSetChanged) {
-            benchmarkSetup.createTestData();
+            benchmarkSetup.resetTestData();
             dataSetChanged = false;
-            postIdGenerator.set(0);
         }
     }
 
@@ -108,32 +99,116 @@ public class JpaBenchmark {
     // -------------------------------------------------------------------------
 
     @Benchmark
-    public void benchmarkLoadDto() {
-        forumService.loadPostDTO(postId);
+    public void benchmarkLoadDto(ThreadPost post) {
+        forumService.loadPostDTO(post.postId);
     }
 
     @Benchmark
-    public void benchmarkLoadDtoUsingMultiset() {
-        forumService.loadPostDTOUsingMultiset(postId);
+    public void benchmarkLoadDtoUsingMultiset(ThreadPost post) {
+        forumService.loadPostDTOUsingMultiset(post.postId);
     }
 
     @Benchmark
-    public void benchmarkLoadDtoUsingRest() {
-        restCaller.loadPostDTO(postId);
+    public void benchmarkLoadDtoUsingRest(ThreadPost post) {
+        restCaller.loadPostDTO(post.postId);
     }
 
     @Benchmark
-    public void benchmarkLoadDtoUsingBlazeAndRest() {
-        restCaller.loadPostDTOUsingMultiset(postId);
+    public void benchmarkLoadDtoUsingBlazeAndRest(ThreadPost post) {
+        restCaller.loadPostDTOUsingMultiset(post.postId);
     }
 
+    /**
+     * Multi-Ops on JPA (R1-14), which is not idiomatic on JPA: the same six calls as on JDBC and jOOQ, except that
+     * the post's own fields are updated with {@code PATCH /post}, since {@code PUT /post} is the JPA Diff-Merge.
+     */
     @Benchmark
-    public void benchmarkDiffMergeSync() {
+    public void benchmarkMultiOpsSync(ThreadPost post) {
         dataSetChanged = true;
 
-        postDTO.setTitle("DTO to Entity Auto-Sync Pattern").upvote();
+        post.postDTO.setTitle("Multi-Ops DTO Sync Pattern").upvote();
+        forumService.patchPost(post.postDTO);
 
-        List<PostCommentDto> replies = postDTO.getReplies();
+        List<PostCommentDto> replies = post.postDTO.getReplies();
+        PostCommentDto removed = replies.stream().filter(comment -> comment.getParentId() != null).findFirst().orElseThrow();
+        replies.remove(removed);
+        forumService.removePostComment(post.postId, removed.getId());
+
+        for (PostCommentDto r : replies) {
+            r.upvote();
+            forumService.updatePostComment(post.postId, r);
+        }
+
+        PostCommentDto newReply = new PostCommentDto()
+            .setId(TimeSortedIdentifierGenerator.generate())
+            .setContent("Does it work with jOOQ?")
+            .setAuthor(UserContext.getCurrentUser())
+            .setParentId(replies.getFirst().getId());
+        replies.add(newReply);
+        forumService.createPostComment(post.postId, newReply);
+
+        TagDto jpaTag = post.postDTO.getTags().stream()
+            .filter(t -> t.getName().startsWith("JPA"))
+            .findFirst()
+            .orElseThrow();
+        post.postDTO.getTags().remove(jpaTag);
+        forumService.removeTag(post.postId, jpaTag);
+
+        Long tagId = TimeSortedIdentifierGenerator.generate();
+        TagDto jakarta = new TagDto()
+            .setId(tagId)
+            .setName("Jakarta Persistence " + tagId);
+        post.postDTO.getTags().add(jakarta);
+        forumService.createTag(post.postId, jakarta);
+    }
+
+    @Benchmark
+    public void benchmarkMultiOpsSyncUsingRest(ThreadPost post) {
+        dataSetChanged = true;
+
+        post.postDTO.setTitle("Multi-Ops DTO Sync Pattern").upvote();
+        restCaller.patchPost(post.postDTO);
+
+        List<PostCommentDto> replies = post.postDTO.getReplies();
+        PostCommentDto removed = replies.stream().filter(comment -> comment.getParentId() != null).findFirst().orElseThrow();
+        replies.remove(removed);
+        restCaller.removePostComment(post.postId, removed.getId());
+
+        for (PostCommentDto r : replies) {
+            r.upvote();
+            restCaller.updatePostComment(post.postId, r);
+        }
+
+        PostCommentDto newReply = new PostCommentDto()
+            .setId(TimeSortedIdentifierGenerator.generate())
+            .setContent("Does it work with jOOQ?")
+            .setAuthor(UserContext.getCurrentUser())
+            .setParentId(replies.getFirst().getId());
+        replies.add(newReply);
+        restCaller.createPostComment(post.postId, newReply);
+
+        TagDto jpaTag = post.postDTO.getTags().stream()
+            .filter(t -> t.getName().startsWith("JPA"))
+            .findFirst()
+            .orElseThrow();
+        post.postDTO.getTags().remove(jpaTag);
+        restCaller.removeTag(post.postId, jpaTag);
+
+        Long tagId = TimeSortedIdentifierGenerator.generate();
+        TagDto jakarta = new TagDto()
+            .setId(tagId)
+            .setName("Jakarta Persistence " + tagId);
+        post.postDTO.getTags().add(jakarta);
+        restCaller.createTag(post.postId, jakarta);
+    }
+
+    @Benchmark
+    public void benchmarkDiffMergeSync(ThreadPost post) {
+        dataSetChanged = true;
+
+        post.postDTO.setTitle("DTO to Entity Auto-Sync Pattern").upvote();
+
+        List<PostCommentDto> replies = post.postDTO.getReplies();
         replies.removeIf(comment -> comment.getParentId() != null);
         replies.forEach(PostCommentDto::upvote);
         replies.add(
@@ -143,29 +218,29 @@ public class JpaBenchmark {
                 .setAuthor(UserContext.getCurrentUser())
                 .setParentId(replies.getFirst().getId())
         );
-        postDTO.getTags().remove(
-            postDTO.getTags().stream()
+        post.postDTO.getTags().remove(
+            post.postDTO.getTags().stream()
                 .filter(t -> t.getName().startsWith("JPA"))
                 .findFirst()
                 .orElseThrow()
         );
         Long tagId = TimeSortedIdentifierGenerator.generate();
-        postDTO.getTags().add(
+        post.postDTO.getTags().add(
             new TagDto()
                 .setId(tagId)
                 .setName("Jakarta Persistence " + tagId)
         );
 
-        forumService.updatePost(postDTO);
+        forumService.updatePost(post.postDTO);
     }
 
     @Benchmark
-    public void benchmarkDiffMergeSyncUsingRest() {
+    public void benchmarkDiffMergeSyncUsingRest(ThreadPost post) {
         dataSetChanged = true;
 
-        postDTO.setTitle("DTO to Entity Auto-Sync Pattern").upvote();
+        post.postDTO.setTitle("DTO to Entity Auto-Sync Pattern").upvote();
 
-        List<PostCommentDto> replies = postDTO.getReplies();
+        List<PostCommentDto> replies = post.postDTO.getReplies();
         replies.removeIf(comment -> comment.getParentId() != null);
         replies.forEach(PostCommentDto::upvote);
         replies.add(
@@ -175,20 +250,51 @@ public class JpaBenchmark {
                 .setAuthor(UserContext.getCurrentUser())
                 .setParentId(replies.getFirst().getId())
         );
-        postDTO.getTags().remove(
-            postDTO.getTags().stream()
+        post.postDTO.getTags().remove(
+            post.postDTO.getTags().stream()
                 .filter(t -> t.getName().startsWith("JPA"))
                 .findFirst()
                 .orElseThrow()
         );
         Long tagId = TimeSortedIdentifierGenerator.generate();
-        postDTO.getTags().add(
+        post.postDTO.getTags().add(
             new TagDto()
                 .setId(tagId)
                 .setName("Jakarta Persistence " + tagId)
         );
 
-        restCaller.updatePost(postDTO);
+        restCaller.updatePost(post.postDTO);
+    }
+
+    /**
+     * The post that the current benchmark thread reads or edits next, from a range of posts that no other thread uses.
+     */
+    @State(Scope.Thread)
+    public static class ThreadPost {
+
+        private PostRange postRange;
+
+        private Long postId;
+        private PostDto postDTO;
+
+        @Setup(Level.Trial)
+        public void assignRange(ThreadParams threadParams, JpaBenchmark benchmark) {
+            postRange = new PostRange(threadParams, benchmark.benchmarkSetup.generator().editablePostCount());
+        }
+
+        @Setup(Level.Iteration)
+        public void onEachIteration() {
+            postRange.reset();
+        }
+
+        @Setup(Level.Invocation)
+        public void onEachInvocation(JpaBenchmark benchmark) {
+            try (LayerTimings.Pause pause = LayerTimings.pause()) {
+                // Only the write benchmarks change the data set, and they must not edit a post twice
+                postId = postRange.nextPostId(!benchmark.dataSetChanged);
+                postDTO = benchmark.forumService.loadPostDTO(postId);
+                UserContext.setCurrentUser(postDTO.getAuthor());
+            }
+        }
     }
 }
-

@@ -150,11 +150,11 @@ public class JooqTest extends AbstractSpringTest {
         List<PostCommentDto> replies = postDTO.getReplies();
         PostCommentDto removed = replies.stream().filter(comment -> comment.getParentId() != null).findFirst().orElseThrow();
         replies.remove(removed);
-        forumService.removePostComment(removed.getId());
+        forumService.removePostComment(postId, removed.getId());
 
         for (PostCommentDto r : replies) {
             r.upvote();
-            forumService.updatePostComment(r);
+            forumService.updatePostComment(postId, r);
         }
 
         PostCommentDto newReply = new PostCommentDto()
@@ -198,7 +198,7 @@ public class JooqTest extends AbstractSpringTest {
             .findAny()
             .orElseThrow();
 
-        forumService.removePostComment(parentCommentDTO.getId());
+        forumService.removePostComment(postId, parentCommentDTO.getId());
 
         PostDto updatedPostDTO = forumService.loadPostDTO(postId);
         assertTrue(updatedPostDTO.getReplies().isEmpty());
@@ -206,7 +206,7 @@ public class JooqTest extends AbstractSpringTest {
 
     @Test
     public void testDiffMergeSync() {
-        LOGGER.info("Sync DTOs and jOOQ state via a single JSON Patch");
+        LOGGER.info("Sync DTOs and jOOQ state via a single Diff-Merge call");
 
         PostDto originalPost = forumService.loadPostDTO(postId);
         PostDto modifiedPost = JsonUtil.clone(originalPost);
@@ -244,7 +244,7 @@ public class JooqTest extends AbstractSpringTest {
 
     @Test
     public void testDiffMergeRemoveParentPostComment() {
-        LOGGER.info("Remove a parent PostCommentDTO via JSON Patch and verify children are also removed");
+        LOGGER.info("Remove a parent PostCommentDTO via Diff-Merge and verify children are also removed");
 
         PostDto originalPost = forumService.loadPostDTO(postId);
         PostDto modifiedPost = JsonUtil.clone(originalPost);

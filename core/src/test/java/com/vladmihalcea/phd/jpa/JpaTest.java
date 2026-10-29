@@ -107,6 +107,49 @@ public class JpaTest extends AbstractSpringTest {
     }
 
     @Test
+    public void testMultiOpsDtoSync() {
+        LOGGER.info("Sync DTOs and JPA entity state through the per-change Multi-Ops calls");
+        PostDto postDTO = forumService.loadPostDTO(postId);
+
+        postDTO.setTitle("Multi-Ops DTO Sync Pattern").upvote();
+        forumService.patchPost(postDTO);
+
+        List<PostCommentDto> replies = postDTO.getReplies();
+        PostCommentDto removed = replies.stream().filter(comment -> comment.getParentId() != null).findFirst().orElseThrow();
+        replies.remove(removed);
+        forumService.removePostComment(postId, removed.getId());
+
+        for (PostCommentDto r : replies) {
+            r.upvote();
+            forumService.updatePostComment(postId, r);
+        }
+
+        PostCommentDto newReply = new PostCommentDto()
+            .setId(TimeSortedIdentifierGenerator.generate())
+            .setContent("Does it work with jOOQ?")
+            .setAuthor(UserContext.getCurrentUser())
+            .setParentId(replies.getFirst().getId());
+        replies.add(newReply);
+        forumService.createPostComment(postId, newReply);
+
+        TagDto jpaTag = postDTO.getTags().stream()
+            .filter(t -> t.getName().equals("JPA"))
+            .findFirst()
+            .orElseThrow();
+        postDTO.getTags().remove(jpaTag);
+        forumService.removeTag(postId, jpaTag);
+
+        TagDto jakarta = new TagDto()
+            .setId(TimeSortedIdentifierGenerator.generate())
+            .setName("Jakarta Persistence");
+        postDTO.getTags().add(jakarta);
+        forumService.createTag(postId, jakarta);
+
+        PostDto updatedPostDTO = forumService.loadPostDTO(postId);
+        assertEquals(postDTO, updatedPostDTO);
+    }
+
+    @Test
     public void testDtoToEntitySync() {
         LOGGER.info("Sync DTOs and JPA entity state");
         PostDto postDTO = forumService.loadPostDTO(postId);
