@@ -1,0 +1,343 @@
+# JMH version: 1.37
+# VM version: JDK 21.0.4, OpenJDK 64-Bit Server VM, 21.0.4+7-LTS
+# VM invoker: /opt/temurin-21.0.4+7/bin/java
+# VM options: -Xms4g -Xmx4g -XX:+AlwaysPreTouch -Djmh.separateClasspathJAR=true
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 2 iterations, 2 s each
+# Measurement: 3 iterations, 2 s each
+# Timeout: 10 min per iteration
+# Threads: 16 threads, will synchronize iterations
+# Benchmark mode: Sampling time
+# Benchmark: com.vladmihalcea.phd.jdbc.jmh.JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest
+
+# Run progress: 0.00% complete, ETA 00:00:10
+# Fork: 1 of 1
+# Warmup Iteration   1: Telemetry: CPU clock from the APERF and MPERF counters of the running cores; package power from Intel RAPL
+Database of the core module: jdbc:postgresql://localhost:5432/dto2entity, run 34, PostgreSQL 18.6 (Ubuntu 18.6-0ubuntu0.26.04.1) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0, 64-bit, effective_cache_size=24GB, fsync=on, jit=on, maintenance_work_mem=1GB, max_connections=100, random_page_cost=1.1, shared_buffers=8GB, synchronous_commit=on, wal_sync_method=fdatasync, work_mem=16MB
+50.574 ±(99.9%) 2.973 ms/op
+# Warmup Iteration   2: 28.416 ±(99.9%) 0.627 ms/op
+Iteration   1: 23.829 ±(99.9%) 0.465 ms/op
+                 app.cpu.mhz:                 4277.364 MHz
+                 app.cpu.power:               77.371 W
+                 app.cpu.power.limit:         80.000 W
+                 app.cpu.util:                89.874 %
+                 app.temp:                    71.000 degC
+                 app.thermal.throttles:       ≈ 0 #
+                 db.cpu.mhz:                  4279.314 MHz
+                 db.cpu.power:                77.219 W
+                 db.cpu.power.limit:          80.000 W
+                 db.cpu.util:                 89.797 %
+                 db.temp:                     71.000 degC
+                 db.thermal.throttles:        ≈ 0 #
+                 layer.commit.ms:             2.811 ms/op
+                 layer.commits:               6.000 #/op
+                 layer.http.calls:            6.000 #/op
+                 layer.http.client.ms:        23.491 ms/op
+                 layer.http.delete.client.ms: 2.850 ms/call
+                 layer.http.delete.server.ms: 1.410 ms/call
+                 layer.http.post.client.ms:   4.635 ms/call
+                 layer.http.post.server.ms:   1.771 ms/call
+                 layer.http.put.client.ms:    4.260 ms/call
+                 layer.http.put.server.ms:    1.494 ms/call
+                 layer.http.server.ms:        9.349 ms/op
+                 layer.service.ms:            7.003 ms/op
+                 layer.sql.ms:                3.522 ms/op
+                 layer.sql.statements:        8.000 #/op
+                 layer.throughput:            625.500 ops/s
+                 p0.00:                       15.778 ms/op
+                 p0.50:                       23.167 ms/op
+                 p0.90:                       27.748 ms/op
+                 p0.95:                       30.448 ms/op
+                 p0.99:                       53.897 ms/op
+                 p0.999:                      57.964 ms/op
+                 p0.9999:                     58.262 ms/op
+                 p1.00:                       58.262 ms/op
+
+Iteration   2: 20.336 ±(99.9%) 0.263 ms/op
+                 app.cpu.mhz:                 4311.720 MHz
+                 app.cpu.power:               79.460 W
+                 app.cpu.power.limit:         80.000 W
+                 app.cpu.util:                91.344 %
+                 app.temp:                    66.000 degC
+                 app.thermal.throttles:       ≈ 0 #
+                 db.cpu.mhz:                  4310.960 MHz
+                 db.cpu.power:                79.795 W
+                 db.cpu.power.limit:          80.000 W
+                 db.cpu.util:                 91.384 %
+                 db.temp:                     65.000 degC
+                 db.thermal.throttles:        ≈ 0 #
+                 layer.commit.ms:             2.002 ms/op
+                 layer.commits:               6.000 #/op
+                 layer.http.calls:            6.000 #/op
+                 layer.http.client.ms:        20.078 ms/op
+                 layer.http.delete.client.ms: 2.300 ms/call
+                 layer.http.delete.server.ms: 1.112 ms/call
+                 layer.http.post.client.ms:   4.042 ms/call
+                 layer.http.post.server.ms:   1.429 ms/call
+                 layer.http.put.client.ms:    3.698 ms/call
+                 layer.http.put.server.ms:    1.201 ms/call
+                 layer.http.server.ms:        7.482 ms/op
+                 layer.service.ms:            5.584 ms/op
+                 layer.sql.ms:                3.061 ms/op
+                 layer.sql.statements:        8.000 #/op
+                 layer.throughput:            735.000 ops/s
+                 p0.00:                       11.518 ms/op
+                 p0.50:                       20.054 ms/op
+                 p0.90:                       24.052 ms/op
+                 p0.95:                       25.901 ms/op
+                 p0.99:                       30.302 ms/op
+                 p0.999:                      34.603 ms/op
+                 p0.9999:                     34.603 ms/op
+                 p1.00:                       34.603 ms/op
+
+Iteration   3: 18.817 ±(99.9%) 0.401 ms/op
+                 app.cpu.mhz:                 4299.453 MHz
+                 app.cpu.power:               77.258 W
+                 app.cpu.power.limit:         80.000 W
+                 app.cpu.util:                82.287 %
+                 app.temp:                    73.000 degC
+                 app.thermal.throttles:       ≈ 0 #
+                 db.cpu.mhz:                  4299.479 MHz
+                 db.cpu.power:                77.254 W
+                 db.cpu.power.limit:          80.000 W
+                 db.cpu.util:                 82.548 %
+                 db.temp:                     73.000 degC
+                 db.thermal.throttles:        ≈ 0 #
+                 layer.commit.ms:             2.262 ms/op
+                 layer.commits:               6.000 #/op
+                 layer.http.calls:            6.000 #/op
+                 layer.http.client.ms:        18.595 ms/op
+                 layer.http.delete.client.ms: 2.072 ms/call
+                 layer.http.delete.server.ms: 1.027 ms/call
+                 layer.http.post.client.ms:   3.742 ms/call
+                 layer.http.post.server.ms:   1.349 ms/call
+                 layer.http.put.client.ms:    3.483 ms/call
+                 layer.http.put.server.ms:    1.167 ms/call
+                 layer.http.server.ms:        7.086 ms/op
+                 layer.service.ms:            5.469 ms/op
+                 layer.sql.ms:                2.842 ms/op
+                 layer.sql.statements:        8.000 #/op
+                 layer.throughput:            796.500 ops/s
+                 p0.00:                       11.960 ms/op
+                 p0.50:                       17.891 ms/op
+                 p0.90:                       22.269 ms/op
+                 p0.95:                       25.677 ms/op
+                 p0.99:                       47.915 ms/op
+                 p0.999:                      54.372 ms/op
+                 p0.9999:                     55.968 ms/op
+                 p1.00:                       55.968 ms/op
+
+
+
+Result "com.vladmihalcea.phd.jdbc.jmh.JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest":
+  N = 4314
+  mean =     20.788 ±(99.9%) 0.242 ms/op
+
+  Histogram, ms/op:
+    [10.000, 15.000) = 182 
+    [15.000, 20.000) = 1964 
+    [20.000, 25.000) = 1643 
+    [25.000, 30.000) = 388 
+    [30.000, 35.000) = 79 
+    [35.000, 40.000) = 22 
+    [40.000, 45.000) = 3 
+    [45.000, 50.000) = 4 
+    [50.000, 55.000) = 22 
+
+  Percentiles, ms/op:
+      p(0.0000) =     11.518 ms/op
+     p(50.0000) =     20.021 ms/op
+     p(90.0000) =     25.657 ms/op
+     p(95.0000) =     27.894 ms/op
+     p(99.0000) =     37.356 ms/op
+     p(99.9000) =     56.361 ms/op
+     p(99.9900) =     58.262 ms/op
+     p(99.9990) =     58.262 ms/op
+     p(99.9999) =     58.262 ms/op
+    p(100.0000) =     58.262 ms/op
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:app.cpu.mhz":
+  4296.179 ±(99.9%) 317.633 MHz [Average]
+  (min, avg, max) = (4277.364, 4296.179, 4311.720), stdev = 17.411
+  CI (99.9%): [3978.546, 4613.812] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:app.cpu.power":
+  78.030 ±(99.9%) 22.626 W [Average]
+  (min, avg, max) = (77.258, 78.030, 79.460), stdev = 1.240
+  CI (99.9%): [55.404, 100.655] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:app.cpu.power.limit":
+  80.000 ±(99.9%) 0.001 W [Minimum]
+  (min, avg, max) = (80.000, 80.000, 80.000), stdev = 0.001
+  CI (99.9%): [80.000, 80.000] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:app.cpu.util":
+  87.835 ±(99.9%) 88.676 % [Average]
+  (min, avg, max) = (82.287, 87.835, 91.344), stdev = 4.861
+  CI (99.9%): [≈ 0, 176.510] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:app.temp":
+  73.000 ±(99.9%) 0.001 degC [Maximum]
+  (min, avg, max) = (66.000, 70.000, 73.000), stdev = 3.606
+  CI (99.9%): [73.000, 73.000] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:app.thermal.throttles":
+  ≈ 0 #
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:db.cpu.mhz":
+  4296.584 ±(99.9%) 292.269 MHz [Average]
+  (min, avg, max) = (4279.314, 4296.584, 4310.960), stdev = 16.020
+  CI (99.9%): [4004.315, 4588.854] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:db.cpu.power":
+  78.089 ±(99.9%) 26.955 W [Average]
+  (min, avg, max) = (77.219, 78.089, 79.795), stdev = 1.477
+  CI (99.9%): [51.135, 105.044] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:db.cpu.power.limit":
+  80.000 ±(99.9%) 0.001 W [Minimum]
+  (min, avg, max) = (80.000, 80.000, 80.000), stdev = 0.001
+  CI (99.9%): [80.000, 80.000] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:db.cpu.util":
+  87.909 ±(99.9%) 85.941 % [Average]
+  (min, avg, max) = (82.548, 87.909, 91.384), stdev = 4.711
+  CI (99.9%): [1.968, 173.851] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:db.temp":
+  73.000 ±(99.9%) 0.001 degC [Maximum]
+  (min, avg, max) = (65.000, 69.667, 73.000), stdev = 4.163
+  CI (99.9%): [73.000, 73.000] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:db.thermal.throttles":
+  ≈ 0 #
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.commit.ms":
+  2.359 ±(99.9%) 7.534 ms/op [Average]
+  (min, avg, max) = (2.002, 2.359, 2.811), stdev = 0.413
+  CI (99.9%): [≈ 0, 9.893] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.commits":
+  6.000 ±(99.9%) 0.001 #/op [Average]
+  (min, avg, max) = (6.000, 6.000, 6.000), stdev = 0.001
+  CI (99.9%): [6.000, 6.000] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.calls":
+  6.000 ±(99.9%) 0.001 #/op [Average]
+  (min, avg, max) = (6.000, 6.000, 6.000), stdev = 0.001
+  CI (99.9%): [6.000, 6.000] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.client.ms":
+  20.721 ±(99.9%) 45.804 ms/op [Average]
+  (min, avg, max) = (18.595, 20.721, 23.491), stdev = 2.511
+  CI (99.9%): [≈ 0, 66.526] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.delete.client.ms":
+  2.407 ±(99.9%) 7.300 ms/call [Average]
+  (min, avg, max) = (2.072, 2.407, 2.850), stdev = 0.400
+  CI (99.9%): [≈ 0, 9.708] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.delete.server.ms":
+  1.183 ±(99.9%) 3.666 ms/call [Average]
+  (min, avg, max) = (1.027, 1.183, 1.410), stdev = 0.201
+  CI (99.9%): [≈ 0, 4.849] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.post.client.ms":
+  4.140 ±(99.9%) 8.292 ms/call [Average]
+  (min, avg, max) = (3.742, 4.140, 4.635), stdev = 0.454
+  CI (99.9%): [≈ 0, 12.431] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.post.server.ms":
+  1.516 ±(99.9%) 4.092 ms/call [Average]
+  (min, avg, max) = (1.349, 1.516, 1.771), stdev = 0.224
+  CI (99.9%): [≈ 0, 5.608] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.put.client.ms":
+  3.814 ±(99.9%) 7.319 ms/call [Average]
+  (min, avg, max) = (3.483, 3.814, 4.260), stdev = 0.401
+  CI (99.9%): [≈ 0, 11.133] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.put.server.ms":
+  1.287 ±(99.9%) 3.276 ms/call [Average]
+  (min, avg, max) = (1.167, 1.287, 1.494), stdev = 0.180
+  CI (99.9%): [≈ 0, 4.563] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.server.ms":
+  7.972 ±(99.9%) 22.040 ms/op [Average]
+  (min, avg, max) = (7.086, 7.972, 9.349), stdev = 1.208
+  CI (99.9%): [≈ 0, 30.013] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.service.ms":
+  6.019 ±(99.9%) 15.581 ms/op [Average]
+  (min, avg, max) = (5.469, 6.019, 7.003), stdev = 0.854
+  CI (99.9%): [≈ 0, 21.600] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.sql.ms":
+  3.142 ±(99.9%) 6.332 ms/op [Average]
+  (min, avg, max) = (2.842, 3.142, 3.522), stdev = 0.347
+  CI (99.9%): [≈ 0, 9.474] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.sql.statements":
+  8.000 ±(99.9%) 0.001 #/op [Average]
+  (min, avg, max) = (8.000, 8.000, 8.000), stdev = 0.001
+  CI (99.9%): [8.000, 8.000] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.throughput":
+  719.000 ±(99.9%) 1580.190 ops/s [Average]
+  (min, avg, max) = (625.500, 719.000, 796.500), stdev = 86.616
+  CI (99.9%): [≈ 0, 2299.190] (assumes normal distribution)
+
+
+# Run complete. Total time: 00:00:20
+
+REMEMBER: The numbers below are just data. To gain reusable insights, you need to follow up on
+why the numbers are the way they are. Use profilers (see -prof, -lprof), design factorial
+experiments, perform baseline and negative tests that provide experimental control, make sure
+the benchmarking environment is safe on JVM/OS/HW level, ask for reviews from the domain experts.
+Do not assume the numbers tell you what you want them to tell.
+
+NOTE: Current JVM experimentally supports Compiler Blackholes, and they are in use. Please exercise
+extra caution when trusting the results, look into the generated code to check the benchmark still
+works, and factor in a small probability of new VM bugs. Additionally, while comparisons between
+different JVMs are already problematic, the performance difference caused by different Blackhole
+modes can be very significant. Please make sure you use the consistent Blackhole mode for comparisons.
+
+Benchmark                                                                         Mode   Cnt     Score      Error    Units
+JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest                              sample  4314    20.788 ±    0.242    ms/op
+JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:app.cpu.mhz                  sample     3  4296.179 ±  317.633      MHz
+JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:app.cpu.power                sample     3    78.030 ±   22.626        W
+JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:app.cpu.power.limit          sample     3    80.000                   W
+JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:app.cpu.util                 sample     3    87.835 ±   88.676        %
+JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:app.temp                     sample     3    73.000                degC
+JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:app.thermal.throttles        sample     3       ≈ 0                   #
+JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:db.cpu.mhz                   sample     3  4296.584 ±  292.269      MHz
+JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:db.cpu.power                 sample     3    78.089 ±   26.955        W
+JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:db.cpu.power.limit           sample     3    80.000                   W
+JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:db.cpu.util                  sample     3    87.909 ±   85.941        %
+JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:db.temp                      sample     3    73.000                degC
+JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:db.thermal.throttles         sample     3       ≈ 0                   #
+JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.commit.ms              sample     3     2.359 ±    7.534    ms/op
+JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.commits                sample     3     6.000 ±    0.001     #/op
+JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.calls             sample     3     6.000 ±    0.001     #/op
+JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.client.ms         sample     3    20.721 ±   45.804    ms/op
+JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.delete.client.ms  sample     3     2.407 ±    7.300  ms/call
+JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.delete.server.ms  sample     3     1.183 ±    3.666  ms/call
+JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.post.client.ms    sample     3     4.140 ±    8.292  ms/call
+JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.post.server.ms    sample     3     1.516 ±    4.092  ms/call
+JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.put.client.ms     sample     3     3.814 ±    7.319  ms/call
+JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.put.server.ms     sample     3     1.287 ±    3.276  ms/call
+JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.server.ms         sample     3     7.972 ±   22.040    ms/op
+JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.service.ms             sample     3     6.019 ±   15.581    ms/op
+JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.sql.ms                 sample     3     3.142 ±    6.332    ms/op
+JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.sql.statements         sample     3     8.000 ±    0.001     #/op
+JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.throughput             sample     3   719.000 ± 1580.190    ops/s
+JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:p0.00                        sample          11.518               ms/op
+JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:p0.50                        sample          20.021               ms/op
+JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:p0.90                        sample          25.657               ms/op
+JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:p0.95                        sample          27.894               ms/op
+JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:p0.99                        sample          37.356               ms/op
+JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:p0.999                       sample          56.361               ms/op
+JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:p0.9999                      sample          58.262               ms/op
+JdbcUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:p1.00                        sample          58.262               ms/op
+
+Benchmark result is saved to /root/dto2entity/results/s66-power-check/power-check/round-01/jdbc-multiops-rest-t16.json.part

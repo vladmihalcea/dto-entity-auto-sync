@@ -47,6 +47,18 @@ public class RestCaller {
         );
     }
 
+    /**
+     * Reads the typed MS-JSON response as a String, like {@link #loadPostJsonString(Long)}, so that both MS-JSON
+     * variants do the same work on the client and differ only in what the server does.
+     */
+    public String loadPostDTOUsingMultisetAsString(Long postId) {
+        return restTemplate.getForObject(
+            baseUrl() + "/postMultiset?postId={postId}",
+            String.class,
+            postId
+        );
+    }
+
     public JsonNode loadPostDTOUsingMultiset(Long postId) {
         return restTemplate.getForObject(
             baseUrl() + "/postMultiset?postId={postId}",
@@ -57,6 +69,19 @@ public class RestCaller {
 
     public void updatePost(PostDto postDTO) {
         restTemplate.put(
+            baseUrl() + "/post",
+            postDTO,
+            Void.class
+        );
+    }
+
+    /**
+     * Updates the post's own fields with {@code PATCH}, as the JPA Multi-Ops variant does. The JDK {@code HttpClient}
+     * of {@link com.vladmihalcea.phd.common.util.BenchmarkRestTemplate} supports {@code PATCH}, while the
+     * {@code HttpURLConnection} client of {@code new RestTemplate()} does not.
+     */
+    public void patchPost(PostDto postDTO) {
+        restTemplate.patchForObject(
             baseUrl() + "/post",
             postDTO,
             Void.class
@@ -89,18 +114,19 @@ public class RestCaller {
         );
     }
 
-    public void removePostComment(Long id) {
+    public void removePostComment(Long postId, Long id) {
         restTemplate.delete(
-            baseUrl() + "/post/comment/{commentId}",
+            baseUrl() + "/post/{postId}/comment/{commentId}",
+            postId,
             id
         );
     }
 
-    public void updatePostComment(PostCommentDto reply) {
+    public void updatePostComment(Long postId, PostCommentDto reply) {
         restTemplate.put(
-            baseUrl() + "/post/comment",
+            baseUrl() + "/post/{postId}/comment",
             reply,
-            Void.class
+            postId
         );
     }
 

@@ -12,14 +12,39 @@ import java.util.Properties;
  */
 public class PostgreSQLDataSourceProvider extends AbstractContainerDataSourceProvider {
 
+    /**
+     * Each module uses a separate database, since the db_schema.sql scripts of the modules create different tables,
+     * e.g., the posts table of the versioning module has a version column.
+     */
+    public static final String MODULE = "core";
+    public static final String DATABASE = "dto2entity";
+
+    /*
+     * The connection settings can point to a remote PostgreSQL server, e.g.:
+     * -Djdbc.url=jdbc:postgresql://192.168.1.20:5432/dto2entity, or the JDBC_URL environment variable.
+     */
+    private static final String URL = setting("jdbc.url", "JDBC_URL");
+    private static final String USER = setting("jdbc.user", "JDBC_USER");
+    private static final String PASSWORD = setting("jdbc.password", "JDBC_PASSWORD");
+
     @Override
     public String hibernateDialect() {
         return PostgreSQLDialect.class.getName();
     }
 
     @Override
+    protected boolean isConfigured() {
+        return URL != null;
+    }
+
+    @Override
+    protected String module() {
+        return MODULE;
+    }
+
+    @Override
     protected String defaultJdbcUrl() {
-        return "jdbc:postgresql://localhost/dto2entity";
+        return URL != null ? URL : "jdbc:postgresql://localhost/" + DATABASE;
     }
 
     protected DataSource newDataSource() {
@@ -44,7 +69,7 @@ public class PostgreSQLDataSourceProvider extends AbstractContainerDataSourcePro
     @Override
     public Properties dataSourceProperties() {
         Properties properties = new Properties();
-        properties.setProperty("databaseName", "dto2entity");
+        properties.setProperty("databaseName", DATABASE);
         properties.setProperty("serverName", "localhost");
         properties.setProperty("user", username());
         properties.setProperty("password", password());
@@ -53,12 +78,12 @@ public class PostgreSQLDataSourceProvider extends AbstractContainerDataSourcePro
 
     @Override
     public String username() {
-        return "postgres";
+        return USER != null ? USER : "postgres";
     }
 
     @Override
     public String password() {
-        return "admin";
+        return PASSWORD != null ? PASSWORD : "admin";
     }
 
     @Override

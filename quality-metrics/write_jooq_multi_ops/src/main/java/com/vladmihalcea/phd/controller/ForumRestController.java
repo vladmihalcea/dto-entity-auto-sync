@@ -43,13 +43,13 @@ public class ForumRestController {
         return forumService.createPostComment(postId, commentDTO);
     }
 
-    @DeleteMapping("/post/comment/{commentId}")
-    public void removePostComment(@PathVariable Long commentId) {
-        forumService.removePostComment(commentId);
+    @DeleteMapping("/post/{postId}/comment/{commentId}")
+    public void removePostComment(@PathVariable Long postId, @PathVariable Long commentId) {
+        forumService.removePostComment(postId, commentId);
     }
 
-    @PutMapping("/post/comment")
-    public void updatePostComment(@RequestBody PostCommentDto commentDTO) {
-        forumService.updatePostComment(commentDTO);
+    @PutMapping("/post/{postId}/comment")
+    public void updatePostComment(@PathVariable Long postId, @RequestBody PostCommentDto commentDTO) {
+        forumService.updatePostComment(postId, commentDTO);
     }
 }

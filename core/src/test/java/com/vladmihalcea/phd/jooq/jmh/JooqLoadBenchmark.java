@@ -5,15 +5,19 @@ import com.vladmihalcea.phd.common.config.BenchmarkTestData;
 import com.vladmihalcea.phd.common.config.SpringRestConfiguration;
 import com.vladmihalcea.phd.common.controller.RestCaller;
 import com.vladmihalcea.phd.jooq.config.JooqConfiguration;
+import com.vladmihalcea.phd.common.util.BenchmarkRestTemplate;
+import com.vladmihalcea.phd.common.timing.LayerTimings;
+import com.vladmihalcea.phd.common.dto.PostDto;
 import org.openjdk.jmh.annotations.*;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.WebApplicationType;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.Environment;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
+import static com.vladmihalcea.phd.common.config.DataSetGenerator.FAN_OUT_POST_ID;
 
 /**
  * JMH benchmark that measures the execution time of the JPA
@@ -48,7 +52,7 @@ public class JooqLoadBenchmark {
             .getRequiredProperty("local.server.port", Integer.class);
 
         restCaller = new RestCaller(
-            port, new RestTemplate()
+            port, LayerTimings.timed(BenchmarkRestTemplate.create())
         );
 
         BenchmarkTestData benchmarkSetup = context.getBean(BenchmarkTestData.class);
@@ -69,53 +73,68 @@ public class JooqLoadBenchmark {
     // -------------------------------------------------------------------------
 
     @Benchmark
-    public void benchmarkLoadDtoUsingRest_0_collection_size() {
-        restCaller.loadPostDTO(100_000L);
+    public PostDto benchmarkLoadDtoUsingRest_0_collection_size() {
+        return restCaller.loadPostDTO(FAN_OUT_POST_ID + 0);
     }
 
     @Benchmark
-    public void benchmarkLoadDtoUsingRest_5_collection_size() {
-        restCaller.loadPostDTO(100_005L);
+    public PostDto benchmarkLoadDtoUsingRest_5_collection_size() {
+        return restCaller.loadPostDTO(FAN_OUT_POST_ID + 5);
     }
 
     @Benchmark
-    public void benchmarkLoadDtoUsingRest_10_collection_size() {
-        restCaller.loadPostDTO(100_010L);
+    public PostDto benchmarkLoadDtoUsingRest_10_collection_size() {
+        return restCaller.loadPostDTO(FAN_OUT_POST_ID + 10);
     }
 
     @Benchmark
-    public void benchmarkLoadDtoUsingRest_25_collection_size() {
-        restCaller.loadPostDTO(100_025L);
+    public PostDto benchmarkLoadDtoUsingRest_25_collection_size() {
+        return restCaller.loadPostDTO(FAN_OUT_POST_ID + 25);
     }
 
     @Benchmark
-    public void benchmarkLoadDtoUsingRest_100_collection_size() {
-        restCaller.loadPostDTO(100_100L);
+    public PostDto benchmarkLoadDtoUsingRest_100_collection_size() {
+        return restCaller.loadPostDTO(FAN_OUT_POST_ID + 100);
     }
 
     @Benchmark
-    public void benchmarkLoadJsonStringRest_0_collection_size() {
-        restCaller.loadPostJsonString(100_000L);
+    public String benchmarkLoadJsonStringRest_0_collection_size() {
+        return restCaller.loadPostJsonString(FAN_OUT_POST_ID + 0);
     }
 
     @Benchmark
-    public void benchmarkLoadJsonStringRest_5_collection_size() {
-        restCaller.loadPostJsonString(100_005L);
+    public String benchmarkLoadJsonStringRest_5_collection_size() {
+        return restCaller.loadPostJsonString(FAN_OUT_POST_ID + 5);
     }
 
     @Benchmark
-    public void benchmarkLoadJsonStringRest_10_collection_size() {
-        restCaller.loadPostJsonString(100_010L);
+    public String benchmarkLoadJsonStringRest_10_collection_size() {
+        return restCaller.loadPostJsonString(FAN_OUT_POST_ID + 10);
     }
 
     @Benchmark
-    public void benchmarkLoadJsonStringRest_25_collection_size() {
-        restCaller.loadPostJsonString(100_025L);
+    public String benchmarkLoadJsonStringRest_25_collection_size() {
+        return restCaller.loadPostJsonString(FAN_OUT_POST_ID + 25);
     }
 
     @Benchmark
-    public void benchmarkLoadJsonStringRest_100_collection_size() {
-        restCaller.loadPostJsonString(100_100L);
+    public String benchmarkLoadJsonStringRest_100_collection_size() {
+        return restCaller.loadPostJsonString(FAN_OUT_POST_ID + 100);
+    }
+
+    @Benchmark
+    public String benchmarkLoadDtoUsingMultisetAndRest_0_collection_size() {
+        return restCaller.loadPostDTOUsingMultisetAsString(FAN_OUT_POST_ID + 0);
+    }
+
+    @Benchmark
+    public String benchmarkLoadDtoUsingMultisetAndRest_10_collection_size() {
+        return restCaller.loadPostDTOUsingMultisetAsString(FAN_OUT_POST_ID + 10);
+    }
+
+    @Benchmark
+    public String benchmarkLoadDtoUsingMultisetAndRest_100_collection_size() {
+        return restCaller.loadPostDTOUsingMultisetAsString(FAN_OUT_POST_ID + 100);
     }
 }
 

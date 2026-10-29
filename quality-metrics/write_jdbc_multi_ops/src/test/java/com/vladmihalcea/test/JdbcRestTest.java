@@ -67,11 +67,11 @@ public class JdbcRestTest {
         List<PostCommentDto> replies = postDTO.getReplies();
         PostCommentDto removed = replies.stream().filter(comment -> comment.getParentId() != null).findFirst().orElseThrow();
         replies.remove(removed);
-        restCaller.removePostComment(removed.getId());
+        restCaller.removePostComment(postId, removed.getId());
 
         for (PostCommentDto reply : replies) {
             reply.upvote();
-            restCaller.updatePostComment(reply);
+            restCaller.updatePostComment(postId, reply);
         }
 
         PostCommentDto newReply = new PostCommentDto()

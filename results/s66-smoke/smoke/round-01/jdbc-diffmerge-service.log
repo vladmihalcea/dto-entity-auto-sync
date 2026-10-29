@@ -1,0 +1,250 @@
+# JMH version: 1.37
+# VM version: JDK 21.0.4, OpenJDK 64-Bit Server VM, 21.0.4+7-LTS
+# VM invoker: /opt/temurin-21.0.4+7/bin/java
+# VM options: -Xms4g -Xmx4g -XX:+AlwaysPreTouch -Djmh.separateClasspathJAR=true
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 2 iterations, 2 s each
+# Measurement: 3 iterations, 2 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Sampling time
+# Benchmark: com.vladmihalcea.phd.jdbc.jmh.JdbcBenchmark.benchmarkDiffMergeSync
+
+# Run progress: 0.00% complete, ETA 00:00:10
+# Fork: 1 of 1
+# Warmup Iteration   1: Telemetry: CPU clock from the APERF and MPERF counters of the running cores; package power from Intel RAPL
+Database of the core module: jdbc:postgresql://localhost:5432/dto2entity, run 15, PostgreSQL 18.6 (Ubuntu 18.6-0ubuntu0.26.04.1) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0, 64-bit, effective_cache_size=24GB, fsync=on, jit=on, maintenance_work_mem=1GB, max_connections=100, random_page_cost=1.1, shared_buffers=8GB, synchronous_commit=on, wal_sync_method=fdatasync, work_mem=16MB
+1.295 ±(99.9%) 0.061 ms/op
+# Warmup Iteration   2: 0.885 ±(99.9%) 0.014 ms/op
+Iteration   1: 0.892 ±(99.9%) 0.082 ms/op
+                 app.cpu.mhz:           4589.819 MHz
+                 app.cpu.power:         41.242 W
+                 app.cpu.util:          10.839 %
+                 app.temp:              62.000 degC
+                 app.thermal.throttles: ≈ 0 #
+                 db.cpu.mhz:            4583.981 MHz
+                 db.cpu.power:          40.928 W
+                 db.cpu.util:           10.865 %
+                 db.temp:               62.000 degC
+                 db.thermal.throttles:  ≈ 0 #
+                 layer.commit.ms:       0.156 ms/op
+                 layer.commits:         1.000 #/op
+                 layer.service.ms:      0.886 ms/op
+                 layer.sql.ms:          0.659 ms/op
+                 layer.sql.statements:  8.000 #/op
+                 layer.throughput:      796.000 ops/s
+                 p0.00:                 0.788 ms/op
+                 p0.50:                 0.814 ms/op
+                 p0.90:                 0.954 ms/op
+                 p0.95:                 0.963 ms/op
+                 p0.99:                 1.059 ms/op
+                 p0.999:                23.046 ms/op
+                 p0.9999:               35.521 ms/op
+                 p1.00:                 35.521 ms/op
+
+Iteration   2: 0.821 ±(99.9%) 0.005 ms/op
+                 app.cpu.mhz:           4576.975 MHz
+                 app.cpu.power:         37.810 W
+                 app.cpu.util:          10.428 %
+                 app.temp:              67.000 degC
+                 app.thermal.throttles: ≈ 0 #
+                 db.cpu.mhz:            4573.403 MHz
+                 db.cpu.power:          38.721 W
+                 db.cpu.util:           10.760 %
+                 db.temp:               67.000 degC
+                 db.thermal.throttles:  ≈ 0 #
+                 layer.commit.ms:       0.114 ms/op
+                 layer.commits:         1.000 #/op
+                 layer.service.ms:      0.816 ms/op
+                 layer.sql.ms:          0.640 ms/op
+                 layer.sql.statements:  8.000 #/op
+                 layer.throughput:      856.500 ops/s
+                 p0.00:                 0.774 ms/op
+                 p0.50:                 0.796 ms/op
+                 p0.90:                 0.936 ms/op
+                 p0.95:                 0.947 ms/op
+                 p0.99:                 0.987 ms/op
+                 p0.999:                1.393 ms/op
+                 p0.9999:               1.868 ms/op
+                 p1.00:                 1.868 ms/op
+
+Iteration   3: 0.822 ±(99.9%) 0.006 ms/op
+                 app.cpu.mhz:           4586.611 MHz
+                 app.cpu.power:         36.450 W
+                 app.cpu.util:          9.808 %
+                 app.temp:              60.000 degC
+                 app.thermal.throttles: ≈ 0 #
+                 db.cpu.mhz:            4595.200 MHz
+                 db.cpu.power:          35.630 W
+                 db.cpu.util:           9.378 %
+                 db.temp:               54.000 degC
+                 db.thermal.throttles:  ≈ 0 #
+                 layer.commit.ms:       0.115 ms/op
+                 layer.commits:         1.000 #/op
+                 layer.service.ms:      0.819 ms/op
+                 layer.sql.ms:          0.642 ms/op
+                 layer.sql.statements:  8.000 #/op
+                 layer.throughput:      861.000 ops/s
+                 p0.00:                 0.773 ms/op
+                 p0.50:                 0.795 ms/op
+                 p0.90:                 0.933 ms/op
+                 p0.95:                 0.944 ms/op
+                 p0.99:                 0.982 ms/op
+                 p0.999:                1.893 ms/op
+                 p0.9999:               2.527 ms/op
+                 p1.00:                 2.527 ms/op
+
+
+
+Result "com.vladmihalcea.phd.jdbc.jmh.JdbcBenchmark.benchmarkDiffMergeSync":
+  N = 5027
+  mean =      0.844 ±(99.9%) 0.026 ms/op
+
+  Histogram, ms/op:
+    [ 0.000,  2.500) = 5022 
+    [ 2.500,  5.000) = 2 
+    [ 5.000,  7.500) = 0 
+    [ 7.500, 10.000) = 0 
+    [10.000, 12.500) = 0 
+    [12.500, 15.000) = 2 
+    [15.000, 17.500) = 0 
+    [17.500, 20.000) = 0 
+    [20.000, 22.500) = 0 
+    [22.500, 25.000) = 0 
+    [25.000, 27.500) = 0 
+    [27.500, 30.000) = 0 
+    [30.000, 32.500) = 0 
+    [32.500, 35.000) = 0 
+    [35.000, 37.500) = 1 
+
+  Percentiles, ms/op:
+      p(0.0000) =      0.773 ms/op
+     p(50.0000) =      0.801 ms/op
+     p(90.0000) =      0.942 ms/op
+     p(95.0000) =      0.953 ms/op
+     p(99.0000) =      0.995 ms/op
+     p(99.9000) =      2.509 ms/op
+     p(99.9900) =     35.521 ms/op
+     p(99.9990) =     35.521 ms/op
+     p(99.9999) =     35.521 ms/op
+    p(100.0000) =     35.521 ms/op
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcBenchmark.benchmarkDiffMergeSync:app.cpu.mhz":
+  4584.468 ±(99.9%) 121.955 MHz [Average]
+  (min, avg, max) = (4576.975, 4584.468, 4589.819), stdev = 6.685
+  CI (99.9%): [4462.513, 4706.423] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcBenchmark.benchmarkDiffMergeSync:app.cpu.power":
+  38.501 ±(99.9%) 45.056 W [Average]
+  (min, avg, max) = (36.450, 38.501, 41.242), stdev = 2.470
+  CI (99.9%): [≈ 0, 83.557] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcBenchmark.benchmarkDiffMergeSync:app.cpu.util":
+  10.358 ±(99.9%) 9.464 % [Average]
+  (min, avg, max) = (9.808, 10.358, 10.839), stdev = 0.519
+  CI (99.9%): [0.894, 19.822] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcBenchmark.benchmarkDiffMergeSync:app.temp":
+  67.000 ±(99.9%) 0.001 degC [Maximum]
+  (min, avg, max) = (60.000, 63.000, 67.000), stdev = 3.606
+  CI (99.9%): [67.000, 67.000] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcBenchmark.benchmarkDiffMergeSync:app.thermal.throttles":
+  ≈ 0 #
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcBenchmark.benchmarkDiffMergeSync:db.cpu.mhz":
+  4584.195 ±(99.9%) 198.851 MHz [Average]
+  (min, avg, max) = (4573.403, 4584.195, 4595.200), stdev = 10.900
+  CI (99.9%): [4385.344, 4783.046] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcBenchmark.benchmarkDiffMergeSync:db.cpu.power":
+  38.426 ±(99.9%) 48.549 W [Average]
+  (min, avg, max) = (35.630, 38.426, 40.928), stdev = 2.661
+  CI (99.9%): [≈ 0, 86.975] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcBenchmark.benchmarkDiffMergeSync:db.cpu.util":
+  10.334 ±(99.9%) 15.144 % [Average]
+  (min, avg, max) = (9.378, 10.334, 10.865), stdev = 0.830
+  CI (99.9%): [≈ 0, 25.478] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcBenchmark.benchmarkDiffMergeSync:db.temp":
+  67.000 ±(99.9%) 0.001 degC [Maximum]
+  (min, avg, max) = (54.000, 61.000, 67.000), stdev = 6.557
+  CI (99.9%): [67.000, 67.000] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcBenchmark.benchmarkDiffMergeSync:db.thermal.throttles":
+  ≈ 0 #
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcBenchmark.benchmarkDiffMergeSync:layer.commit.ms":
+  0.129 ±(99.9%) 0.440 ms/op [Average]
+  (min, avg, max) = (0.114, 0.129, 0.156), stdev = 0.024
+  CI (99.9%): [≈ 0, 0.568] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcBenchmark.benchmarkDiffMergeSync:layer.commits":
+  1.000 ±(99.9%) 0.001 #/op [Average]
+  (min, avg, max) = (1.000, 1.000, 1.000), stdev = 0.001
+  CI (99.9%): [1.000, 1.000] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcBenchmark.benchmarkDiffMergeSync:layer.service.ms":
+  0.841 ±(99.9%) 0.724 ms/op [Average]
+  (min, avg, max) = (0.816, 0.841, 0.886), stdev = 0.040
+  CI (99.9%): [0.117, 1.564] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcBenchmark.benchmarkDiffMergeSync:layer.sql.ms":
+  0.647 ±(99.9%) 0.186 ms/op [Average]
+  (min, avg, max) = (0.640, 0.647, 0.659), stdev = 0.010
+  CI (99.9%): [0.461, 0.833] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcBenchmark.benchmarkDiffMergeSync:layer.sql.statements":
+  8.000 ±(99.9%) 0.001 #/op [Average]
+  (min, avg, max) = (8.000, 8.000, 8.000), stdev = 0.001
+  CI (99.9%): [8.000, 8.000] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jdbc.jmh.JdbcBenchmark.benchmarkDiffMergeSync:layer.throughput":
+  837.833 ±(99.9%) 662.220 ops/s [Average]
+  (min, avg, max) = (796.000, 837.833, 861.000), stdev = 36.299
+  CI (99.9%): [175.613, 1500.054] (assumes normal distribution)
+
+
+# Run complete. Total time: 00:00:19
+
+REMEMBER: The numbers below are just data. To gain reusable insights, you need to follow up on
+why the numbers are the way they are. Use profilers (see -prof, -lprof), design factorial
+experiments, perform baseline and negative tests that provide experimental control, make sure
+the benchmarking environment is safe on JVM/OS/HW level, ask for reviews from the domain experts.
+Do not assume the numbers tell you what you want them to tell.
+
+NOTE: Current JVM experimentally supports Compiler Blackholes, and they are in use. Please exercise
+extra caution when trusting the results, look into the generated code to check the benchmark still
+works, and factor in a small probability of new VM bugs. Additionally, while comparisons between
+different JVMs are already problematic, the performance difference caused by different Blackhole
+modes can be very significant. Please make sure you use the consistent Blackhole mode for comparisons.
+
+Benchmark                                                     Mode   Cnt     Score     Error  Units
+JdbcBenchmark.benchmarkDiffMergeSync                        sample  5027     0.844 ±   0.026  ms/op
+JdbcBenchmark.benchmarkDiffMergeSync:app.cpu.mhz            sample     3  4584.468 ± 121.955    MHz
+JdbcBenchmark.benchmarkDiffMergeSync:app.cpu.power          sample     3    38.501 ±  45.056      W
+JdbcBenchmark.benchmarkDiffMergeSync:app.cpu.util           sample     3    10.358 ±   9.464      %
+JdbcBenchmark.benchmarkDiffMergeSync:app.temp               sample     3    67.000             degC
+JdbcBenchmark.benchmarkDiffMergeSync:app.thermal.throttles  sample     3       ≈ 0                #
+JdbcBenchmark.benchmarkDiffMergeSync:db.cpu.mhz             sample     3  4584.195 ± 198.851    MHz
+JdbcBenchmark.benchmarkDiffMergeSync:db.cpu.power           sample     3    38.426 ±  48.549      W
+JdbcBenchmark.benchmarkDiffMergeSync:db.cpu.util            sample     3    10.334 ±  15.144      %
+JdbcBenchmark.benchmarkDiffMergeSync:db.temp                sample     3    67.000             degC
+JdbcBenchmark.benchmarkDiffMergeSync:db.thermal.throttles   sample     3       ≈ 0                #
+JdbcBenchmark.benchmarkDiffMergeSync:layer.commit.ms        sample     3     0.129 ±   0.440  ms/op
+JdbcBenchmark.benchmarkDiffMergeSync:layer.commits          sample     3     1.000 ±   0.001   #/op
+JdbcBenchmark.benchmarkDiffMergeSync:layer.service.ms       sample     3     0.841 ±   0.724  ms/op
+JdbcBenchmark.benchmarkDiffMergeSync:layer.sql.ms           sample     3     0.647 ±   0.186  ms/op
+JdbcBenchmark.benchmarkDiffMergeSync:layer.sql.statements   sample     3     8.000 ±   0.001   #/op
+JdbcBenchmark.benchmarkDiffMergeSync:layer.throughput       sample     3   837.833 ± 662.220  ops/s
+JdbcBenchmark.benchmarkDiffMergeSync:p0.00                  sample           0.773            ms/op
+JdbcBenchmark.benchmarkDiffMergeSync:p0.50                  sample           0.801            ms/op
+JdbcBenchmark.benchmarkDiffMergeSync:p0.90                  sample           0.942            ms/op
+JdbcBenchmark.benchmarkDiffMergeSync:p0.95                  sample           0.953            ms/op
+JdbcBenchmark.benchmarkDiffMergeSync:p0.99                  sample           0.995            ms/op
+JdbcBenchmark.benchmarkDiffMergeSync:p0.999                 sample           2.509            ms/op
+JdbcBenchmark.benchmarkDiffMergeSync:p0.9999                sample          35.521            ms/op
+JdbcBenchmark.benchmarkDiffMergeSync:p1.00                  sample          35.521            ms/op
+
+Benchmark result is saved to /root/dto2entity/results/s66-smoke/smoke/round-01/jdbc-diffmerge-service.json.part

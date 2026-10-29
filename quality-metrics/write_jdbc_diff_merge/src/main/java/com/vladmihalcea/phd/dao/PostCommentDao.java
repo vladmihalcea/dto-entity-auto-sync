@@ -12,9 +12,9 @@ public interface PostCommentDao {
 
     void insert(Long postId, PostCommentDto comment);
 
-    void update(PostCommentDto comment);
+    void update(Long postId, PostCommentDto comment);
 
-    void delete(Long id);
+    void delete(Long postId, Long id);
 
-    void deleteChildrenOf(Long parentId);
+    void deleteChildrenOf(Long postId, Long parentId);
 }

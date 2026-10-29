@@ -1,0 +1,181 @@
+$ chronyc -n tracking
+Reference ID    : C1213CF9 (193.33.60.249)
+Stratum         : 5
+Ref time (UTC)  : Mon Nov 09 04:42:29 2026
+System time     : 0.000014814 seconds fast of NTP time
+Last offset     : +0.000020268 seconds
+RMS offset      : 0.000056285 seconds
+Frequency       : 5.144 ppm slow
+Residual freq   : +0.021 ppm
+Skew            : 0.119 ppm
+Root delay      : 0.006283754 seconds
+Root dispersion : 0.000845564 seconds
+Update interval : 516.6 seconds
+Leap status     : Normal
+
+$ chronyc -n sources -v
+
+  .-- Source mode  '^' = server, '=' = peer, '#' = local clock.
+ / .- Source state '*' = current best, '+' = combined, '-' = not combined,
+| /             'x' = may be in error, '~' = too variable, '?' = unusable.
+||                                                 .- xxxx [ yyyy ] +/- zzzz
+||      Reachability register (octal) -.           |  xxxx = adjusted offset,
+||      Log2(Polling interval) --.      |          |  yyyy = measured offset,
+||                                \     |          |  zzzz = estimated error.
+||                                 |    |           \
+MS Name/IP address         Stratum Poll Reach LastRx Last sample               
+===============================================================================
+^? 2620:2d:4000:1::2123          0   6     0     -     +0ns[   +0ns] +/-    0ns
+^? 185.125.190.122               0  10     0     -     +0ns[   +0ns] +/-    0ns
+^? 2620:2d:4000:1::3123          0   6     0     -     +0ns[   +0ns] +/-    0ns
+^? 185.125.190.123               0  10     0     -     +0ns[   +0ns] +/-    0ns
+^? 2620:2d:4002:1::2123          0   6     0     -     +0ns[   +0ns] +/-    0ns
+^? 91.189.91.112                 0  10     0     -     +0ns[   +0ns] +/-    0ns
+^? 2620:2d:4002:1::3123          0   6     0     -     +0ns[   +0ns] +/-    0ns
+^? 91.189.91.113                 0  10     0     -     +0ns[   +0ns] +/-    0ns
+^? 185.125.190.121               0  10     0     -     +0ns[   +0ns] +/-    0ns
+^* 193.33.60.249                 4   9   377   261    -86us[  -65us] +/- 4140us
+
+$ chronyc -n sourcestats
+Name/IP Address            NP  NR  Span  Frequency  Freq Skew  Offset  Std Dev
+==============================================================================
+2620:2d:4000:1::2123        0   0     0     +0.000   2000.000     +0ns  4000ms
+185.125.190.122             0   0     0     +0.000   2000.000     +0ns  4000ms
+2620:2d:4000:1::3123        0   0     0     +0.000   2000.000     +0ns  4000ms
+185.125.190.123             0   0     0     +0.000   2000.000     +0ns  4000ms
+2620:2d:4002:1::2123        0   0     0     +0.000   2000.000     +0ns  4000ms
+91.189.91.112               0   0     0     +0.000   2000.000     +0ns  4000ms
+2620:2d:4002:1::3123        0   0     0     +0.000   2000.000     +0ns  4000ms
+91.189.91.113               0   0     0     +0.000   2000.000     +0ns  4000ms
+185.125.190.121             0   0     0     +0.000   2000.000     +0ns  4000ms
+193.33.60.249               6   4   60m     +0.021      0.094  +5550ns    33us
+
+$ timedatectl
+               Local time: Mon 2026-11-09 05:46:51 CET
+           Universal time: Mon 2026-11-09 04:46:51 UTC
+                 RTC time: Mon 2026-11-09 04:46:51
+                Time zone: Europe/Amsterdam (CET, +0100)
+System clock synchronized: yes
+              NTP service: active
+          RTC in local TZ: no
+
+$ cat /etc/chrony/chrony.conf
+# Welcome to the chrony configuration file. See chrony.conf(5) for more
+# information about usable directives.
+
+# The Ubuntu NTP pool servers configuration was moved to /etc/chrony/sources.d/ubuntu-ntp-pools.sources
+
+# Use time sources from DHCP.
+# Those could be non-NTS sources. If you want to avoid unauthenticated NTP
+# sources comment the following line. (LP: #2115565)
+sourcedir /run/chrony-dhcp
+
+# Use NTP sources found in /etc/chrony/sources.d.
+sourcedir /etc/chrony/sources.d
+
+# This directive specifies the location of the file containing ID/key pairs for
+# NTP authentication.
+keyfile /etc/chrony/chrony.keys
+
+# This directive specifies the file into which chronyd will store the rate
+# information.
+driftfile /var/lib/chrony/chrony.drift
+
+# Save NTS keys and cookies.
+ntsdumpdir /var/lib/chrony
+
+# Uncomment the following line to turn logging on.
+#log tracking measurements statistics
+
+# Log files location.
+logdir /var/log/chrony
+
+# Stop bad estimates upsetting machine clock.
+maxupdateskew 100.0
+
+# This directive enables kernel synchronisation (every 11 minutes) of the
+# real-time clock. Note that it can't be used along with the 'rtcfile' directive.
+rtcsync
+
+# Step the system clock instead of slewing it if the adjustment is larger than
+# one second, but only in the first three clock updates.
+makestep 1 3
+
+# Get TAI-UTC offset and leap seconds from the system tz database.
+# This directive must be commented out when using time sources serving
+# leap-smeared time.
+leapseclist /usr/share/zoneinfo/leap-seconds.list
+
+# Include configuration files found in /etc/chrony/conf.d.
+confdir /etc/chrony/conf.d
+
+$ cat /etc/chrony/conf.d/README
+Files found under the /etc/chrony/conf.d directory with the .conf suffix are
+parsed in the lexicographical order of the file names when chronyd starts up.
+This enables a fragmented configuration of chronyd.
+
+Although those files can contain any directives listed in chrony.conf(5),
+it would be wiser to add NTP sources in the /etc/chrony/sources.d
+directory. Please read /etc/chrony/sources.d/README for more information.
+
+$ cat /etc/chrony/conf.d/benchmark.conf
+authselectmode ignore
+
+$ cat /etc/chrony/conf.d/ubuntu-nts.conf
+# This CA is needed for the Ubuntu NTS bootstrap servers.  It has a very large
+# validity range (decades into the past and future) to allow systems with a
+# very large initial clock drift to use NTS.
+# If there is already another certificate set using the same index as this one
+# here ("1"), then this CA will get added to that set.
+ntstrustedcerts 1 /etc/chrony/nts-bootstrap-ubuntu.crt
+
+$ cat /etc/chrony/sources.d/README
+Only NTP sources can be specified in the /etc/chrony/sources.d directory.
+Files in this directory must end with the ".sources" suffix. They can only
+contain the "peer", "pool" and "server" directives and must have all
+lines terminated by a trailing newline.
+
+There is no need to restart chronyd for these time sources to be usable,
+running 'chronyc reload sources' is sufficient.
+
+Example:
+
+# echo 'server 192.0.2.1 iburst' > /etc/chrony/sources.d/local-ntp-server.sources
+# chronyc reload sources
+
+$ cat /etc/chrony/sources.d/benchmark.sources
+server ntp.hostner.com iburst
+
+$ cat /etc/chrony/sources.d/ubuntu-ntp-pools.sources
+# Use NTS by default
+# NTS uses an additional port to negotiate security: 4460/tcp
+# The normal NTP port remains in use: 123/udp
+pool 1.ntp.ubuntu.com iburst maxsources 1 nts prefer
+pool 2.ntp.ubuntu.com iburst maxsources 1 nts prefer
+pool 3.ntp.ubuntu.com iburst maxsources 1 nts prefer
+pool 4.ntp.ubuntu.com iburst maxsources 1 nts prefer
+# The bootstrap server is needed by systems without a hardware clock, or a very
+# large initial clock offset. The specified certificate set is defined in
+# /etc/chrony/conf.d/ubuntu-nts.conf.
+pool ntp-bootstrap.ubuntu.com iburst maxsources 1 nts certset 1
+
+# If you can't or won't use NTS, then here are the old NTP-only definitions
+
+# This will use (up to):
+# - 4 sources from ntp.ubuntu.com which some are ipv6 enabled
+# - 2 sources from 2.ubuntu.pool.ntp.org which is ipv6 enabled as well
+# - 1 source from [01].ubuntu.pool.ntp.org each (ipv4 only atm)
+# This means by default, up to 6 dual-stack and up to 2 additional IPv4-only
+# sources will be used.
+# At the same time it retains some protection against one of the entries being
+# down (compare to just using one of the lines). See (LP: #1754358) for the
+# discussion.
+#
+# About using servers from the NTP Pool Project in general see (LP: #104525).
+# Approved by Ubuntu Technical Board on 2011-02-08.
+# See http://www.pool.ntp.org/join.html for more information.
+#pool ntp.ubuntu.com        iburst maxsources 4
+#pool 0.ubuntu.pool.ntp.org iburst maxsources 1
+#pool 1.ubuntu.pool.ntp.org iburst maxsources 1
+#pool 2.ubuntu.pool.ntp.org iburst maxsources 2
+

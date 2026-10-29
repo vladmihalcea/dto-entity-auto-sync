@@ -1,0 +1,17 @@
+# W7 data growth (AE-3, R2-1): the W7 headline cells, single-threaded, on the scale-10 data set (200,005 posts and
+# 500,000 users), 10 rounds; the rq1-rest and rq2-writes blocks give the same cells at scale 1.
+# On JPA, Multi-Ops is not idiomatic and is labeled as such (R1-14).
+# Cell: <name> <module> <rounds> <benchmark regex> [JMH options]
+@jmh -bm sample -wi 15 -w 3s -i 30 -r 3s -jvmArgsAppend -Dbenchmark.scale=10
+jdbc-mqdto-10-sf10        core  10 JdbcLoadBenchmark\.benchmarkLoadDtoUsingRest_10_collection_size$
+jdbc-msjson-10-sf10       core  10 JdbcLoadBenchmark\.benchmarkLoadJsonStringRest_10_collection_size$
+jooq-mqdto-10-sf10        core  10 JooqLoadBenchmark\.benchmarkLoadDtoUsingRest_10_collection_size$
+jooq-msjson-10-sf10       core  10 JooqLoadBenchmark\.benchmarkLoadJsonStringRest_10_collection_size$
+jpa-mqdto-10-sf10         core  10 JpaLoadBenchmark\.benchmarkLoadDtoUsingRest_10_collection_size$
+jpa-msjson-10-sf10        core  10 JpaLoadBenchmark\.benchmarkLoadDtoUsingBlazeAndRest_10_collection_size$
+jdbc-multiops-rest-sf10   core  10 JdbcUpdateBenchmark\.benchmarkMultiOpsSyncUsingRest$
+jdbc-diffmerge-rest-sf10  core  10 JdbcUpdateBenchmark\.benchmarkDiffMergeSyncUsingRest$
+jooq-multiops-rest-sf10   core  10 JooqUpdateBenchmark\.benchmarkMultiOpsSyncUsingRest$
+jooq-diffmerge-rest-sf10  core  10 JooqUpdateBenchmark\.benchmarkDiffMergeSyncUsingRest$
+jpa-multiops-rest-sf10    core  10 JpaUpdateBenchmark\.benchmarkMultiOpsSyncUsingRest$
+jpa-diffmerge-rest-sf10   core  10 JpaUpdateBenchmark\.benchmarkDiffMergeSyncUsingRest$

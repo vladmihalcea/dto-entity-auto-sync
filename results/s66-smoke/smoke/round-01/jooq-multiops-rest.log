@@ -1,0 +1,327 @@
+# JMH version: 1.37
+# VM version: JDK 21.0.4, OpenJDK 64-Bit Server VM, 21.0.4+7-LTS
+# VM invoker: /opt/temurin-21.0.4+7/bin/java
+# VM options: -Xms4g -Xmx4g -XX:+AlwaysPreTouch -Djmh.separateClasspathJAR=true
+# Blackhole mode: compiler (auto-detected, use -Djmh.blackhole.autoDetect=false to disable)
+# Warmup: 2 iterations, 2 s each
+# Measurement: 3 iterations, 2 s each
+# Timeout: 10 min per iteration
+# Threads: 1 thread, will synchronize iterations
+# Benchmark mode: Sampling time
+# Benchmark: com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest
+
+# Run progress: 0.00% complete, ETA 00:00:10
+# Fork: 1 of 1
+# Warmup Iteration   1: Telemetry: CPU clock from the APERF and MPERF counters of the running cores; package power from Intel RAPL
+Database of the core module: jdbc:postgresql://localhost:5432/dto2entity, run 5, PostgreSQL 18.6 (Ubuntu 18.6-0ubuntu0.26.04.1) on x86_64-pc-linux-gnu, compiled by gcc (Ubuntu 15.2.0-16ubuntu1) 15.2.0, 64-bit, effective_cache_size=24GB, fsync=on, jit=on, maintenance_work_mem=1GB, max_connections=100, random_page_cost=1.1, shared_buffers=8GB, synchronous_commit=on, wal_sync_method=fdatasync, work_mem=16MB
+25.969 ±(99.9%) 13.084 ms/op
+# Warmup Iteration   2: 15.513 ±(99.9%) 1.271 ms/op
+Iteration   1: 11.798 ±(99.9%) 0.363 ms/op
+                 app.cpu.mhz:                 4322.114 MHz
+                 app.cpu.power:               49.412 W
+                 app.cpu.util:                29.053 %
+                 app.temp:                    67.000 degC
+                 app.thermal.throttles:       ≈ 0 #
+                 db.cpu.mhz:                  4327.760 MHz
+                 db.cpu.power:                48.939 W
+                 db.cpu.util:                 29.092 %
+                 db.temp:                     67.000 degC
+                 db.thermal.throttles:        ≈ 0 #
+                 layer.commit.ms:             1.007 ms/op
+                 layer.commits:               6.000 #/op
+                 layer.http.calls:            6.000 #/op
+                 layer.http.client.ms:        11.451 ms/op
+                 layer.http.delete.client.ms: 1.698 ms/call
+                 layer.http.delete.server.ms: 1.178 ms/call
+                 layer.http.post.client.ms:   2.122 ms/call
+                 layer.http.post.server.ms:   1.428 ms/call
+                 layer.http.put.client.ms:    1.905 ms/call
+                 layer.http.put.server.ms:    1.249 ms/call
+                 layer.http.server.ms:        7.709 ms/op
+                 layer.service.ms:            4.593 ms/op
+                 layer.sql.ms:                1.677 ms/op
+                 layer.sql.statements:        8.000 #/op
+                 layer.throughput:            75.000 ops/s
+                 p0.00:                       9.568 ms/op
+                 p0.50:                       11.575 ms/op
+                 p0.90:                       13.397 ms/op
+                 p0.95:                       13.590 ms/op
+                 p0.99:                       17.803 ms/op
+                 p0.999:                      21.070 ms/op
+                 p0.9999:                     21.070 ms/op
+                 p1.00:                       21.070 ms/op
+
+Iteration   2: 8.837 ±(99.9%) 0.193 ms/op
+                 app.cpu.mhz:                 4324.825 MHz
+                 app.cpu.power:               43.923 W
+                 app.cpu.util:                24.413 %
+                 app.temp:                    58.000 degC
+                 app.thermal.throttles:       ≈ 0 #
+                 db.cpu.mhz:                  4323.142 MHz
+                 db.cpu.power:                43.801 W
+                 db.cpu.util:                 24.055 %
+                 db.temp:                     58.000 degC
+                 db.thermal.throttles:        ≈ 0 #
+                 layer.commit.ms:             0.953 ms/op
+                 layer.commits:               6.000 #/op
+                 layer.http.calls:            6.000 #/op
+                 layer.http.client.ms:        8.543 ms/op
+                 layer.http.delete.client.ms: 1.263 ms/call
+                 layer.http.delete.server.ms: 0.899 ms/call
+                 layer.http.post.client.ms:   1.614 ms/call
+                 layer.http.post.server.ms:   1.057 ms/call
+                 layer.http.put.client.ms:    1.395 ms/call
+                 layer.http.put.server.ms:    0.887 ms/call
+                 layer.http.server.ms:        5.687 ms/op
+                 layer.service.ms:            3.868 ms/op
+                 layer.sql.ms:                1.476 ms/op
+                 layer.sql.statements:        8.000 #/op
+                 layer.throughput:            100.000 ops/s
+                 p0.00:                       7.021 ms/op
+                 p0.50:                       8.864 ms/op
+                 p0.90:                       9.863 ms/op
+                 p0.95:                       10.201 ms/op
+                 p0.99:                       10.907 ms/op
+                 p0.999:                      10.961 ms/op
+                 p0.9999:                     10.961 ms/op
+                 p1.00:                       10.961 ms/op
+
+Iteration   3: 8.133 ±(99.9%) 0.213 ms/op
+                 app.cpu.mhz:                 4307.543 MHz
+                 app.cpu.power:               49.559 W
+                 app.cpu.util:                30.949 %
+                 app.temp:                    61.000 degC
+                 app.thermal.throttles:       ≈ 0 #
+                 db.cpu.mhz:                  4310.435 MHz
+                 db.cpu.power:                50.045 W
+                 db.cpu.util:                 30.288 %
+                 db.temp:                     61.000 degC
+                 db.thermal.throttles:        ≈ 0 #
+                 layer.commit.ms:             0.926 ms/op
+                 layer.commits:               6.000 #/op
+                 layer.http.calls:            6.000 #/op
+                 layer.http.client.ms:        7.843 ms/op
+                 layer.http.delete.client.ms: 1.172 ms/call
+                 layer.http.delete.server.ms: 0.839 ms/call
+                 layer.http.post.client.ms:   1.447 ms/call
+                 layer.http.post.server.ms:   0.940 ms/call
+                 layer.http.put.client.ms:    1.302 ms/call
+                 layer.http.put.server.ms:    0.805 ms/call
+                 layer.http.server.ms:        5.171 ms/op
+                 layer.service.ms:            3.611 ms/op
+                 layer.sql.ms:                1.386 ms/op
+                 layer.sql.statements:        8.000 #/op
+                 layer.throughput:            108.500 ops/s
+                 p0.00:                       5.718 ms/op
+                 p0.50:                       8.233 ms/op
+                 p0.90:                       9.077 ms/op
+                 p0.95:                       9.278 ms/op
+                 p0.99:                       10.035 ms/op
+                 p0.999:                      15.172 ms/op
+                 p0.9999:                     15.172 ms/op
+                 p1.00:                       15.172 ms/op
+
+
+
+Result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest":
+  N = 567
+  mean =      9.351 ±(99.9%) 0.252 ms/op
+
+  Histogram, ms/op:
+    [ 0.000,  2.500) = 0 
+    [ 2.500,  5.000) = 0 
+    [ 5.000,  7.500) = 65 
+    [ 7.500, 10.000) = 342 
+    [10.000, 12.500) = 117 
+    [12.500, 15.000) = 41 
+    [15.000, 17.500) = 1 
+    [17.500, 20.000) = 0 
+    [20.000, 22.500) = 1 
+    [22.500, 25.000) = 0 
+    [25.000, 27.500) = 0 
+
+  Percentiles, ms/op:
+      p(0.0000) =      5.718 ms/op
+     p(50.0000) =      8.897 ms/op
+     p(90.0000) =     12.016 ms/op
+     p(95.0000) =     12.894 ms/op
+     p(99.0000) =     13.818 ms/op
+     p(99.9000) =     21.070 ms/op
+     p(99.9900) =     21.070 ms/op
+     p(99.9990) =     21.070 ms/op
+     p(99.9999) =     21.070 ms/op
+    p(100.0000) =     21.070 ms/op
+
+Secondary result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:app.cpu.mhz":
+  4318.161 ±(99.9%) 169.572 MHz [Average]
+  (min, avg, max) = (4307.543, 4318.161, 4324.825), stdev = 9.295
+  CI (99.9%): [4148.589, 4487.732] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:app.cpu.power":
+  47.632 ±(99.9%) 58.603 W [Average]
+  (min, avg, max) = (43.923, 47.632, 49.559), stdev = 3.212
+  CI (99.9%): [≈ 0, 106.235] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:app.cpu.util":
+  28.138 ±(99.9%) 61.344 % [Average]
+  (min, avg, max) = (24.413, 28.138, 30.949), stdev = 3.362
+  CI (99.9%): [≈ 0, 89.483] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:app.temp":
+  67.000 ±(99.9%) 0.001 degC [Maximum]
+  (min, avg, max) = (58.000, 62.000, 67.000), stdev = 4.583
+  CI (99.9%): [67.000, 67.000] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:app.thermal.throttles":
+  ≈ 0 #
+
+Secondary result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:db.cpu.mhz":
+  4320.445 ±(99.9%) 163.680 MHz [Average]
+  (min, avg, max) = (4310.435, 4320.445, 4327.760), stdev = 8.972
+  CI (99.9%): [4156.766, 4484.125] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:db.cpu.power":
+  47.595 ±(99.9%) 60.788 W [Average]
+  (min, avg, max) = (43.801, 47.595, 50.045), stdev = 3.332
+  CI (99.9%): [≈ 0, 108.382] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:db.cpu.util":
+  27.812 ±(99.9%) 60.342 % [Average]
+  (min, avg, max) = (24.055, 27.812, 30.288), stdev = 3.308
+  CI (99.9%): [≈ 0, 88.154] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:db.temp":
+  67.000 ±(99.9%) 0.001 degC [Maximum]
+  (min, avg, max) = (58.000, 62.000, 67.000), stdev = 4.583
+  CI (99.9%): [67.000, 67.000] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:db.thermal.throttles":
+  ≈ 0 #
+
+Secondary result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.commit.ms":
+  0.962 ±(99.9%) 0.756 ms/op [Average]
+  (min, avg, max) = (0.926, 0.962, 1.007), stdev = 0.041
+  CI (99.9%): [0.206, 1.718] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.commits":
+  6.000 ±(99.9%) 0.001 #/op [Average]
+  (min, avg, max) = (6.000, 6.000, 6.000), stdev = 0.001
+  CI (99.9%): [6.000, 6.000] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.calls":
+  6.000 ±(99.9%) 0.001 #/op [Average]
+  (min, avg, max) = (6.000, 6.000, 6.000), stdev = 0.001
+  CI (99.9%): [6.000, 6.000] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.client.ms":
+  9.279 ±(99.9%) 34.903 ms/op [Average]
+  (min, avg, max) = (7.843, 9.279, 11.451), stdev = 1.913
+  CI (99.9%): [≈ 0, 44.182] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.delete.client.ms":
+  1.378 ±(99.9%) 5.129 ms/call [Average]
+  (min, avg, max) = (1.172, 1.378, 1.698), stdev = 0.281
+  CI (99.9%): [≈ 0, 6.507] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.delete.server.ms":
+  0.972 ±(99.9%) 3.292 ms/call [Average]
+  (min, avg, max) = (0.839, 0.972, 1.178), stdev = 0.180
+  CI (99.9%): [≈ 0, 4.264] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.post.client.ms":
+  1.728 ±(99.9%) 6.412 ms/call [Average]
+  (min, avg, max) = (1.447, 1.728, 2.122), stdev = 0.351
+  CI (99.9%): [≈ 0, 8.139] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.post.server.ms":
+  1.142 ±(99.9%) 4.642 ms/call [Average]
+  (min, avg, max) = (0.940, 1.142, 1.428), stdev = 0.254
+  CI (99.9%): [≈ 0, 5.784] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.put.client.ms":
+  1.534 ±(99.9%) 5.926 ms/call [Average]
+  (min, avg, max) = (1.302, 1.534, 1.905), stdev = 0.325
+  CI (99.9%): [≈ 0, 7.460] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.put.server.ms":
+  0.981 ±(99.9%) 4.305 ms/call [Average]
+  (min, avg, max) = (0.805, 0.981, 1.249), stdev = 0.236
+  CI (99.9%): [≈ 0, 5.286] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.server.ms":
+  6.189 ±(99.9%) 24.469 ms/op [Average]
+  (min, avg, max) = (5.171, 6.189, 7.709), stdev = 1.341
+  CI (99.9%): [≈ 0, 30.657] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.service.ms":
+  4.024 ±(99.9%) 9.296 ms/op [Average]
+  (min, avg, max) = (3.611, 4.024, 4.593), stdev = 0.510
+  CI (99.9%): [≈ 0, 13.320] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.sql.ms":
+  1.513 ±(99.9%) 2.725 ms/op [Average]
+  (min, avg, max) = (1.386, 1.513, 1.677), stdev = 0.149
+  CI (99.9%): [≈ 0, 4.238] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.sql.statements":
+  8.000 ±(99.9%) 0.001 #/op [Average]
+  (min, avg, max) = (8.000, 8.000, 8.000), stdev = 0.001
+  CI (99.9%): [8.000, 8.000] (assumes normal distribution)
+
+Secondary result "com.vladmihalcea.phd.jooq.jmh.JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.throughput":
+  94.500 ±(99.9%) 317.698 ops/s [Average]
+  (min, avg, max) = (75.000, 94.500, 108.500), stdev = 17.414
+  CI (99.9%): [≈ 0, 412.198] (assumes normal distribution)
+
+
+# Run complete. Total time: 00:00:18
+
+REMEMBER: The numbers below are just data. To gain reusable insights, you need to follow up on
+why the numbers are the way they are. Use profilers (see -prof, -lprof), design factorial
+experiments, perform baseline and negative tests that provide experimental control, make sure
+the benchmarking environment is safe on JVM/OS/HW level, ask for reviews from the domain experts.
+Do not assume the numbers tell you what you want them to tell.
+
+NOTE: Current JVM experimentally supports Compiler Blackholes, and they are in use. Please exercise
+extra caution when trusting the results, look into the generated code to check the benchmark still
+works, and factor in a small probability of new VM bugs. Additionally, while comparisons between
+different JVMs are already problematic, the performance difference caused by different Blackhole
+modes can be very significant. Please make sure you use the consistent Blackhole mode for comparisons.
+
+Benchmark                                                                         Mode  Cnt     Score     Error    Units
+JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest                              sample  567     9.351 ±   0.252    ms/op
+JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:app.cpu.mhz                  sample    3  4318.161 ± 169.572      MHz
+JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:app.cpu.power                sample    3    47.632 ±  58.603        W
+JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:app.cpu.util                 sample    3    28.138 ±  61.344        %
+JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:app.temp                     sample    3    67.000               degC
+JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:app.thermal.throttles        sample    3       ≈ 0                  #
+JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:db.cpu.mhz                   sample    3  4320.445 ± 163.680      MHz
+JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:db.cpu.power                 sample    3    47.595 ±  60.788        W
+JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:db.cpu.util                  sample    3    27.812 ±  60.342        %
+JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:db.temp                      sample    3    67.000               degC
+JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:db.thermal.throttles         sample    3       ≈ 0                  #
+JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.commit.ms              sample    3     0.962 ±   0.756    ms/op
+JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.commits                sample    3     6.000 ±   0.001     #/op
+JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.calls             sample    3     6.000 ±   0.001     #/op
+JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.client.ms         sample    3     9.279 ±  34.903    ms/op
+JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.delete.client.ms  sample    3     1.378 ±   5.129  ms/call
+JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.delete.server.ms  sample    3     0.972 ±   3.292  ms/call
+JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.post.client.ms    sample    3     1.728 ±   6.412  ms/call
+JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.post.server.ms    sample    3     1.142 ±   4.642  ms/call
+JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.put.client.ms     sample    3     1.534 ±   5.926  ms/call
+JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.put.server.ms     sample    3     0.981 ±   4.305  ms/call
+JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.http.server.ms         sample    3     6.189 ±  24.469    ms/op
+JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.service.ms             sample    3     4.024 ±   9.296    ms/op
+JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.sql.ms                 sample    3     1.513 ±   2.725    ms/op
+JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.sql.statements         sample    3     8.000 ±   0.001     #/op
+JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:layer.throughput             sample    3    94.500 ± 317.698    ops/s
+JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:p0.00                        sample          5.718              ms/op
+JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:p0.50                        sample          8.897              ms/op
+JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:p0.90                        sample         12.016              ms/op
+JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:p0.95                        sample         12.894              ms/op
+JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:p0.99                        sample         13.818              ms/op
+JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:p0.999                       sample         21.070              ms/op
+JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:p0.9999                      sample         21.070              ms/op
+JooqUpdateBenchmark.benchmarkMultiOpsSyncUsingRest:p1.00                        sample         21.070              ms/op
+
+Benchmark result is saved to /root/dto2entity/results/s66-smoke/smoke/round-01/jooq-multiops-rest.json.part

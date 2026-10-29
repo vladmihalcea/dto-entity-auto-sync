@@ -36,6 +36,16 @@ public class ForumRestController {
         return forumService.loadPostJsonStringUsingMultiset(postId);
     }
 
+    /**
+     * Maps the MULTISET JSON into a {@code PostDto}, which Jackson serializes again, so that, compared with
+     * {@code /postJsonString}, it measures the cost of returning a typed DTO instead of forwarding the database JSON.
+     */
+    @GetMapping("/postMultiset")
+    public PostDto findByIdUsingMultiset(
+        @RequestParam("postId") Long postId) {
+        return forumService.loadPostDTOUsingMultiset(postId);
+    }
+
     @PutMapping("/post")
     public void updatePost(@RequestBody PostDto postDTO) {
         forumService.updatePost(postDTO);
@@ -56,14 +66,14 @@ public class ForumRestController {
         return forumService.createPostComment(postId, commentDTO);
     }
 
-    @DeleteMapping("/post/comment/{commentId}")
-    public void removePostComment(@PathVariable Long commentId) {
-        forumService.removePostComment(commentId);
+    @DeleteMapping("/post/{postId}/comment/{commentId}")
+    public void removePostComment(@PathVariable Long postId, @PathVariable Long commentId) {
+        forumService.removePostComment(postId, commentId);
     }
 
-    @PutMapping("/post/comment")
-    public void updatePostComment(@RequestBody PostCommentDto commentDTO) {
-        forumService.updatePostComment(commentDTO);
+    @PutMapping("/post/{postId}/comment")
+    public void updatePostComment(@PathVariable Long postId, @RequestBody PostCommentDto commentDTO) {
+        forumService.updatePostComment(postId, commentDTO);
     }
 
     @PostMapping("/post/diff-merge")
